@@ -1,7 +1,5 @@
-URxvt.font: xft:inconsolata:regular:24
+URxvt*font: xft:iosevka:size=11
 URxvt.scrollBar: false
-URxvt.keysym.Shift-Control-V: eval:paste_clipboard
-URxvt.keysym.Shift-Control-C: eval:selection_to_clipboard
 
 ! Dracula Xresources palette
 *.foreground: #F8F8F2
@@ -22,3 +20,34 @@ URxvt.keysym.Shift-Control-C: eval:selection_to_clipboard
 *.color14:    #9AEDFE
 *.color7:     #BFBFBF
 *.color15:    #E6E6E6
+
+! rofi
+! rofi.color-enabled: true
+! rofi.color-window: #44475a, #f1fa8c, #f1fa8c
+! rofi.color-normal: #44475a, #8BE9FD, #44475a, #44475a, #FF7AC6
+! rofi.color-active: #f1fa8c, #44475a, #8BE9FD, #44475a, #FF7AC6
+! rofi.color-urgent: #f1fa8c, #44475a, #8BE9FD, #44475a, #FF7AC6
+! rofi.lines: 24
+! rofi.eh: 2
+! rofi.width: 50
+! rofi.padding: 50
+! rofi.bw: 2
+rofi.sort: true
+rofi.matching: fuzzy
+rofi.font: iosevka 13
+
+! Extensions
+URxvt.perl-ext-common: default,clipboard,resize-font,url-select,keyboard-select
+
+URxvt.keysym.C-p: perl:clipboard:paste
+
+!! url-select
+URxvt.keysym.M-u: perl:url-select:select_next
+URxvt.url-select.launcher: xdg-open
+URxvt.url-select.underline: true
+!! keyboard-select
+URxvt.keysym.M-Escape: perl:keyboard-select:activate
+URxvt.keyboard-select.clipboard: true
+!! resize font
+URxvt.resize-font.smaller: C-j
+URxvt.resize-font.bigger: C-k

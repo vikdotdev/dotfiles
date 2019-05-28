@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=ranger
+Icon=utilities-terminal
+Terminal=true
+Exec=ranger
+Categories=ConsoleOnly;System;FileTools;FileManager
+MimeType=inode/directory;

@@ -1,0 +1,18 @@
+url-select
+Alt+u	Enter selection mode. The last URL on your screen will be selected. You can repeat Alt+u to select the next upward URL.
+k	Select next upward URL
+j	Select next downward URL
+Return	Open selected URL in browser and quit selection mode
+o	Open selected URL in browser without quitting selection mode
+y	Copy (yank) selected URL and quit selection mode
+Esc	Cancel URL selection mode
+
+font-resize
+C-j
+C-k
+Ctrl+= to reset size
+Ctrl+? to see current size
+
+keyboard-select
+C-Esc
+

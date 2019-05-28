@@ -1,6 +1,21 @@
 alias ls="ls -hN --color=auto --group-directories-first" \
-	grep="grep --color=auto" \
-	diff="diff --color=auto" \
+  mkd="mkdir -pv" \
+  rmd="rm -r" \
+  p="pacman" \
+  sp="sudo pacman" \
+  lspkg="pacman -Qett --color=always | less" \
+  sctl="systemctl" \
+  ssctl="sudo systemctl" \
+  o="$file" \
+  v="$editor" \
+  x="sxiv -ft *" \
+  ranger="launch_ranger.sh" \
+  yt="youtube-dl --add-metadata -i -o '%(upload_date)s-%(title)s.%(ext)s'" \
+  yta="yt -x -f bestaudio/best" \
+  grep="grep --color=auto" \
+  diff="diff --color=auto" \
+  poweroff="sudo shutdown -h 'now'" \
+  reboot="sudo shutdown -r 'now'" \
 
 # Use neovim for vim if present.
 command -v nvim >/dev/null && alias vim="nvim" vimdiff="nvim -d" 
