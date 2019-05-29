@@ -8,6 +8,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 "Plug 'ctrlpvim/ctrlp.vim'
 "Plug 'easymotion/vim-easymotion'
+Plug 'sirtaj/vim-openscad'
 Plug 'vim-airline/vim-airline'
 Plug 'mattn/emmet-vim'
 Plug 'chrisbra/Colorizer'
@@ -47,7 +48,7 @@ set shiftwidth=2
 set smartindent
 
 "pastes from a * register
-set clipboard=unnamed
+set clipboard=unnamedplus
 
 "enables pastting from win10 clipboard
 "map <silent> "=p :r !powershell.exe -Command Get-Clipboard<CR>

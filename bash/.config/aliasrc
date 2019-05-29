@@ -9,7 +9,6 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   o="$file" \
   v="$editor" \
   x="sxiv -ft *" \
-  ranger="launch_ranger.sh" \
   yt="youtube-dl --add-metadata -i -o '%(upload_date)s-%(title)s.%(ext)s'" \
   yta="yt -x -f bestaudio/best" \
   grep="grep --color=auto" \

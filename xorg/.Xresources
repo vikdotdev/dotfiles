@@ -21,21 +21,6 @@ URxvt.scrollBar: false
 *.color7:     #BFBFBF
 *.color15:    #E6E6E6
 
-! rofi
-! rofi.color-enabled: true
-! rofi.color-window: #44475a, #f1fa8c, #f1fa8c
-! rofi.color-normal: #44475a, #8BE9FD, #44475a, #44475a, #FF7AC6
-! rofi.color-active: #f1fa8c, #44475a, #8BE9FD, #44475a, #FF7AC6
-! rofi.color-urgent: #f1fa8c, #44475a, #8BE9FD, #44475a, #FF7AC6
-! rofi.lines: 24
-! rofi.eh: 2
-! rofi.width: 50
-! rofi.padding: 50
-! rofi.bw: 2
-rofi.sort: true
-rofi.matching: fuzzy
-rofi.font: iosevka 13
-
 ! Extensions
 URxvt.perl-ext-common: default,clipboard,resize-font,url-select,keyboard-select
 
