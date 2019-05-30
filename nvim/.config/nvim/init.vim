@@ -4,10 +4,12 @@ Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'Valloric/YouCompleteMe'
 Plug 'jiangmiao/auto-pairs'
+Plug 'tpope/vim-surround'
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 "Plug 'ctrlpvim/ctrlp.vim'
 "Plug 'easymotion/vim-easymotion'
+Plug 'dsjkvf/vim-conway-hlnext/src/master/'
 Plug 'sirtaj/vim-openscad'
 Plug 'vim-airline/vim-airline'
 Plug 'mattn/emmet-vim'
@@ -23,6 +25,9 @@ set path+=**
 set wildmenu
 set wildignore+=**/node_modules/**,**/.git/**
 
+set colorcolumn=80
+"highlight ColorColumn ctermbg=4
+
 color dracula
 filetype plugin on
 syntax on
@@ -36,9 +41,15 @@ set tabstop=2
 
 set hlsearch
 set incsearch
+"execute 'match IncSearch /\%#' . @/ . '/'
+"highlight IncSearch ctermbg=Red
 
 set list
 set listchars=trail:·,tab:▸\ ,eol:¬
+set cursorline
+" or consider 235
+highlight CursorLine ctermbg=237
+
 
 set ignorecase
 set equalalways
@@ -50,12 +61,15 @@ set smartindent
 "pastes from a * register
 set clipboard=unnamedplus
 
+nnoremap ; :
+nnoremap : ;
+
 "enables pastting from win10 clipboard
 "map <silent> "=p :r !powershell.exe -Command Get-Clipboard<CR>
 "map! <silent> <C-r>= :r !powershell.exe -Command Get-Clipboard<CR>
 
 " I thought this will be better :)
-noremap "+p :exe 'norm a'.system('/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command Get-Clipboard')<CR>
+"noremap "+p :exe 'norm a'.system('/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command Get-Clipboard')<CR>
 
 "" Remove bell on both windows and unix
 set noerrorbells visualbell t_vb=

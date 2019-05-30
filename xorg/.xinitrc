@@ -7,10 +7,8 @@ xset r rate 250 44
 xbindkeys
 
 
-# setxkbmap -layout us,ua
-# setxkbmap -option 'grp:alt_shift_toggle'
-
-# initialize greepclip daemon
+# initialize various daemons
 greenclip daemon &
+transmission-daemon &
 
 exec i3

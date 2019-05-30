@@ -1,0 +1,68 @@
+rofi.modi: drun,run,ssh
+rofi.terminal: urxvt
+rofi.font: iosevka 13
+rofi.matching: normal
+rofi.tokenize: true
+! rofi.width: 36
+! rofi.lines: 8
+! rofi.columns: 1
+! rofi.bw: 2
+! rofi.location: 0
+! rofi.padding: 30
+! rofi.yoffset: 0
+! rofi.xoffset: 0
+! rofi.fixed-num-lines: true
+! rofi.show-icons: true
+! rofi.ssh-client: "ssh"
+! rofi.ssh-command: "{terminal} -e {ssh-client} {host}"
+! rofi.run-command: "{cmd}"
+! rofi.run-list-command: ""
+! rofi.run-shell-command: "{terminal} -e {cmd}"
+! rofi.window-command: "xkill -id {window}"
+! rofi.window-match-fields: "all"
+! rofi.backlight: #ccffeedd 
+! rofi.background-color: transparent 
+! rofi.drun-icon-theme: "breath" 
+! rofi.drun-match-fields: "name,generic,exec,categories"
+! rofi.disable-history: false
+! rofi.sort: false
+! rofi.levenshtein-sort: false
+! rofi.case-sensitive: false
+! rofi.cycle: true
+! rofi.sidebar-mode: false
+! rofi.eh: 1 
+! rofi.auto-select: false
+! rofi.parse-hosts: false
+! rofi.parse-known-hosts: true
+! rofi.combi-modi: "window,run"
+! rofi.m: "-5"
+! rofi.line-margin: 8 
+! rofi.line-padding: 1
+! rofi.filter: 
+! rofi.separator-style: "dash"
+! rofi.hide-scrollbar: false
+! rofi.fullscreen: false
+! rofi.fake-transparency: false
+! rofi.dpi: 108 
+! rofi.threads: 0
+! rofi.scrollbar-width: 18 
+! rofi.scroll-method: 0
+! rofi.fake-background: "screenshot"
+! rofi.window-format: "{w}    {i}{c}   {t}"
+! rofi.click-to-exit: true
+! rofi.show-match: true
+! rofi.theme: "/usr/share/rofi/themes/Adapta-Nokto.rasi" 
+! rofi.color-normal: "argb:22222222, #2ecc71, argb:2222cc71, argb:223e7730, #eeee88" 
+! rofi.color-urgent: 
+! rofi.color-active: 
+! rofi.color-window: "argb:da222222, #5c9070, #222222" 
+! rofi.max-history-size: 25
+! rofi.combi-hide-mode-prefix: false
+! rofi.pid: "/run/user/1000/rofi.pid"
+! rofi.display-window: 
+! rofi.display-windowcd: 
+! rofi.display-run: "$ " 
+! rofi.display-ssh: "$ " 
+! rofi.display-drun: 
+! rofi.display-combi: 
+! rofi.display-keys: 

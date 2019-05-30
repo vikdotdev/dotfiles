@@ -70,6 +70,8 @@
 
 # "~/.scripts/browtabf.sh"
 #    F7
+# "pkill -SIGRTMIN+8 i3blocks"
+#   Shift_L
 
 "display_select.sh"
   Mod4 + p
