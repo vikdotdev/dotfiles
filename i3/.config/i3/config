@@ -24,9 +24,7 @@ default_border pixel 2
 default_floating_border pixel 2
 gaps inner 10
 exec --no-startup-id "setxkbmap -model pc105 -layout us,ua -option grp:alt_shift_toggle"
-# bindsym ISO_Next_Group exec pkill -SIGRTMIN+8 i3blocks
-# bindsym ISO_Prev_Group exec pkill -SIGRTMIN+8 i3blocks
-# bindsym $mod+Shift exec pkill -SIGRTMIN+8 i3blocks
+# bindsym --release $mod+Shift+b exec pkill -SIGRTMIN+11 i3blocks
 
 bindsym $mod+Return exec i3-sensible-terminal
 bindsym $mod+q kill
