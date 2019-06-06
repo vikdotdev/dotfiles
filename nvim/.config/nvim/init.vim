@@ -7,9 +7,7 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
-"Plug 'ctrlpvim/ctrlp.vim'
-"Plug 'easymotion/vim-easymotion'
-Plug 'dsjkvf/vim-conway-hlnext/src/master/'
+Plug 'Yggdroot/indentLine'
 Plug 'sirtaj/vim-openscad'
 Plug 'vim-airline/vim-airline'
 Plug 'mattn/emmet-vim'
@@ -25,14 +23,13 @@ set path+=**
 set wildmenu
 set wildignore+=**/node_modules/**,**/.git/**
 
-set colorcolumn=80
-"highlight ColorColumn ctermbg=4
+set colorcolumn=80 " highlight does not seem to work on ColorColumn
 
 color dracula
 filetype plugin on
 syntax on
 
-map <C-n> :NERDTreeToggle<CR>
+nnoremap <C-n> :NERDTreeToggle<CR>
 
 set number
 set relativenumber
@@ -41,13 +38,10 @@ set tabstop=2
 
 set hlsearch
 set incsearch
-"execute 'match IncSearch /\%#' . @/ . '/'
-"highlight IncSearch ctermbg=Red
 
 set list
 set listchars=trail:·,tab:▸\ ,eol:¬
 set cursorline
-" or consider 235
 highlight CursorLine ctermbg=237
 
 
@@ -58,28 +52,10 @@ set shiftwidth=2
 
 set smartindent
 
-"pastes from a * register
 set clipboard=unnamedplus
 
 nnoremap ; :
 nnoremap : ;
 
-"enables pastting from win10 clipboard
-"map <silent> "=p :r !powershell.exe -Command Get-Clipboard<CR>
-"map! <silent> <C-r>= :r !powershell.exe -Command Get-Clipboard<CR>
-
-" I thought this will be better :)
-"noremap "+p :exe 'norm a'.system('/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command Get-Clipboard')<CR>
-
-"" Remove bell on both windows and unix
 set noerrorbells visualbell t_vb=
 autocmd GUIEnter * set visualbell t_vb=
-
-"auto InsertEnter * :silent !echo -ne "\e[8 q"
-"auto InsertLeave * :silent !echo -ne "\e[1 q"
-
-"fixes the issue with background on scrolling
-"by clearing the old background color?
-"on windows
-"set t_ut=
-
