@@ -1,10 +1,11 @@
 export PATH="$PATH:$(du "$HOME/.local/bin/" | cut -f2 | tr '\n' ':' | sed 's/:*$//')"
 
-export editor="nvim"
+
+export EDITOR="nvim"
 export term="urxvt"
-export file="ranger"
-export browser="chromium"
-export reader="zathura"
+export FILE="vifm"
+export BROWSER="chromium"
+export READER="zathura"
 export SUDO_ASKPASS="$HOME/.local/bin/tools/rofi_dmenu.sh password -password"
 
 # rofi positional variables
@@ -12,7 +13,6 @@ export ROFI_LOC=2
 export ROFI_OFFSET=250
 
 # less/man colors
-
 export LESS=-R
 export LESS_TERMCAP_mb="$(printf '%b' '[1;31m')"; a="${a%_}"
 export LESS_TERMCAP_md="$(printf '%b' '[1;36m')"; a="${a%_}"

@@ -3,16 +3,26 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   la="ls -A" \
   lal="ll -A" \
   mkd="mkdir -pv" \
-  rmd="rm -rf" \
-  p="pacman" \
-  sp="sudo pacman" \
-  sps="pacman -S " \
-  psi="pacman -Si " \
-  pq="pacman -Q" \
-  pqi="pacman -Qi" \
-  pqett="pacman -Qett --color=always | less" \
-  spsyu="sudo pacman -Syu" \
-  sctl="sudo systemctl" \
+  rmrf="rm -rf" \
+  gst="git status" \
+  gad="git add " \
+  gbr="git branch " \
+  gch="git checkout " \
+  gco="git commit -m " \
+  t="tree" \
+  pac="pacman " \
+  spac="sudo pacman " \
+  spacs="sudo pacman -S " \
+  spacrns="sudo pacman -Rns " \
+  spacrnso="sudo pacman -Rns $(pacman -Qqtd)" \
+  pacsi="pacman -Si " \
+  spacsyu="sudo pacman -Syu" \
+  pacq="pacman -Q " \
+  pacqi="pacman -Qi " \
+  pacqett="pacman -Qett --color=always | less" \
+  yays="yay -S " \
+  yayrns="yay -Rns " \
+  sysd="sudo systemctl" \
   o="$file" \
   v="$editor" \
   yt="youtube-dl --add-metadata -i -o ~/video/youtube/%(upload_date)s-%(title)s.%(ext)s" \

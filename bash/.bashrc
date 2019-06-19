@@ -3,6 +3,7 @@ stty -ixon
 
 #Allows you to cd into directory merely by typing the directory name.
 shopt -s autocd 
+shopt -s dotglob
 
 # Infinite history.
 HISTSIZE= HISTFILESIZE=
