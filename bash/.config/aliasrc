@@ -15,16 +15,19 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   spacs="sudo pacman -S " \
   spacrns="sudo pacman -Rns " \
   spacrnso="sudo pacman -Rns $(pacman -Qqtd)" \
+  pacss="pacman -Ss " \
   pacsi="pacman -Si " \
   spacsyu="sudo pacman -Syu" \
   pacq="pacman -Q " \
   pacqi="pacman -Qi " \
+  pacqs="pacman -Qs " \
   pacqett="pacman -Qett --color=always | less" \
   yays="yay -S " \
   yayrns="yay -Rns " \
   sysd="sudo systemctl" \
-  o="$file" \
-  v="$editor" \
+  o="$FILE" \
+  z="$READER" \
+  v="$EDITOR" \
   yt="youtube-dl --add-metadata -i -o ~/video/youtube/%(upload_date)s-%(title)s.%(ext)s" \
   yta="youtube-dl -x --add-metadata -i -o ~/audio/youtube/%(upload_date)s-%(title)s.%(ext)s" \
   grep="grep --color=auto" \
