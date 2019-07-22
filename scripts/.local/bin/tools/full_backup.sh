@@ -2,18 +2,20 @@
 
 MOUNT_POINT="/mnt/backup"
 BACKUP_CONTENTS="/home/vik/" # note the trailing space here
-LS=$(lsblk -l | awk '{print $1,$4,$7}' | grep 'sd[a-z][0-9]')
-CORRECT_DEVICES=$(lsblk -l | awk '{print $1}' | grep 'sd[a-z][0-9]')
+LS=$(lsblk -l | awk '{print $1,$4,$7}' | grep 'sd[b-z][0-9]')
+CORRECT_DEVICES=$(lsblk -l | awk '{print $1}' | grep 'sd[b-z][0-9]')
 DEVICE=
 
 function list_devices {
-  echo "DEV SIZE MOUNTED"
-  echo "$LS"
+  echo "DEV  SIZE  MOUNTED"
+  local list=$(lsblk -l | awk '{print $1,$4,$7}' | grep 'sd[b-z][0-9]')
+  echo "$list"
 }
 
 function read_device_name {
-  echo -e -n "\nChoose a device name to mount onto "$MOUNT_POINT": "
-  read DEVICE
+  # echo -e -n "\nChoose a device name to mount onto "$MOUNT_POINT": "
+  # read DEVICE
+  DEVICE=$(echo "$CORRECT_DEVICES" | rofi_dmenu.sh "Choose a device name to mount onto $MOUNT_POINT")
   echo -e "$CORRECT_DEVICES" | grep -w "$DEVICE" &> /dev/null
 }
 
@@ -25,7 +27,7 @@ function sync {
   echo -e "\nDo not change backup files during transfer.\n"
   sleep 1
   echo Backing up "$BACKUP_CONTENTS" to "$MOUNT_POINT"
-  sudo rsync -aAXvP --delete "$BACKUP_CONTENTS" "$MOUNT_POINT" # what -> where
+  sudo rsync -n -aAXvP --delete "$BACKUP_CONTENTS" "$MOUNT_POINT" # what -> where
 }
 
 function mount_device {
@@ -33,11 +35,19 @@ function mount_device {
 }
 
 function main {
-  echo "$LS" | grep "$MOUNT_POINT" &> /dev/null
+  LS=$(list_devices)
+  echo -e "$LS" | grep "$MOUNT_POINT" &> /dev/null
   if [ $? == 0 ]; then
-    echo -e "\nThere's already something mounted onto $MOUNT_POINT. Unmount it manually and try again.\n"
     list_devices
-    exit 1
+    echo -e -n "\nThere's already something mounted onto $MOUNT_POINT. Unmount? [y/N]: "
+    read ANSWER
+    if [ "$ANSWER" == "y" ]; then
+      sudo umount "$MOUNT_POINT"
+      main
+    else
+      echo "Aborting."
+      exit 1
+    fi
   else
     list_devices
     read_device_name
