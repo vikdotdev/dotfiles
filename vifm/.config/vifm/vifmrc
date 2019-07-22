@@ -1,0 +1,60 @@
+" VIFM COLORS
+" based on: https://github.com/istib/dotfiles/blob/master/vifm/vifm-colors
+
+highlight clear
+
+highlight Win             cterm=none ctermfg=default    ctermbg=none
+
+highlight TopLine         cterm=none ctermfg=blue       ctermbg=none
+highlight TopLineSel      cterm=none ctermfg=magenta    ctermbg=none
+highlight StatusLine      cterm=none ctermfg=blue       ctermbg=none
+highlight Border          cterm=none ctermfg=blue       ctermbg=none
+
+highlight Selected        cterm=bold ctermfg=magenta    ctermbg=default
+highlight CurrLine        cterm=bold ctermfg=236    ctermbg=blue
+
+highlight WildMenu        cterm=none,reverse ctermfg=blue ctermbg=236
+highlight CmdLine         cterm=none ctermfg=255 ctermbg=236
+highlight ErrorMsg        cterm=none ctermfg=red ctermbg=black
+
+highlight Directory       cterm=none ctermfg=blue ctermbg=default
+highlight Link            cterm=none ctermfg=cyan ctermbg=default
+highlight BrokenLink      cterm=none ctermfg=red ctermbg=default
+highlight Socket          cterm=none ctermfg=magenta ctermbg=black
+highlight Device          cterm=none ctermfg=red ctermbg=default
+highlight Fifo            cterm=none ctermfg=yellow ctermbg=black
+highlight Executable      cterm=none ctermfg=green ctermbg=default
+
+set vicmd=nvim
+nmap ; :
+
+" total size of selected files
+set statusline="  %t%= %A %10u:%-7g %15E %20d  "
+
+filextype *.jpg,*.jpeg,*.png,*.gif
+\
+       \ {View in feh}
+       \ feh -FZ %d --start-at %d/%c 2>/dev/null
+
+command df df -h %m 2> /dev/null
+command diff vim -d %f %F
+
+" a link of the selected file is made in the other directory (if you are in split view). It even works with multiple files selected with visual (v) or tag (t).
+
+command lns ln -s %d/%f %D
+
+" marks can be set same as in vim"
+" m[a-z][A-Z][0-9]
+" goto marked file
+" '[a-z][A-Z][0-9]
+" marks will remain between the sessions
+
+" if poppler is installed
+fileviewer *.pdf
+  \ pdftotext %c -
+
+fileviewer *.exe
+ \ echo Binary file: no preview available. %i
+
+fileview */ tree %c -L 2
+nnoremap w :view<cr>
