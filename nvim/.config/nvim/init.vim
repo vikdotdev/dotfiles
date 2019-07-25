@@ -17,6 +17,7 @@ Plug 'airblade/vim-gitgutter'
 Plug 'vim-airline/vim-airline'
 Plug 'mattn/emmet-vim'
 Plug 'chrisbra/Colorizer'
+Plug 'MaxMEllon/vim-jsx-pretty'
 
 call plug#end()
 
