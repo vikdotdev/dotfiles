@@ -27,7 +27,7 @@ function sync {
   echo -e "\nDo not change backup files during transfer.\n"
   sleep 1
   echo Backing up "$BACKUP_CONTENTS" to "$MOUNT_POINT"
-  sudo rsync -n -aAXvP --delete "$BACKUP_CONTENTS" "$MOUNT_POINT" # what -> where
+  sudo rsync -aAXvP --delete "$BACKUP_CONTENTS" "$MOUNT_POINT" # what -> where
 }
 
 function mount_device {
