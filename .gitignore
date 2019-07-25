@@ -3,4 +3,3 @@ xdg/.local/share*
 
 vifm/.config/vifm/vifminfo
 nvim/.config/nvim/.netrwhist
-transmission-daemon/.config/transmission-daemon/dht.dat

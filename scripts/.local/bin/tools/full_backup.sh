@@ -1,7 +1,7 @@
 #!/bin/bash
 
 MOUNT_POINT="/mnt/backup/" # note the trailing space here
-BACKUP_CONTENTS="/home/vik"
+BACKUP_CONTENTS="/home/$USER"
 LS=$(lsblk -l | awk '{print $1,$4,$7}' | grep 'sd[b-z][0-9]')
 CORRECT_DEVICES=$(lsblk -l | awk '{print $1}' | grep 'sd[b-z][0-9]')
 DEVICE=
@@ -24,11 +24,13 @@ function read_device_name {
 }
 
 function create_datafiles {
-  echo "Creating datafiles..."
+  echo "Saving pacman package list"
+  mkdir /home/$USER/docs/notes/
+  comm -23 <(pacman -Qqe | sort) <(pacman -Qqg base -g base-devel | sort | uniq) | less > /home/$USER/docs/notes/arch.packages-$(date +%F)
 }
 
 function sync {
-  echo -e "\nDo not change backup files during transfer.\n"
+  echo -e "Do not change backup files during transfer.\n"
   sleep 1
   echo Backing up "$BACKUP_CONTENTS" to "$MOUNT_POINT"
   sudo rsync -aAXvP --delete --exclude=/vik/repos/*/node_modules --exclude=/vik/.npm --exclude=/vik/.config/chromium --exclude=/vik/dl/* --exclude=/vik/temp/* --exclude=/vik/.cache/* "$BACKUP_CONTENTS" "$MOUNT_POINT" # what -> where
