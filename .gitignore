@@ -2,7 +2,5 @@ xdg/.local/share*
 !xdg/.local/share/applications
 
 vifm/.config/vifm/vifminfo
-
-nvim/.config/nvim/.netwhist
-
+nvim/.config/nvim/.netrwhist
 transmission-daemon/.config/transmission-daemon/dht.dat

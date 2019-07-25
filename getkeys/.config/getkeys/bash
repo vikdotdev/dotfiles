@@ -1,0 +1,3 @@
+
+!$ - expand last word in history command
+$_ - for last argument of previous command
