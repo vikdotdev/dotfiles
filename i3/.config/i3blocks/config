@@ -28,14 +28,8 @@ command=/usr/lib/i3blocks/$BLOCK_NAME
 separator_block_width=25
 markup=none
 
-[test]
-command=bash -c 'layout.sh'
-interval=once
-signal=11
-
-
 [kblayout]
-command=xkb-switch -W
+command=xkb-switch | tr a-z A-Z;xkb-switch -W | stdbuf -oL tr a-z A-Z
 interval=persist
 separator=true
 min_width=US
