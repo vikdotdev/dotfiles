@@ -10,6 +10,7 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   gbr="git branch " \
   gch="git checkout " \
   gco="git commit -m " \
+  gdif="git diff " \
   t="tree" \
   pac="pacman " \
   spac="sudo pacman " \
@@ -32,13 +33,12 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   o="$FILE" \
   z="$READER" \
   v="$EDITOR" \
-  yt="youtube-dl --add-metadata -i -o ~/video/youtube/%(upload_date)s-%(title)s.%(ext)s" \
-  yta="youtube-dl -x --add-metadata -i -o ~/audio/youtube/%(upload_date)s-%(title)s.%(ext)s" \
   grep="grep --color=auto" \
   diff="diff --color=auto" \
   poweroff="sudo shutdown -h 'now'" \
   reboot="sudo shutdown -r 'now'" \
-  tor="transmission-remote-cli" \
+  yta="youtube-dl -f bestaudio[ext=m4a] "
+  tor="transmission-remote-cli " \
   boat="newsboat" \
   wee="weechat" \
 

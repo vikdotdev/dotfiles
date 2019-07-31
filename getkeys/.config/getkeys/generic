@@ -1,14 +1,15 @@
-  ____ _____ _   _ _____ ____  ___ ____ 
+  ____ _____ _   _ _____ ____  ___ ____
  / ___| ____| \ | | ____|  _ \|_ _/ ___|
-| |  _|  _| |  \| |  _| | |_) || | |    
-| |_| | |___| |\  | |___|  _ < | | |___ 
+| |  _|  _| |  \| |  _| | |_) || | |
+| |_| | |___| |\  | |___|  _ < | | |___
  \____|_____|_| \_|_____|_| \_\___\____|
 
- Space f - backspace
- Space d - delete
- Space e - enter 
- Space c - mouse button 4 / back in history
- Space v - mouse button 5 / forward in history
- Space w - Ctrl Shift Tab / back a browser tab 
- Space r - mouse button 5 / forward a browser tab
- 
+  Space f - backspace
+  Space d - delete
+  Space e - enter
+  Space c - mouse button 4 / back in history
+  Space v - mouse button 5 / forward in history
+  Space w - Ctrl Shift Tab / back a browser tab
+  Space r - mouse button 5 / forward a browser tab
+
+  kill -s SIGHUP `pidof transmission-daemon` to reload config

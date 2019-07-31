@@ -11,8 +11,8 @@ map p navigate previous
 map n navigate next
 map r reload
 map R rotate rotate-cw
-map J zoom out
-map K zoom in
+map K zoom out
+map J zoom in
 map c recolor
 map P print
 

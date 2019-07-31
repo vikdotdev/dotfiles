@@ -40,7 +40,7 @@ command df df -h %m 2> /dev/null
 command diff vim -d %f %F
 
 
-filextype *.epub zathura %c
+filextype *.pdf,*.epub zathura %c
 
 " a link of the selected file is made in the other directory (if you are in split view). It even works with multiple files selected with visual (v) or tag (t).
 
@@ -58,6 +58,9 @@ fileviewer *.pdf
 
 fileviewer *.exe
  \ echo Binary file: no preview available. %i
+
+fileviewer *.jpg,*.jpeg,*.png,*.gif,*.pdf,*.epub
+ \ file %c
 
 fileview */ tree %c -L 2
 nnoremap w :view<cr>
