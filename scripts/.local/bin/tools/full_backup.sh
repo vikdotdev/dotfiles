@@ -25,8 +25,9 @@ function read_device_name {
 
 function create_datafiles {
   echo "Saving pacman package list"
-  mkdir /home/$USER/docs/notes/
-  comm -23 <(pacman -Qqe | sort) <(pacman -Qqg base -g base-devel | sort | uniq) | less > /home/$USER/docs/notes/arch.packages-$(date +%F)
+  local BACKUPDIR="/home/$USER/backup/"
+  mkdir "$BACKUPDIR" &> /dev/null
+  comm -23 <(pacman -Qqe | sort) <(pacman -Qqg base -g base-devel | sort | uniq) | less > "$BACKUPDIR"/packages-$(date +%F)
 }
 
 function sync {
@@ -41,6 +42,11 @@ function mount_device {
   sudo mount $(echo "/dev/$DEVICE") "$MOUNT_POINT"
 }
 
+function umount_device {
+  echo "Unmounting $MOUNT_POINT"
+  sudo umount "$MOUNT_POINT"
+}
+
 function main {
   LS=$(list_devices)
   echo -e "$LS" | grep "${MOUNT_POINT::-1}" &> /dev/null
@@ -49,7 +55,7 @@ function main {
     echo -e -n "\nThere's already something mounted onto $MOUNT_POINT. Unmount? [y/N]: "
     read ANSWER
     if [ "$ANSWER" == "y" ]; then
-      sudo umount "$MOUNT_POINT"
+      umount_device
       main
     else
       echo "Aborting."
@@ -62,6 +68,7 @@ function main {
       create_datafiles
       mount_device
       sync
+      umount_device
     else
       echo "$DEVICE" is not a correct device. Aborting.
       exit 1
