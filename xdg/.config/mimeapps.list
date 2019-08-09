@@ -1,7 +1,4 @@
-
 [Default Applications]
-inode/directory=ranger.desktop
-
 x-scheme-handler/magnet=torrent.desktop;
 x-scheme-handler/mailto=mail.desktop;
 text/plain=text.desktop;
