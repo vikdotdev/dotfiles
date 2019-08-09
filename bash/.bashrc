@@ -1,8 +1,8 @@
 # Disable ctrl-s and ctrl-q.
-stty -ixon 
+stty -ixon
 
 #Allows you to cd into directory merely by typing the directory name.
-shopt -s autocd 
+shopt -s autocd
 shopt -s dotglob
 
 # Infinite history.

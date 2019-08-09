@@ -15,6 +15,8 @@ Plug 'vim-airline/vim-airline'
 Plug 'mattn/emmet-vim'
 Plug 'MaxMEllon/vim-jsx-pretty'
 Plug 'styled-components/vim-styled-components',  { 'branch': 'main' }
+Plug 'jiangmiao/auto-pairs'
+Plug 'junegunn/fzf.vim'
 " Plug 'dense-analysis/ale'
 call plug#end()
 

@@ -34,6 +34,7 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   z="$READER" \
   v="$EDITOR" \
   grep="grep --color=auto" \
+  egrepr="egrep --color=auto -R " \
   diff="diff --color=auto" \
   poweroff="sudo shutdown -h 'now'" \
   reboot="sudo shutdown -r 'now'" \
