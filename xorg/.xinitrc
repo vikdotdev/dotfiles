@@ -10,5 +10,6 @@ xbindkeys
 # initialize various daemons
 greenclip daemon &
 transmission-daemon &
+dunst -config ~/.config/dunst/dunstrc &
 
 exec i3

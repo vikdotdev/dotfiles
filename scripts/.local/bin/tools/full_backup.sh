@@ -4,12 +4,20 @@ MOUNT_POINT="/mnt/backup/" # note the trailing space here
 BACKUP_CONTENTS="/home/$USER"
 LS=$(lsblk -l | awk '{print $1,$4,$7}' | grep 'sd[b-z][0-9]')
 CORRECT_DEVICES=$(lsblk -l | awk '{print $1}' | grep 'sd[b-z][0-9]')
+SCRIPT_NAME=$(basename $0)
 DEVICE=
 
 function list_devices {
-  echo "DEV  SIZE  MOUNTED"
-  local LIST=$(lsblk -l | awk '{print $1,$4,$7}' | grep 'sd[b-z][0-9]')
-  echo "$LIST"
+  if [ "$CORRECT_DEVICES" != "" ]; then
+    echo "DEV  SIZE  MOUNTED"
+    local LIST=$(lsblk -l | awk '{print $1,$4,$7}' | grep 'sd[b-z][0-9]')
+    echo "$LIST"
+  else
+    local MESSAGE="No applicable device found. Aborting"
+    notify-send -a "$SCRIPT_NAME" -u critical "$MESSAGE"
+    echo "$MESSAGE"
+    exit 1
+  fi
 }
 
 function read_device_name {
@@ -24,16 +32,20 @@ function read_device_name {
 }
 
 function create_datafiles {
-  echo "Saving pacman package list"
   local BACKUPDIR="/home/$USER/backup/"
+  local MESSAGE="Saving pacman package list to $BACKUPDIR"
+  echo "$MESSAGE"
+  notify-send -a "$SCRIPT_NAME" -u normal "$MESSAGE"
   mkdir "$BACKUPDIR" &> /dev/null
   comm -23 <(pacman -Qqe | sort) <(pacman -Qqg base -g base-devel | sort | uniq) | less > "$BACKUPDIR"/packages-$(date +%F)
 }
 
 function sync {
+  local MESSAGE="Backing up $BACKUP_CONTENTS to $MOUNT_POINT"
   echo -e "Do not change backup files during transfer.\n"
+  notify-send -a "$SCRIPT_NAME" -u normal "$MESSAGE"
+  echo "$MESSAGE"
   sleep 1
-  echo Backing up "$BACKUP_CONTENTS" to "$MOUNT_POINT"
   sudo rsync -aAXvP --delete --exclude=/vik/repos/*/node_modules --exclude=/vik/.npm --exclude=/vik/.config/chromium --exclude=/vik/dl/* --exclude=/vik/temp/* --exclude=/vik/.cache/* "$BACKUP_CONTENTS" "$MOUNT_POINT" # what -> where
 }
 
@@ -43,7 +55,9 @@ function mount_device {
 }
 
 function umount_device {
-  echo "Unmounting $MOUNT_POINT"
+  local MESSAGE="Unmounting $MOUNT_POINT"
+  notify-send -a "$SCRIPT_NAME" -u normal "$MESSAGE. Backup is finished."
+  echo "$MESSAGE"
   sudo umount "$MOUNT_POINT"
 }
 

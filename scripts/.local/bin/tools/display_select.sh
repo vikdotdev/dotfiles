@@ -1,6 +1,6 @@
 #!/bin/bash
 # xrandr -q | grep -w connected | awk '{print $1}'
-# won't select dual is already on external
+# won't select dual if already on external
 chosen=$(echo -e "Native\nExternal\nDual\nManual" | rofi_dmenu.sh "Which monitor?")
 
 case "$chosen" in
