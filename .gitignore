@@ -1,5 +1,7 @@
 xdg/.local/share*
 !xdg/.local/share/applications
+scripts/.bin/*
+!scripts/.bin/scripts/
 
 vifm/.config/vifm/vifminfo
 nvim/.config/nvim/.netrwhist

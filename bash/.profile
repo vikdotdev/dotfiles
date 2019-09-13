@@ -1,4 +1,4 @@
-export PATH="$PATH:$(du "$HOME/.local/bin/" | cut -f2 | tr '\n' ':' | sed 's/:*$//')"
+export PATH="$PATH:$(du "$HOME/.bin/" | cut -f2 | tr '\n' ':' | sed 's/:*$//')"
 
 
 export EDITOR="nvim"
@@ -6,7 +6,7 @@ export term="urxvt"
 export FILE="vifm"
 export BROWSER="chromium"
 export READER="zathura"
-export SUDO_ASKPASS="$HOME/.local/bin/tools/rofi_dmenu.sh password -password"
+export SUDO_ASKPASS="rofi_dmenu.sh password -password"
 
 # rofi positional variables
 export ROFI_LOC=2

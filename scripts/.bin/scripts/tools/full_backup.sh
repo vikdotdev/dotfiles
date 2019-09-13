@@ -36,7 +36,7 @@ function create_datafiles {
   local MESSAGE="Saving pacman package list to $BACKUPDIR"
   echo "$MESSAGE"
   notify-send -a "$SCRIPT_NAME" -u normal "$MESSAGE"
-  mkdir "$BACKUPDIR" &> /dev/null
+  mkdir -p "$BACKUPDIR" &> /dev/null
   comm -23 <(pacman -Qqe | sort) <(pacman -Qqg base -g base-devel | sort | uniq) | less > "$BACKUPDIR"/packages-$(date +%F)
 }
 
@@ -46,7 +46,7 @@ function sync {
   notify-send -a "$SCRIPT_NAME" -u normal "$MESSAGE"
   echo "$MESSAGE"
   sleep 1
-  sudo rsync -aAXvP --delete --exclude=/vik/repos/*/node_modules --exclude=/vik/.npm --exclude=/vik/.config/chromium --exclude=/vik/dl/* --exclude=/vik/temp/* --exclude=/vik/.cache/* "$BACKUP_CONTENTS" "$MOUNT_POINT" # what -> where
+  sudo rsync -aAXvP --delete --exclude=/vik/repos/*/node_modules --exclude=/vik/.npm --exclude=/vik/.config/google-chrome --exclude=/vik/.rvm --exclude=/vik/.nvm  --exclude=/vik/dl/* --exclude=/vik/repos/dotfiles/xdg/.local/share/* --exclude=/vik/temp/* --exclude=/vik/.cache/* "$BACKUP_CONTENTS" "$MOUNT_POINT" # what -> where
 }
 
 function mount_device {

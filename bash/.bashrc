@@ -73,6 +73,5 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 [ -f "/usr/share/fzf/completion.bash" ] && source /usr/share/fzf/completion.bash
 [ -f "~/.fzf.bash" ] && source ~/.fzf.bash
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-[ -d "$HOME/.bin" ] && PATH=$PATH:$HOME/.bin
 
 
