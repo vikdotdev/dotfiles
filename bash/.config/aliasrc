@@ -1,5 +1,62 @@
+function checkexec() {
+	command -v "$1" > /dev/null
+}
+
+if checkexec nvim; then
+  alias vim="nvim"
+  alias vimdiff="nvim -d"
+fi
+
+if checkexec git; then
+	# export GIT_EDITOR="$EDITOR"
+
+	# add, commit
+	alias gadd='git add -v'
+	alias gaddp='git add --patch'
+	alias gaddi='git add --interactive'
+	alias gall='git add -Av'
+	alias gco='git commit -m' # opens in the predefined editor.
+	alias gcom='git commit -m' # pass a message directly: gcomm 'My commit'
+	alias gcoa='git commit --amend -m'
+	alias gcoma='git commit --amend'
+	alias grh='git reset HEAD'
+
+	# stats and diffs
+	alias gsh='git show'
+	alias gsho='git show --oneline'
+	alias glo='git log --oneline'
+	alias glog='git log'
+	alias gst='git status'
+	alias gdif='git diff'
+	alias gdiff='git diff'
+	alias gdifs='git diff --stat --summary'
+	alias gdiffss='git diff --stat --summary'
+
+	# branching
+	alias gch='git checkout'
+	alias gchb='git checkout -b'
+	alias gbd='git branch -d'
+	# alias gbl='git branch --list'
+	# alias gpd='git push origin --delete'
+	# alias gmerg='git merge --edit --stat'
+	# alias gmerge='git merge --edit --stat'
+
+	# tagging
+	# alias gtag='git tag --sign' # followed by the tag's name
+	# alias gtagl='git tag --list'
+
+	# syncing
+	alias gpull='git pull'
+	alias gfetch='git fetch'
+	alias gpm='git push -u origin master'
+	alias gph='git push -u origin HEAD'
+fi
+
 # pavucontrol
 alias ls="ls -hN --color=auto --group-directories-first" \
+  ..2="cd ../.." \
+  ..3="cd ../../.." \
+  ..4="cd ../../../.." \
   ll="ls -l" \
   la="ls -A" \
   lal="ll -A" \
@@ -28,6 +85,7 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   pacqdt="pacman -Qdt " \
   pacqett="pacman -Qett --color=always | less" \
   yays="yay -S " \
+  yaysyu="yay -Syu " \
   yayrns="yay -Rns " \
   sysd="sudo systemctl" \
   o="$FILE" \
@@ -38,11 +96,16 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   diff="diff --color=auto" \
   poweroff="sudo shutdown -h 'now'" \
   reboot="sudo shutdown -r 'now'" \
-  yta="youtube-dl -f bestaudio[ext=m4a] "
+  sleep="sudo systemctl suspend" \
+  yta="youtube-dl -f bestaudio[ext=m4a] " \
   tor="transmission-remote-cli " \
   boat="newsboat" \
-  wee="weechat" \
+  py="python3" \
+  py2="python"
 
 
-# Use neovim for vim if present.
-command -v nvim >/dev/null && alias vim="nvim" vimdiff="nvim -d"
+
+if checkexec nvim; then
+  alias vim="nvim"
+  alias vimdiff="nvim -d"
+fi

@@ -7,9 +7,6 @@ shopt -s dotglob
 
 # Infinite history.
 HISTSIZE= HISTFILESIZE=
-# export PS1='\[\033[01;35m\]\u \[\033[34m\][\[\033[01;36m\]\w\[\033[34m\]]\[\033[33m\]\[\033[35m\] > \[\033[00m\]'
-
-# start prompt
 
 # get current branch in git repo
 function parse_git_branch() {
@@ -58,13 +55,11 @@ function parse_git_dirty {
 	fi
 }
 
+# prompt
 export PS1="\[\e[01;34m\]\u\[\e[m\]\[\e[01;33m\]@\[\e[m\]\[\e[01;32m\]\h\[\e[m\] \[\e[01;36m\]\w\[\e[m\] \[\e[01;35m\]\`parse_git_branch\`\[\e[m\]"
-
-#end prompt
 
 [ -f "$HOME/.config/shortcutrc" ] && source "$HOME/.config/shortcutrc" # Load shortcut aliases
 [ -f "$HOME/.config/aliasrc" ] && source "$HOME/.config/aliasrc"
-
 
 source /usr/share/nvm/init-nvm.sh
 
@@ -77,5 +72,7 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 [ -f "/usr/share/fzf/key-bindings.bash" ] && source /usr/share/fzf/key-bindings.bash
 [ -f "/usr/share/fzf/completion.bash" ] && source /usr/share/fzf/completion.bash
 [ -f "~/.fzf.bash" ] && source ~/.fzf.bash
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+[ -d "$HOME/.bin" ] && PATH=$PATH:$HOME/.bin
 
 

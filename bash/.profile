@@ -22,9 +22,16 @@ export LESS_TERMCAP_se="$(printf '%b' '[0m')"; a="${a%_}"
 export LESS_TERMCAP_us="$(printf '%b' '[1;32m')"; a="${a%_}"
 export LESS_TERMCAP_ue="$(printf '%b' '[0m')"; a="${a%_}"
 
+export XDG_CONFIG_HOME="$HOME/.config" # for bspwm
+
 if [[ "$(tty)" = "/dev/tty1" ]]; then
-  pgrep i3 || startx
+  pgrep bspwm || startx
 fi
 
 
 [[ -f ~/.bashrc ]] && . ~/.bashrc
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+# export PATH="$PATH:$HOME/.rvm/bin"
+
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
