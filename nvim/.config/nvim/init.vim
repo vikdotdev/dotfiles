@@ -5,19 +5,22 @@ endif
 
 call plug#begin('~/.local/share/nvim/plugged')
 Plug 'dracula/vim', { 'as': 'dracula' }
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+" replaced with vifm
+" Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-" Plug 'Valloric/YouCompleteMe', { 'do': './install.py --ts-completer --rust-completer' }
 " Plug 'chrisbra/Colorizer'
+" Plug 'Valloric/YouCompleteMe', { 'do': './install.py --ts-completer --rust-completer' }
 " Plug 'sirtaj/vim-openscad'
+" Plug 'dense-analysis/ale'
 Plug 'airblade/vim-gitgutter'
 Plug 'vim-airline/vim-airline'
 Plug 'mattn/emmet-vim'
-Plug 'MaxMEllon/vim-jsx-pretty'
-Plug 'styled-components/vim-styled-components',  { 'branch': 'main' }
+" Plug 'MaxMEllon/vim-jsx-pretty'
+" Plug 'styled-components/vim-styled-components',  { 'branch': 'main' }
 Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/fzf.vim'
-" Plug 'dense-analysis/ale'
+Plug 'dhruvasagar/vim-table-mode'
+Plug 'vifm/vifm.vim'
 call plug#end()
 
 let g:airline_powerline_fonts = 1
@@ -56,7 +59,17 @@ set clipboard=unnamedplus
 let mapleader = ","
 nnoremap ; :
 nnoremap : ;
-nnoremap <C-n> :NERDTreeToggle<CR>
+" file/buffer manipulations
+nnoremap <leader>fm :Vifm<CR>
+nnoremap <leader>ff :FZF<CR>
+nnoremap <leader>bo :Buffers<CR>
+nnoremap <leader>bd :bd<CR>
+" tab switching
+nnoremap <leader>tl gt<CR>
+nnoremap <leader>th gT<CR>
+" pane shortcuts, maximaze and minimize just as in xmonad layout
+nnoremap <leader>wm <C-w><bar><C-w>_k<CR>
+nnoremap <leader>wn <C-w>=k<CR>
 
 " makes tab autocomplete key
 inoremap <silent><expr> <TAB>
