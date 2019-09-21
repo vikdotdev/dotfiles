@@ -1,4 +1,4 @@
-export PATH="$PATH:$(du "$HOME/.bin/" | cut -f2 | tr '\n' ':' | sed 's/:*$//')"
+export PATH="$PATH:$(du -L "$HOME/.bin/" | cut -f2 | tr '\n' ':' | sed 's/:*$//')"
 
 
 export EDITOR="nvim"
@@ -24,9 +24,9 @@ export LESS_TERMCAP_ue="$(printf '%b' '[0m')"; a="${a%_}"
 
 export XDG_CONFIG_HOME="$HOME/.config" # for bspwm
 
-if [[ "$(tty)" = "/dev/tty1" ]]; then
-  pgrep bspwm || startx
-fi
+# if [[ "$(tty)" = "/dev/tty1" ]]; then
+#   pgrep qtile || startx
+# fi
 
 
 [[ -f ~/.bashrc ]] && . ~/.bashrc

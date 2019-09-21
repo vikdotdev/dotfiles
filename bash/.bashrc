@@ -8,6 +8,9 @@ shopt -s dotglob
 # Infinite history.
 HISTSIZE= HISTFILESIZE=
 
+# removes duplicates from bash history
+export HISTCONTROL=ignoreboth:erasedups
+
 # get current branch in git repo
 function parse_git_branch() {
 	BRANCH=`git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
