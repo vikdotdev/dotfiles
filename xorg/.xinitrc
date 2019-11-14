@@ -6,7 +6,7 @@ xset r rate 250 44
 xsetroot -cursor_name left_ptr
 
 # initializes .xbindkeys of xbindkeys utility
-xbindkeys
+# xbindkeys
 
 # initialize xmodmap config
 [[ -f ~/.Xmodmap ]] && xmodmap ~/.Xmodmap
@@ -16,6 +16,10 @@ greenclip daemon &
 transmission-daemon &
 dunst -config ~/.config/dunst/dunstrc &
 
-setxkbmap -model pc105 -layout us,ua -option grp:alt_shift_toggle
+setxkbmap -model pc105 -layout us,ua -option grp:win_space_toggle
+#grp:win_space_toggle
 
-exec bspwm
+qtile
+#exec bspwm
+#xmobar ~/.config/xmobar/xmobarrc &
+#xmonad

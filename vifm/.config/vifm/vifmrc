@@ -36,23 +36,18 @@ filextype *.jpg,*.jpeg,*.png,*.gif
        \ {View in feh}
        \ feh -FZ %d --start-at %d/%c 2>/dev/null
 
-command df df -h %m 2> /dev/null
-command diff vim -d %f %F
-
-
 filextype *.pdf,*.epub zathura %c
 
-" a link of the selected file is made in the other directory (if you are in split view). It even works with multiple files selected with visual (v) or tag (t).
+filextype *.mp4, mpv %c
 
 command lns ln -s %d/%f %D
 
-" marks can be set same as in vim"
-" m[a-z][A-Z][0-9]
-" goto marked file
-" '[a-z][A-Z][0-9]
-" marks will remain between the sessions
+command df df -h %m 2> /dev/null
 
-" if poppler is installed
+command diff vim -d %f %F
+
+command! FZFfind :set noquickview | :execute 'goto "'.system('find | fzf --height 10 2>/dev/tty ').'"%IU' | redraw
+
 fileviewer *.pdf
   \ pdftotext %c -
 
@@ -63,13 +58,21 @@ fileviewer *.jpg,*.jpeg,*.png,*.gif,*.pdf,*.epub
  \ file %c
 
 fileview */ tree %c -L 2
+
+unmap ,
 nnoremap w :view<cr>
 
 " yank current directory path into the clipboard
-nnoremap yd :!echo -n %d | xclip %i<cr>
+nnoremap yd :!echo -n %d | xclip -selection clipboard %i<cr>
 
 " yank current file path into the clipboard
-nnoremap yf :!echo -n %c:p | xclip %i<cr>
+nnoremap yf :!echo -n %c:p | xclip -selection clipboard %i<cr>
 
 " yank current filename without path into the clipboard
-nnoremap yn :!echo -n %c | xclip %i<cr>
+nnoremap yn :!echo -n %c | xclip -selection clipboard %i<cr>
+
+" yank root of current file's name into the clipboard
+nnoremap yr :!echo -n %c:r | xclip -selection clipboard %i<cr>
+
+nnoremap <Space>ff :FZFfind<cr>
+

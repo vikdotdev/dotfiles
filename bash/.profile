@@ -35,3 +35,6 @@ export XDG_CONFIG_HOME="$HOME/.config" # for bspwm
 # export PATH="$PATH:$HOME/.rvm/bin"
 
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+
+# Auto start tbsm after login on first two VTs
+#[[ $XDG_VTNR -le 2 ]] && tbsm
