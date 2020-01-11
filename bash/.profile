@@ -24,17 +24,11 @@ export LESS_TERMCAP_ue="$(printf '%b' '[0m')"; a="${a%_}"
 
 export XDG_CONFIG_HOME="$HOME/.config" # for bspwm
 
-# if [[ "$(tty)" = "/dev/tty1" ]]; then
-#   pgrep qtile || startx
-# fi
-
+if [[ "$(tty)" = "/dev/tty1" ]]; then
+  pgrep qtile || startx
+fi
 
 [[ -f ~/.bashrc ]] && . ~/.bashrc
 
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-# export PATH="$PATH:$HOME/.rvm/bin"
-
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 
-# Auto start tbsm after login on first two VTs
-#[[ $XDG_VTNR -le 2 ]] && tbsm

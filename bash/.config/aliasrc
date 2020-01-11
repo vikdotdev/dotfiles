@@ -1,50 +1,60 @@
 function checkexec() {
-	command -v "$1" > /dev/null
+  command -v "$1" > /dev/null
 }
 
 if checkexec nvim; then
   alias vim="nvim"
+  alias hvim="nvim -u ~/.hvimrc"
   alias vimdiff="nvim -d"
 fi
 
 if checkexec git; then
-	# export GIT_EDITOR="$EDITOR"
+  # export GIT_EDITOR="$EDITOR"
 
-	# add, commit
-	alias gadd='git add -v'
-	alias gaddp='git add --patch '
-	alias gaddi='git add --interactive '
-	alias gall='git add -Av'
-	alias gco='git commit'
-	alias gcom='git commit -m '
-	alias gcoa='git commit --amend'
-	alias gcoma='git commit --amend -m '
+  # add, commit
+  alias gadd='git add -v'
+  alias gaddp='git add --patch '
+  alias gaddi='git add --interactive '
+  alias gall='git add -Av'
+  alias gco='git commit'
+  alias gcom='git commit -m '
+  alias gcoa='git commit --amend'
+  alias gcoma='git commit --amend -m '
 
-	# stats and diffs
-	alias gsh='git show '
-	alias gsho='git show --oneline '
-	alias glo='git log --oneline '
-	alias glog='git log '
-	alias gst='git status '
-	alias gdif='git diff '
-	alias gdiff='git diff '
-	alias gdifc='git diff --cached '
-	alias gdiffc='git diff --cached '
-	alias gdifs='git diff --stat --summary '
-	alias gdiffss='git diff --stat --summary '
+  # stats and diffs
+  alias gsh='git show '
+  alias gsho='git show --oneline '
+  alias glo='git log --oneline '
+  alias glog='git log '
+  alias gst='git status '
+  alias gdif='git diff '
+  alias gdiff='git diff '
+  alias gdifc='git diff --cached '
+  alias gdiffc='git diff --cached '
+  alias gdifs='git diff --stat --summary '
+  alias gdiffss='git diff --stat --summary '
 
-	# branching
-	alias gch='git checkout '
-	alias gchb='git checkout -b '
-	alias gbd='git branch -d '
+  # restoring
+  alias grest='git restore '
+  alias grests='git restore --staged '
 
-	# tagging
-	alias gtag='git tag --sign ' # followed by the tag's name
-	alias gtagl='git tag --list'
+  # branching
+  alias gch='git checkout '
+  alias gchm='git checkout master'
+  alias gchb='git checkout -b '
+  alias gbd='git branch -d '
 
-	# syncing
-	alias gpul='git pull '
-	alias gpull='git pull '
+  # tagging
+  alias gtag='git tag --sign ' # followed by the tag's name
+  alias gtagl='git tag --list'
+
+  # syncing
+  alias gpul='git pull '
+  alias gpull='git pull '
+fi
+
+if checkexec rails; then
+  alias r='rails'
 fi
 
 # pavucontrol
@@ -61,7 +71,7 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   gad="git add " \
   gbr="git branch " \
   gch="git checkout " \
-  gco="git commit -m " \
+  gco="git commit" \
   gdif="git diff " \
   t="tree" \
   pac="pacman " \
@@ -99,8 +109,66 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   py2="python"
 
 
+export DID_PATH=~/docs/notes/
 
-if checkexec nvim; then
-  alias vim="nvim"
-  alias vimdiff="nvim -d"
-fi
+function did(){
+    export LC_ALL=C
+    if [ ! -f ${DID_PATH}/$(date +%Y-%V).txt ]; then
+        echo -e "Week $(date +"%V (%B %Y)") -- $(date +"%A %Y-%m-%d")" > ${DID_PATH}/$(date +%Y-%V).txt
+    fi
+    FILE_EDITION_DATE="$(stat -c "%y" ${DID_PATH}/$(date +%Y-%V).txt)"
+    NOW="$(date +"%Y-%m-%d")"
+    if [ ${FILE_EDITION_DATE:0:10} != ${NOW} ]; then
+        echo -e "\n\n$(date +"%A %Y-%m-%d")\n" >> ${DID_PATH}/$(date +%Y-%V).txt
+    fi
+    unset LC_ALL
+    vim +'normal Go' ${DID_PATH}/$(date +%Y-%V).txt
+}
+
+function didv(){
+    if [ $1 ]
+    then
+         cat ${DID_PATH}/${1}.txt
+    else
+        if [ ! -f ${DID_PATH}/$(date +%Y-%V).txt ]; then
+            LC_ALL=C echo "# Week $(date +"%V (%B %Y)") \n\n## $(date +"%A %Y-%m-%d")" > ${DID_PATH}/$(date +%Y-%V).txt
+        fi
+        cat ${DID_PATH}/$(date +%Y-%V).txt
+    fi
+}
+
+function week2Month(){
+    export LC_ALL=C
+    year=$(echo $1 | cut -f1 -d-)
+    week=$(echo $1 | cut -f2 -d-)
+    local dayofweek=1 # 1 for monday
+    date -d "$year-01-01 +$(( $week * 7 + 1 - $(date -d "$year-01-04" +%w ) - 3 )) days -2 days + $dayofweek days" +"%B %Y"
+    unset LC_ALL
+}
+
+function didl(){
+    for file in `ls ${DID_PATH}/*.txt | sort -Vr`; do
+        filenameRaw="$(basename ${file})"
+        filename="${filenameRaw%.*}"
+        echo "${filename} ($(week2Month ${filename}))"
+    done
+}
+
+function dids(){
+    export LC_ALL=C
+    if [ $1 ]
+    then
+        for file in `ls ${DID_PATH}/*.txt | sort -Vr`; do
+            NB_OCCURENCE="$(grep -c @${1} ${file})"
+            if [ ${NB_OCCURENCE} != "0" ]
+            then
+                filenameRaw="$(basename ${file})"
+                filename="${filenameRaw%.*}"
+                echo -e "\n\e[32m=> ${filename} ($(week2Month ${filename}), ${NB_OCCURENCE} results) \e[0m" && grep -n -B 1 ${1} ${file}
+            fi
+        done
+    else
+         echo "You must add a something to search..."
+    fi
+    export LC_ALL=C
+}
