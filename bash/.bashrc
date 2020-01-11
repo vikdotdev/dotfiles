@@ -77,4 +77,8 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 [ -f "~/.fzf.bash" ] && source ~/.fzf.bash
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 
+export RAILS_SERVE_STATIC_FILES=1 # for rails local production
 
+# necessary for android studio to work
+# export _JAVA_AWT_WM_NONREPARENTING=1
+# wmname LG3D # needs wmname package
