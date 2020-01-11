@@ -1,0 +1,11 @@
+[Unit]
+Description=Local system suspend actions
+Before=sleep.target
+
+[Service]
+Type=simple
+ExecStart=echo 'Success'
+
+[Install]
+WantedBy=sleep.target
+
