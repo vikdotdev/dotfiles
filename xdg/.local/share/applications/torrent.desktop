@@ -1,4 +1,5 @@
 [Desktop Entry]
 Type=Application
-Name=Torrent
+Name=add.torrent
+Comment=Script to catch magnet links.
 Exec=/usr/bin/env add.torrent.sh %U

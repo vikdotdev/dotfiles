@@ -46,7 +46,7 @@ function sync {
   notify-send -a "$SCRIPT_NAME" -u normal "$MESSAGE"
   echo "$MESSAGE"
   sleep 1
-  sudo rsync -aAXvP --delete --exclude=/vik/repos/*/node_modules --exclude=/vik/.npm --exclude=/vik/.config/google-chrome --exclude=/vik/.rvm --exclude=/vik/.nvm  --exclude=/vik/dl/* --exclude=/vik/repos/dotfiles/xdg/.local/share/* --exclude=/vik/temp/* --exclude=/vik/.cache/* "$BACKUP_CONTENTS" "$MOUNT_POINT" # what -> where
+  sudo rsync -aAXvP --delete --exclude=/vik/repos/*/node_modules --exclude=/vik/.npm --exclude=/vik/.config/google-chrome --exclude=/vik/.rvm --exclude=/vik/.nvm  --exclude=/vik/dl/* --exclude=/vik/repos/dotfiles/xdg/.local/share/* --exclude=/vik/temp/* --exclude=/vik/.cache/* --exclude=/vik/.rvm/gems/* --exclude=/vik/.npm/* --exclude=/vik/.nvm/versions/node/* --exclude=/vik/repos/remote-flow/public/* "$BACKUP_CONTENTS" "$MOUNT_POINT" # what -> where
 }
 
 function mount_device {

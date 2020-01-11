@@ -17,9 +17,21 @@ transmission-daemon &
 dunst -config ~/.config/dunst/dunstrc &
 
 setxkbmap -model pc105 -layout us,ua -option grp:win_space_toggle
-#grp:win_space_toggle
 
-qtile
-#exec bspwm
-#xmobar ~/.config/xmobar/xmobarrc &
-#xmonad
+exec ~/.xprofile &
+exec dwm
+
+
+# Loop
+while true
+do
+    # Set root title
+    sh xsetroot.sh
+
+    # Check battery level
+    BATT=$( acpi -b | sed 's/.*[charging|unknown], \([0-9]*\)%.*/\1/gi' )
+    STATUS=$( acpi -b | sed 's/.*: \([a-zA-Z]*\),.*/\1/gi' )
+
+    # Update every 10s
+    sleep 10s
+done &

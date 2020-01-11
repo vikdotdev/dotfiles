@@ -1,11 +1,7 @@
 URxvt*font: xft:iosevka:size=11
-!URxvt*font: -*-terminus-medium-r-*-*-12-*-*-*-*-*-*-*
-!urxvt.boldFont: -*-terminus-bold-r-*-*-12-*-*-*-*-*-*-*
-!urxvt.italicFont: -*-terminus-medium-r-*-*-12-*-*-*-*-*-*-*
 
 URxvt.scrollBar: false
-
-
+URxvt.saveLines: 20000
 
 ! Dracula Xresources palette
 *.foreground: #F8F8F2

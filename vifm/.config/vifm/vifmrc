@@ -74,5 +74,5 @@ nnoremap yn :!echo -n %c | xclip -selection clipboard %i<cr>
 " yank root of current file's name into the clipboard
 nnoremap yr :!echo -n %c:r | xclip -selection clipboard %i<cr>
 
-nnoremap <Space>ff :FZFfind<cr>
+" nnoremap <Space>ff :FZFfind<cr>
 
