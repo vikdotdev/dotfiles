@@ -58,13 +58,9 @@ function parse_git_dirty {
 	fi
 }
 
-# prompt
 export PS1="\[\e[01;34m\]\u\[\e[m\]\[\e[01;33m\]@\[\e[m\]\[\e[01;32m\]\h\[\e[m\] \[\e[01;36m\]\w\[\e[m\] \[\e[01;35m\]\`parse_git_branch\`\[\e[m\]"
 
-[ -f "$HOME/.config/shortcutrc" ] && source "$HOME/.config/shortcutrc" # Load shortcut aliases
 [ -f "$HOME/.config/aliasrc" ] && source "$HOME/.config/aliasrc"
-
-source /usr/share/nvm/init-nvm.sh
 
 set -o vi
 
@@ -75,10 +71,14 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 [ -f "/usr/share/fzf/key-bindings.bash" ] && source /usr/share/fzf/key-bindings.bash
 [ -f "/usr/share/fzf/completion.bash" ] && source /usr/share/fzf/completion.bash
 [ -f "~/.fzf.bash" ] && source ~/.fzf.bash
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-
-export RAILS_SERVE_STATIC_FILES=1 # for rails local production
 
 # necessary for android studio to work
 # export _JAVA_AWT_WM_NONREPARENTING=1
 # wmname LG3D # needs wmname package
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.

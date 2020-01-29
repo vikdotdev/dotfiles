@@ -1,1 +1,0 @@
-Look for a piece of text in a directory recursively: `grep -FR 'text'` or `grep -ER 'expression'`
