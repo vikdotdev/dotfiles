@@ -1,0 +1,12 @@
+[user]
+	email = viktorhbk@gmail.com
+	name = vikdotdev
+[credential]
+	helper = cache --timeout=1200
+[alias]
+  edit-unmerged = "!f() { git diff --name-status --diff-filter=U | cut -f2 ; }; nvim `f`"
+  add-unmerged = "!f() { git diff --name-status --diff-filter=U | cut -f2 ; }; git add `f`"
+[core]
+	autocrlf = input
+[commit]
+	verbose = true
