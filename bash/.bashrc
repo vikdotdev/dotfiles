@@ -83,6 +83,6 @@ export NVM_DIR="$HOME/.nvm"
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 
-if [ command -v s-caps2ctrl-esc ]; then
+if [ -x "$(command -v s-caps2ctrl-esc)" ]; then
   echo 'No s-caps2ctrl-esc script found.' && exit 1
 fi
