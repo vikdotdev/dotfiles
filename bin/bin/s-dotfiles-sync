@@ -4,4 +4,8 @@ DOTFILES_FOLDER="$HOME/Repositories/dotfiles"
 DIRS=$(ls "$DOTFILES_FOLDER")
 [[ ! -d "$DOTFILES_FOLDER" ]] && echo 'No ~/Repositories/dotfiles directory found.' && exit 1
 echo $DIRS
-stow --verbose=1 --dir="$DOTFILES_FOLDER" --target="$HOME" $@ $DIRS
+if [ command -v stow ]; then
+  stow --verbose=1 --dir="$DOTFILES_FOLDER" --target="$HOME" $@ $DIRS
+else
+  echo 'GNU stow not found. Aborting'
+fi

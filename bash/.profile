@@ -12,5 +12,3 @@ export LESS_TERMCAP_ue="$(printf '%b' '[0m')"; a="${a%_}"
 
 [[ -f ~/.bashrc ]] && . ~/.bashrc
 
-
-

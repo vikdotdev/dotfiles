@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ command -v xcape ]; then
+  # make capslock behave like ctrl:
+  setxkbmap -option ctrl:nocaps
+  # make short-pressed ctrl behave like escape:
+  xcape -e 'Control_L=Escape'
+fi

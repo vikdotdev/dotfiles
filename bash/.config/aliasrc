@@ -4,8 +4,6 @@ function checkexec() {
 
 if checkexec nvim; then
   alias vim="nvim"
-  alias hvim="nvim -u ~/.hvimrc"
-  alias vimdiff="nvim -d"
 fi
 
 if checkexec git; then
@@ -53,10 +51,6 @@ if checkexec git; then
   alias gpull='git pull '
 fi
 
-if checkexec rails; then
-  alias r='rails'
-fi
-
 alias ls="ls -hN --color=auto --group-directories-first" \
   ..2="cd ../.." \
   ..3="cd ../../.." \
@@ -65,23 +59,6 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   lal="ll -A" \
   mkd="mkdir -pv" \
   rmrf="rm -rf" \
-  gst="git status" \
-  gad="git add " \
-  gbr="git branch " \
-  gch="git checkout " \
-  gco="git commit" \
-  gdif="git diff " \
-  t="tree" \
-  sysd="sudo systemctl" \
-  o="$FILE" \
-  z="$READER" \
-  v="$EDITOR" \
   grep="grep --color=auto" \
-  egrepr="egrep --color=auto -R " \
-  diff="diff --color=auto" \
-  poweroff="sudo shutdown -h 'now'" \
-  reboot="sudo shutdown -r 'now'" \
-  sleep="sudo systemctl suspend" \
-  py="python3" \
-  py2="python"
+  diff="diff --color=auto"
 
