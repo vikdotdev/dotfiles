@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ -x "$(command -v imwheel)" ]; then
+  echo 'Launching imwheel'
+  imwheel
+else
+  echo 'No imwheel binary found' 
+fi

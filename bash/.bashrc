@@ -83,9 +83,8 @@ export NVM_DIR="$HOME/.nvm"
 
 export PATH="$PATH:$HOME/.emacs.d/bin/doom"
 
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 
-if [ -x "$(command -v s-caps2ctrl-esc)" ]; then
-  echo 'No s-caps2ctrl-esc script found.' && exit 1
-fi
