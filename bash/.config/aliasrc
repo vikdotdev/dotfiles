@@ -58,13 +58,14 @@ if checkexec rails; then
 fi
 
 # pavucontrol
-alias ls="ls -hN --color=auto --group-directories-first" \
+alias ls="/usr/local/opt/coreutils/libexec/gnubin/ls" \
   ..2="cd ../.." \
   ..3="cd ../../.." \
   ..4="cd ../../../.." \
   ll="ls -l" \
   la="ls -A" \
   lal="ll -A" \
+  q="exit" \
   mkd="mkdir -pv" \
   rmrf="rm -rf" \
   gst="git status" \
@@ -74,37 +75,13 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   gco="git commit" \
   gdif="git diff " \
   t="tree" \
-  pac="pacman " \
-  spac="sudo pacman " \
-  spacs="sudo pacman -S " \
-  spacrns="sudo pacman -Rns " \
-  spacrnso="sudo pacman -Rns $(pacman -Qqtd)" \
-  pacss="pacman -Ss " \
-  pacsi="pacman -Si " \
-  pacsg="pacman -Sg " \
-  spacsyu="sudo pacman -Syu" \
-  pacq="pacman -Q " \
-  pacqi="pacman -Qi " \
-  pacqs="pacman -Qs " \
-  pacql="pacman -Ql " \
-  pacqdt="pacman -Qdt " \
-  pacqett="pacman -Qett --color=always | less" \
-  yays="yay -S " \
-  yaysyu="yay -Syu " \
-  yayrns="yay -Rns " \
-  sysd="sudo systemctl" \
   o="$FILE" \
   z="$READER" \
   v="$EDITOR" \
-  grep="grep --color=auto" \
-  egrepr="egrep --color=auto -R " \
   diff="diff --color=auto" \
   poweroff="sudo shutdown -h 'now'" \
   reboot="sudo shutdown -r 'now'" \
   sleep="sudo systemctl suspend" \
-  yta="youtube-dl -f bestaudio[ext=m4a] " \
-  tor="transmission-remote-cli " \
-  boat="newsboat" \
   py="python3" \
   py2="python"
 

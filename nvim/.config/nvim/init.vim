@@ -17,6 +17,7 @@ Plug 'mattn/emmet-vim'
 Plug 'dense-analysis/ale'
 Plug 'ngmy/vim-rubocop'
 Plug 'jiangmiao/auto-pairs'
+Plug '/usr/local/opt/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'dhruvasagar/vim-table-mode'
 Plug 'vifm/vifm.vim'
@@ -29,7 +30,7 @@ call plug#end()
 " let g:rg_command = 'rg --vimgrep -S'
 let g:rg_command = '
   \ rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --color "always"
-  \ -g "*.{js,json,md,styl,jade,html,slim,config,py,cpp,c,go,hs,rb,erb,conf}"
+  \ -g "*.{css,scss,js,json,md,styl,jade,html,slim,config,py,cpp,c,go,hs,rb,erb,conf}"
   \ -g "!{.git,node_modules,vendor}/*" '
 
 command! -bang -nargs=* FinFile call fzf#vim#grep(g:rg_command .shellescape(<q-args>), 1, <bang>0)

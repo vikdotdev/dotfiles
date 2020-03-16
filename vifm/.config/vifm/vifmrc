@@ -1,30 +1,37 @@
 " VIFM COLORS
 " based on: https://github.com/istib/dotfiles/blob/master/vifm/vifm-colors
 
+" Molokai
+" by Miguel Madrid Mencia
+" https://github.com/vifm/vifm-colors
+
 highlight clear
 
-highlight Win             cterm=none ctermfg=default    ctermbg=none
+highlight  Border      cterm=none               ctermfg=black    ctermbg=232
+highlight  BrokenLink  cterm=bold               ctermfg=red      ctermbg=default
+highlight  CmdLine     cterm=none               ctermfg=white    ctermbg=black
+highlight  CurrLine    cterm=bold               ctermfg=default  ctermbg=208
+highlight  Device      cterm=bold               ctermfg=red      ctermbg=default
+highlight  Directory   cterm=bold               ctermfg=12       ctermbg=default
+highlight  ErrorMsg    cterm=none               ctermfg=red      ctermbg=black
+highlight  Executable  cterm=bold               ctermfg=green    ctermbg=default
+highlight  Fifo        cterm=bold               ctermfg=cyan     ctermbg=default
+highlight  Link        cterm=bold               ctermfg=green    ctermbg=default
+highlight  OtherLine   cterm=bold               ctermfg=default  ctermbg=130
+highlight  Selected    cterm=bold               ctermfg=magenta  ctermbg=default
+highlight  Socket      cterm=bold               ctermfg=magenta  ctermbg=default
+highlight  StatusLine  cterm=none               ctermfg=white    ctermbg=233
+highlight  SuggestBox  cterm=none               ctermfg=white    ctermbg=black
+highlight  TopLine     cterm=none               ctermfg=15       ctermbg=233
+highlight  TopLineSel  cterm=none               ctermfg=148      ctermbg=default
+highlight  WildMenu    cterm=underline,reverse  ctermfg=white    ctermbg=black
+highlight  Win         cterm=none               ctermfg=white    ctermbg=black
 
-highlight TopLine         cterm=none ctermfg=blue       ctermbg=none
-highlight TopLineSel      cterm=none ctermfg=magenta    ctermbg=none
-highlight StatusLine      cterm=none ctermfg=blue       ctermbg=none
-highlight Border          cterm=none ctermfg=blue       ctermbg=none
-
-highlight Selected        cterm=bold ctermfg=magenta    ctermbg=default
-highlight CurrLine        cterm=bold ctermfg=236    ctermbg=blue
-
-highlight WildMenu        cterm=none,reverse ctermfg=blue ctermbg=236
-highlight CmdLine         cterm=none ctermfg=255 ctermbg=236
-highlight ErrorMsg        cterm=none ctermfg=red ctermbg=black
-
-highlight Directory       cterm=none ctermfg=blue ctermbg=default
-highlight Link            cterm=none ctermfg=cyan ctermbg=default
-highlight BrokenLink      cterm=none ctermfg=red ctermbg=default
-highlight Socket          cterm=none ctermfg=magenta ctermbg=black
-highlight Device          cterm=none ctermfg=red ctermbg=default
-highlight Fifo            cterm=none ctermfg=yellow ctermbg=black
-highlight Executable      cterm=none ctermfg=green ctermbg=default
-
+if $USER == 'root'
+    highlight  Border      cterm=none  ctermfg=default  ctermbg=red
+    highlight  StatusLine  cterm=none  ctermfg=white    ctermbg=red
+    highlight  TopLine     cterm=none  ctermfg=default  ctermbg=red
+endif
 set vicmd=nvim
 nmap ; :
 
