@@ -60,7 +60,7 @@ function parse_git_dirty {
 
 export PS1="\[\e[01;34m\]\u\[\e[m\]\[\e[01;33m\]@\[\e[m\]\[\e[01;32m\]\h\[\e[m\] \[\e[01;36m\]\w\[\e[m\] \[\e[01;35m\]\`parse_git_branch\`\[\e[m\]"
 
-[ -f "$HOME/aliasrc" ] && source "$HOME/aliasrc"
+[ -f "$HOME/.aliasrc" ] && source "$HOME/.aliasrc"
 
 
 set -o vi
@@ -81,7 +81,10 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-export PATH="$PATH:$HOME/.emacs.d/bin/doom"
+export PATH="$PATH:$HOME/.emacs.d/bin"
+if [ "$TERM" == "eterm-color" ]; then
+  set -o emacs
+fi
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 
