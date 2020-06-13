@@ -1,10 +1,10 @@
 [user]
 	email = vikdotdev@gmail.com
-	name = vikdotdev
+	name = Viktor Habchak
 [credential]
-	helper = cache --timeout=1200
+	helper = "cache --timeout=3600"
 [alias]
-  edit-unmerged = "!f() { git diff --name-status --diff-filter=U | cut -f2 ; }; nvim `f`"
+  edit-unmerged = "!f() { git diff --name-status --diff-filter=U | cut -f2 ; }; vim `f`"
   add-unmerged = "!f() { git diff --name-status --diff-filter=U | cut -f2 ; }; git add `f`"
 [core]
 	autocrlf = input
