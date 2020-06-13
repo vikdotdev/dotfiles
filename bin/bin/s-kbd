@@ -4,7 +4,7 @@ if [ -x "$(command -v xcape)" ]; then
   # make capslock behave like ctrl:
   setxkbmap -option ctrl:nocaps
 
-  pgrep xcape | xargs kill
+  pgrep xcape && !! | xargs kill
   xcape -e 'Control_L=Escape'
   xcape -e 'Shift_L=bracketleft'
   xcape -e 'Shift_R=bracketright'

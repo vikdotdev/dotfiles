@@ -10,5 +10,5 @@ export LESS_TERMCAP_se="$(printf '%b' '[0m')"; a="${a%_}"
 export LESS_TERMCAP_us="$(printf '%b' '[1;32m')"; a="${a%_}"
 export LESS_TERMCAP_ue="$(printf '%b' '[0m')"; a="${a%_}"
 
+[ -s "$HOME/bin/s-kbd" ] && \. "$HOME/bin/s-kbd"
 xmodmap ~/.Xmodmap
-
