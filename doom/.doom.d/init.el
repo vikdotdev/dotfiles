@@ -40,7 +40,7 @@
        (popup            ; tame sudden yet inevitable temporary windows
         +all             ; catch all popups that start with an asterix
         +defaults)       ; default popup rules
-       pretty-code       ; replace bits of code with pretty symbols
+       ;; pretty-code       ; replace bits of code with pretty symbols
        ;;tabs              ; an tab bar for Emacs
        treemacs          ; a project drawer, like neotree but cooler
        ;;unicode           ; extended unicode support for various languages
@@ -65,15 +65,15 @@
        word-wrap         ; soft wrapping with language-aware indent
 
        :emacs
-       dired             ; making dired pretty [functional]
+       (dired +icons)             ; making dired pretty [functional]
        electric          ; smarter, keyword-based electric-indent
        ibuffer           ; interactive buffer management
        vc                ; version-control and Emacs, sitting in a tree
 
        :term
-       ;;eshell            ; a consistent, cross-platform shell (WIP)
+       eshell            ; a consistent, cross-platform shell (WIP)
        ;;shell             ; a terminal REPL for Emacs
-       term              ; terminals in Emacs
+       ;;term              ; terminals in Emacs
        ;;vterm             ; another terminals in Emacs
 
        :checkers
@@ -156,7 +156,7 @@
        ;;rest              ; Emacs as a REST client
        ;;rst               ; ReST in peace
        ruby              ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
-       rust              ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
+       ;;rust              ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
        ;;scala             ; java, but good
        ;;scheme            ; a fully conniving family of lisps
        sh                ; she sells {ba,z,fi}sh shells on the C xor
