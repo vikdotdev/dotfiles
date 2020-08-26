@@ -5,11 +5,10 @@ stty -ixon
 shopt -s autocd
 shopt -s dotglob
 
-# Infinite history.
-HISTSIZE= HISTFILESIZE=
-
-# removes duplicates from bash history
+HISTSIZE=
+HISTFILESIZE=
 export HISTCONTROL=ignoreboth:erasedups
+export HISTIGNORE="pwd:ls:ll:la"
 
 # get current branch in git repo
 function parse_git_branch() {
@@ -58,33 +57,23 @@ function parse_git_dirty {
 	fi
 }
 
+alias ls="ls -hN --color=auto --group-directories-first" \
+  ..2="cd ../.." \
+  ..3="cd ../../.." \
+  ll="ls -l" \
+  la="ls -A" \
+  lal="ll -A" \
+  mkd="mkdir -pv" \
+  grep="grep --color=auto" \
+  diff="diff --color=auto"
+
 export PS1="\[\e[01;34m\]\u\[\e[m\]\[\e[01;33m\]@\[\e[m\]\[\e[01;32m\]\h\[\e[m\] \[\e[01;36m\]\w\[\e[m\] \[\e[01;35m\]\`parse_git_branch\`\[\e[m\]"
 
-[ -f "$HOME/.aliasrc" ] && source "$HOME/.aliasrc"
-
-
-set -o vi
-
-# IMPORTANT: fzf should be specified after vim mode in terminal
-export FZF_DEFAULT_OPTS="--layout=reverse"
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-
-[ -f "/usr/share/fzf/key-bindings.bash" ] && source /usr/share/fzf/key-bindings.bash
-[ -f "/usr/share/fzf/completion.bash" ] && source /usr/share/fzf/completion.bash
-[ -f "~/.fzf.bash" ] && source ~/.fzf.bash
-
-# necessary for android studio to work
-# export _JAVA_AWT_WM_NONREPARENTING=1
-# wmname LG3D # needs wmname package
+export PATH="$PATH:$HOME/bin"
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-export PATH="$PATH:$HOME/.emacs.d/bin"
-if [ "$TERM" == "eterm-color" ]; then
-  set -o emacs
-fi
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 

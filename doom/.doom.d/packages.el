@@ -54,5 +54,6 @@
 (package! synosaurus)
 (package! bundler)
 (package! es-mode)
+(package! rjsx-mode)
 ;; (package! telega)
 ;; (package! bitwarden :recipe (:host github :repo "seanfarley/emacs-bitwarden"))
