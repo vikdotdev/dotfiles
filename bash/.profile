@@ -1,5 +1,7 @@
 export EDITOR="emacs -nw"
 export GIT_EDITOR="$EDITOR"
+export DESKTOP_HOSTNAME="top"
+export LAPTOP_HOSTNAME="lap"
 
 # less/man colors
 export LESS=-R
@@ -12,6 +14,7 @@ export LESS_TERMCAP_us="$(printf '%b' '[1;32m')"; a="${a%_}"
 export LESS_TERMCAP_ue="$(printf '%b' '[0m')"; a="${a%_}"
 
 [ -s "$HOME/bin/s-kbd" ] && \. "$HOME/bin/s-kbd"
-xmodmap ~/.Xmodmap
+[ -s "$HOME/bin/s-imwheel" ] && \. "$HOME/bin/s-imwheel"
+[ -s "$HOME/.Xmodmap" ] && xmodmap ~/.Xmodmap
 
 export PATH="$HOME/.cargo/bin:$PATH"

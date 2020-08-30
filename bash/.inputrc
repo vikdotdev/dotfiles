@@ -18,7 +18,6 @@ set show-all-if-unmodified On
 
 set keyseq-timeout 5
 
-set -o vi
 set editing-mode vi
 set show-mode-in-prompt on
 set vi-ins-mode-string \1\e[6 q\2
