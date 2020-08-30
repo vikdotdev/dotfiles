@@ -16,7 +16,7 @@ export LESS_TERMCAP_us="$(printf '%b' '[1;32m')"; a="${a%_}"
 export LESS_TERMCAP_ue="$(printf '%b' '[0m')"; a="${a%_}"
 
 [ -s "$HOME/bin/s-kbd" ] && \. "$HOME/bin/s-kbd"
-[ -s "$HOME/bin/s-imwheel" ] && \. "$HOME/bin/s-imwheel"
+[ -s "$HOME/bin/s-scroll" ] && \. "$HOME/bin/s-scroll"
 [ -s "$HOME/.Xmodmap" ] && xmodmap ~/.Xmodmap
 
 export PATH="$HOME/.cargo/bin:$PATH"
