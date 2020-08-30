@@ -65,7 +65,11 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   lal="ll -A" \
   mkd="mkdir -pv" \
   grep="grep --color=auto" \
-  diff="diff --color=auto"
+  diff="diff --color=auto" \
+  e="emacs" \
+  et="emacs -nw" \
+  ed="emacs --eval '(dired \"~\")'" \
+  etd="emacs -nw --eval '(dired \"~\")'"
 
 export PS1="\[\e[01;34m\]\u\[\e[m\]\[\e[01;33m\]@\[\e[m\]\[\e[01;32m\]\h\[\e[m\] \[\e[01;36m\]\w\[\e[m\] \[\e[01;35m\]\`parse_git_branch\`\[\e[m\]"
 
