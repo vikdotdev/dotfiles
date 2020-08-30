@@ -1,3 +1,5 @@
+[ -s "$HOME/.profile.default" ] && . "$HOME/.profile.default"
+
 export EDITOR="emacs -nw"
 export GIT_EDITOR="$EDITOR"
 export DESKTOP_HOSTNAME="top"
