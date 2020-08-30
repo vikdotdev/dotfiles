@@ -2,7 +2,7 @@
 	email = vikdotdev@gmail.com
 	name = Viktor Habchak
 [credential]
-	helper = "cache --timeout=3600"
+	helper = /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret
 [alias]
   edit-unmerged = "!f() { git diff --name-status --diff-filter=U | cut -f2 ; }; vim `f`"
   add-unmerged = "!f() { git diff --name-status --diff-filter=U | cut -f2 ; }; git add `f`"
