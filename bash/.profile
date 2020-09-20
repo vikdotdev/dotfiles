@@ -3,7 +3,7 @@
 export EDITOR="emacs -nw"
 export GIT_EDITOR="$EDITOR"
 export DESKTOP_HOSTNAME="top"
-export LAPTOP_HOSTNAME="lap"
+export LAPTOP_HOSTNAME="pad"
 
 # less/man colors
 export LESS=-R
