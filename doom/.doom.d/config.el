@@ -63,6 +63,11 @@
       :prefix ("e" . "ElasticSearch")
       :desc "Execute under point" "e" 'es-execute-request-dwim)
 
+
+(map! :localleader
+      :map restclient-mode-map
+      :prefix ("r" . "Rest client")
+      :desc "Request under point" "r" 'restclient-http-send-current)
 ;; (map! :localleader
 ;;       :map ruby-mode-map
 ;;       :prefix ("b" . "Bundler")
@@ -71,3 +76,12 @@
 
 ;; Variables
 (setq es-always-pretty-print t)
+
+
+(setq sqlformat-command 'pgformatter)
+(setq sqlformat-args '("-s2" "-g"))
+(map! :localleader
+      :map sql-mode-map
+      :prefix ("f" . "Format")
+      :desc "Region" "r" 'sqlformat-region
+      :desc "Buffer" "b" 'sqlformat-buffer)
