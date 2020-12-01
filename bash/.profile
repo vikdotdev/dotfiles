@@ -20,3 +20,4 @@ export LESS_TERMCAP_ue="$(printf '%b' '[0m')"; a="${a%_}"
 [ -s "$HOME/.Xmodmap" ] && xmodmap ~/.Xmodmap
 
 export PATH="$HOME/.cargo/bin:$PATH"
+export PATH="$HOME/Repositories/flutter/bin:$PATH"

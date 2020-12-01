@@ -55,5 +55,7 @@
 (package! bundler)
 (package! es-mode)
 (package! rjsx-mode)
+(package! sqlformat)
 ;; (package! telega)
 ;; (package! bitwarden :recipe (:host github :repo "seanfarley/emacs-bitwarden"))
+

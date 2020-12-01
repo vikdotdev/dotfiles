@@ -1,0 +1,5 @@
+#!/bin/bash
+
+amixer -c 1 sset 'Channel Mode' 6ch
+sleep 2
+amixer -c 1 sset 'Channel Mode' 2ch
