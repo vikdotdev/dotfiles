@@ -71,11 +71,15 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   e="emacs &" \
   et="emacs -nw" \
   ed="emacs --eval '(dired \"~\")' &" \
-  etd="emacs -nw --eval '(dired \"~\")'"
+  etd="emacs -nw --eval '(dired \"~\")'" \
+  em='emacsclient -c --eval '"'"'(progn (let ((display-buffer-alist `(("^\\*magit: " display-buffer-same-window) ,display-buffer-alist))) (magit-status)) (delete-other-windows))'"' " \
+  etm='emacsclient -nw -c --eval '"'"'(progn (let ((display-buffer-alist `(("^\\*magit: " display-buffer-same-window) ,display-buffer-alist))) (magit-status)) (delete-other-windows))'"' "
 
 export PS1="\[\e[01;34m\]\u\[\e[m\]\[\e[01;33m\]@\[\e[m\]\[\e[01;32m\]\h\[\e[m\] \[\e[01;36m\]\w\[\e[m\] \[\e[01;35m\]\`parse_git_branch\`\[\e[m\]"
 
 export PATH="$PATH:$HOME/bin"
+
+export PATH="$PATH:$HOME/.emacs.d/bin"
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
