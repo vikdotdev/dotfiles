@@ -23,6 +23,11 @@ echo 'Installing essential packages...'
     xclip ripgrep git fd-find clang curl editorconfig ShellCheck clang aspell aspell-en git-credential-libsecret
 } &> /dev/null
 
+echo 'Installing doom pdf dependencies...'
+{
+  echo $PASSWORD | sudo --stdin dnf install -y gcc-c++ libpng-devel poppler-devel poppler-glib-devel zlib-devel pkgconf
+} &> /dev/null
+
 echo 'Installing rpmfusion...'
 {
   echo $PASSWORD | sudo --stdin dnf install \
