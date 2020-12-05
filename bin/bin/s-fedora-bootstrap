@@ -81,7 +81,8 @@ if [ -d "$HOME/Repositories/dotfiles" ]; then
   skipping '~/Repositories/dotfiles found'
 else
   {
-    mkdir ~/Repositories && cd ~/Repositories
+    [ ! -d "$HOME/Repositories" ] && mkdir ~/Repositories
+    cd ~/Repositories
     git clone https://github.com/vikdotdev/dotfiles
 
     cd
@@ -139,11 +140,13 @@ fi
 
 echo "Installing npm packages..."
 if [ -x "$(command -v npm)" ]; then
-  mkdir ~/.npm-global
-  npm config set prefix '~/.npm-global'
-  export PATH=~/.npm-global/bin:$PATH
+  {
+    mkdir ~/.npm-global
+    npm config set prefix '~/.npm-global'
+    export PATH=~/.npm-global/bin:$PATH
 
-  npm install -g js-beautify stylelint marked
+    npm install -g js-beautify stylelint marked
+  } &> /dev/null
 fi
 
 echo "Installing ruby 2.7.2 ..."
