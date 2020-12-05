@@ -1,193 +1,326 @@
 #!/bin/bash
-# Author: Viktor Habchak @vikdotdev at github.com
+# Author: Viktor Habchak
+#   @vikdotdev at github.com
 #
 # This script is designed to bootstrap my Fedora 33 GNOME development workstation.
+# TODO add tmp file to store functions completed in the past
+# TODO install flutter
+# TODO install vpn
+# TODO install zoom
 
-if [ $EUID -eq 0 ]; then
-  echo "Do not run this script as sudo. Aborting"
-  exit 1
-fi
+NEW_HOSTNAME=pad # default hostname
+
+while [[ $# -gt 0 ]]; do
+  key="$1"
+
+  case $key in
+      -d|--desktop)
+      NEW_HOSTNAME=top
+      shift
+      shift
+      ;;
+      -l|--laptop)
+      NEW_HOSTNAME=pad
+      shift
+      shift
+      ;;
+      *)
+      shift
+      ;;
+  esac
+done
 
 read -sp 'Password: ' PASSWORD
+echo
 
-function skipping {
-  echo "$1. Skipping"
+function skip {
+  echo "bootstrap >>> $1. Skipping" | tee -a ~/fedora-bootstrap.log
 }
 
-if echo "$PASSWORD" | sudo --stdin false; then
-  echo "Incorrect password. Aborting"
-  exit 1
-fi
+function print {
+  echo "bootstrap >>>" "$@" | tee -a ~/fedora-bootstrap.log
+}
 
-echo
-echo 'Updating...'
-{
-  echo $PASSWORD | sudo --stdin dnf update -y
-} &> /dev/null
+function exit-if-run-as-sudo {
+  if [ $EUID -eq 0 ]; then
+    print "Script run as sudo. Aborting"
+    exit 1
+  fi
+}
 
-echo 'Installing essential packages...'
-{
-  echo $PASSWORD | sudo --stdin dnf install -y gnome-tweak-tool vim stow deluge emacs ripgrep imwheel tmux \
-    xclip ripgrep git fd-find clang curl editorconfig ShellCheck clang aspell aspell-en git-credential-libsecret
-} &> /dev/null
-
-echo 'Installing rpmfusion...'
-{
-  echo $PASSWORD | sudo --stdin dnf install \
-    https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm \
-    https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm -y
-  echo $PASSWORD | sudo --stdin dnf groupupdate Multimedia -y
-} &> /dev/null
-
-echo "Installing Ruby dependencies..."
-{
-  echo $PASSWORD | sudo --stdin dnf install -y patch autoconf automake bison glibc-headers libffi-devel \
-    libtool libyaml-devel patch readline-devel sqlite-devel zlib-devel \
-    openssl-devel glibc-headers
-} &> /dev/null
-
-echo 'Installing telegram...'
-if [ -x "$(command -v telegram-desktop)" ]; then
-  skipping 'telegram-desktop binary found'
-else
+function execute {
+  echo "[$(date +%D-%T)] $@" >> ~/fedora-bootstrap.log
   {
-    echo $PASSWORD | sudo --stdin dnf install telegram -y
-  } &> /dev/null
-fi
+    eval "$@"
+  } &>> ~/fedora-bootstrap.log
+}
 
-echo 'Installing xcape...'
-if [ -x "$(command -v xcape)" ]; then
-  skipping 'xcape binary found'
-else
+function execute-with-password {
+  echo "[$(date +%D-%T)] sudo $@" >> ~/fedora-bootstrap.log
   {
-    mkdir ~/Repositories && cd ~/Repositories
+    eval "echo $PASSWORD | sudo --stdin $@"
+  } &>> ~/fedora-bootstrap.log
+}
 
-    git clone https://github.com/alols/xcape.git
-    echo $PASSWORD | sudo --stdin dnf install git gcc make pkgconfig libX11-devel libXtst-devel libXi-devel cmake -y
-    cd xcape
-    make
-    echo $PASSWORD | sudo --stdin make install
-  } &> /dev/null
-fi
+function check-password-correctness {
+  [ -z "$PASSWORD" ] && print 'Password is empty. Aborting' && exit 1
 
-echo "Installing iosevka font..."
-font_files=$(ls ~/.fonts/iosevka-* 2> /dev/null | wc -l)
-if [ "$font_files" != "0" ]
-then
-  skipping "~/.fonts/iosevka-* found"
-else
-  {
-    command -v wget && cd ~/Downloads && wget https://github.com/be5invis/Iosevka/releases/download/v3.0.0-rc.5/07-iosevka-curly-3.0.0-rc.5.zip
-    mkdir ~/.fonts
-    command -v unzip && unzip 07-iosevka-curly-3.0.0-rc.5.zip 'ttf/*' -d ~/.fonts/
-    cd ~/.fonts && mv ttf/* . && rm -rf ttf
-  } &> /dev/null
-fi
+  if echo "$PASSWORD" | sudo --stdin false; then
+    print "Incorrect password. Aborting"
+    exit 1
+  fi
+}
 
-echo "Installing dotfiles..."
-if [ -d "$HOME/Repositories/dotfiles" ]; then
-  skipping '~/Repositories/dotfiles found'
-else
-  {
-    [ ! -d "$HOME/Repositories" ] && mkdir ~/Repositories
-    cd ~/Repositories
-    git clone https://github.com/vikdotdev/dotfiles
+function update-system-packages {
+  print 'updating system packages'
 
-    cd
-    [ -s "$HOME/.profile" ] && mv .profile .profile.default
-    [ -s "$HOME/.bash_profile" ] && mv .bash_profile .bash_profile.default
-    [ -s "$HOME/.bashrc" ] && mv .bashrc .bashrc.default
-    [ -s "$HOME/.inputrc" ] && mv .inputrc .inputrc.default
-    cd && ./Repositories/dotfiles/bin/bin/s-dotfiles-sync
-  } &> /dev/null
-fi
+  execute-with-password "dnf update -y"
+}
 
+function install-packages {
+  print 'installing utils'
 
-echo "Installing Doom..."
-if [ -f "$HOME/.emacs.d/bin/doom" ]; then
-  skipping "$HOME/.emacs.d/bin/doom binary found"
-else
-  {
-    cd && rm -r ~/.emacs
-    cd && git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
-    yes | ~/.emacs.d/bin/doom install
-  } &> /dev/null
-fi
+  execute-with-password "dnf install -y vim stow imwheel wget unzip xclip git curl clang git-credential-libsecret snapd"
+  execute-with-password "ln -s /var/lib/snapd/snap /snap"
+}
 
-echo "Installing rvm..."
-if [ -x "$(command -v rvm)" ]; then
-  skipping "rvm binary found"
-else
-  {
-    \curl -sSL https://get.rvm.io | bash
-    source ~/.rvm/scripts/rvm
-  } &> /dev/null
-fi
+function install-rpm-fusion {
+  print 'installing rpmfusion'
 
-echo "Installing yarn..."
-if [ -x "$(command -v yarn)" ]; then
-  skipping "yarn binary found"
-else
-  {
-    YARN_REPO=$(curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo)
-    { echo $PASSWORD; echo "$YARN_REPO"; } | sudo --stdin tee /etc/yum.repos.d/yarn.repo
-    echo $PASSWORD | sudo --stdin dnf install yarn -y
-  } &> /dev/null
-fi
+  execute-with-password "dnf install -y https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
+  execute-with-password "dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm"
+  execute-with-password "dnf groupupdate Multimedia -y"
+}
 
-echo "Configuring tmux..."
-if [ -d "$HOME/.tmux" ]; then
-  skipping "$HOME/.tmux found"
-else
-  {
-    cd
-    rm -r ~/.tmux
-    git clone https://github.com/gpakosz/.tmux.git
-    ln -s -f .tmux/.tmux.conf
-  } &> /dev/null
-fi
+function configure-gnome {
+  print "configuring GNOME"
 
-echo "Installing npm packages..."
-if [ -x "$(command -v npm)" ]; then
-  {
-    mkdir ~/.npm-global
-    npm config set prefix '~/.npm-global'
-    export PATH=~/.npm-global/bin:$PATH
+  execute "gsettings set org.gnome.desktop.peripherals.touchpad natural-scroll false"
+  execute "gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true"
+  execute "gsettings set org.gnome.desktop.peripherals.keyboard delay '250'"
+  execute "gsettings set org.gnome.desktop.peripherals.keyboard repeat-interval '20'"
+  execute "gsettings set org.gnome.desktop.input-sources xkb-options \"['lv3:ralt_switch', 'ctrl:nocaps', 'caps:escape']\""
+  execute "gsettings set org.gnome.desktop.wm.keybindings toggle-maximized \"['<Super>k']\""
+  execute "gsettings set org.gnome.desktop.interface gtk-theme \"Adwaita-dark\""
+}
 
-    npm install -g js-beautify stylelint marked
-  } &> /dev/null
-fi
+function install-ruby-deps {
+  print "installing ruby dependencies"
 
-echo "Installing ruby..."
-if [ -x "$(command -v ruby | grep ~/.rvm/rubies/ruby-2.7.2)" ]; then
-  skipping "Ruby 2.7.2 found"
-else
-  {
-    rvm autolibs disable
-    rvm install ruby 2.7.2
-    rvm use 2.7.2 --default
-  } &> /dev/null
-fi
+  execute-with-password "dnf install -y patch autoconf automake bison glibc-headers libffi-devel libtool libyaml-devel patch readline-devel sqlite-devel zlib-devel openssl-devel glibc-headers"
+}
 
+function install-rvm {
+  print "installing rvm"
 
-echo "Installing ruby gems..."
-if [ -x "$(command -v gem)" ]; then
-  {
-    gem install bundler
-    gem install tmuxinator
-  } &> /dev/null
-fi
+  if [ -x "$(command -v rvm)" ]; then
+    skip "rvm binary found"
+  else
+    execute "\curl -sSL https://get.rvm.io | bash"
+    execute "source ~/.rvm/scripts/rvm"
+  fi
+}
 
+function compile-ruby {
+  print "compiling ruby"
 
-echo "Configuring GNOME..."
-gsettings set org.gnome.desktop.peripherals.touchpad natural-scroll false
-gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
-gsettings set org.gnome.desktop.peripherals.keyboard delay "250"
-gsettings set org.gnome.desktop.peripherals.keyboard repeat-interval "20"
-gsettings set org.gnome.desktop.input-sources xkb-options "['lv3:ralt_switch', 'ctrl:nocaps', 'caps:escape']"
+  if [ -x "$(command -v ruby | grep ~/.rvm/rubies/ruby-2.7.2)" ]; then
+    skip "Ruby 2.7.2 found"
+  else
+    execute "rvm autolibs disable"
+    execute "rvm install ruby 2.7.2"
+    execute "rvm use 2.7.2 --default"
+  fi
+}
 
-gsettings set org.gnome.desktop.wm.keybindings toggle-maximized "['<Super>k']"
-gsettings set org.gnome.desktop.interface gtk-theme "Adwaita-dark"
+function install-gems {
+  print "installing gems"
 
-echo "Changing hostname..."
-hostnamectl set-hostname pad
+  if [ -x "$(command -v gem)" ]; then
+    execute "gem install bundler"
+    execute "gem install tmuxinator"
+  fi
+}
+
+function install-xcape {
+  print 'installing xcape'
+
+  if [ -x "$(command -v xcape)" ]; then
+    skip 'xcape binary found'
+  else
+
+    execute '[ ! -d "$HOME/Repositories" ] && mkdir ~/Repositories'
+    execute "cd ~/Repositories"
+    execute "git clone https://github.com/alols/xcape.git"
+    execute-with-password "dnf install git gcc make pkgconfig libX11-devel libXtst-devel libXi-devel cmake -y"
+    execute "cd xcape"
+    execute "make"
+    execute-with-password "make install"
+  fi
+}
+
+function install-fonts {
+  print "installing iosevka"
+
+  font_files=$(ls ~/.fonts/iosevka-* 2> /dev/null | wc -l)
+  if [ "$font_files" != "0" ]
+  then
+    skip "~/.fonts/iosevka-* found"
+  else
+    execute "cd ~/Downloads"
+    execute "wget --no-verbose --show-progress --progress=bar:force https://github.com/be5invis/Iosevka/releases/download/v3.0.0-rc.5/07-iosevka-curly-3.0.0-rc.5.zip"
+    execute "mkdir ~/.fonts"
+    execute "command -v unzip && unzip 07-iosevka-curly-3.0.0-rc.5.zip 'ttf/*' -d ~/.fonts/"
+    execute "cd ~/.fonts && mv ttf/* . && rm -rf ttf"
+  fi
+}
+
+function install-dotfiles {
+  print "installing dotfiles"
+
+  if [ -d "$HOME/Repositories/dotfiles" ]; then
+    skip "~/Repositories/dotfiles found"
+  else
+    execute '[ ! -d "$HOME/Repositories" ] && mkdir ~/Repositories'
+    execute "cd ~/Repositories"
+    execute "git clone https://github.com/vikdotdev/dotfiles"
+
+    execute "cd"
+    execute '[ -s "$HOME/.profile" ] && mv .profile .profile.default'
+    execute '[ -s "$HOME/.bash_profile" ] && mv .bash_profile .bash_profile.default'
+    execute '[ -s "$HOME/.bashrc" ] && mv .bashrc .bashrc.default'
+    execute '[ -s "$HOME/.inputrc" ] && mv .inputrc .inputrc.default'
+    execute 'cd && ./Repositories/dotfiles/bin/bin/s-dotfiles-sync'
+  fi
+}
+
+function install-emacs {
+  print "installing emacs"
+
+  if [ -f "$HOME/.emacs.d/bin/doom" ]; then
+    skip "$HOME/.emacs.d/bin/doom binary found"
+  else
+    execute-with-password "dnf install -y emacs ripgrep fd-find editorconfig ShellCheck aspell aspell-en"
+
+    execute "cd && rm -r ~/.emacs"
+    execute "cd && git clone https://github.com/hlissner/doom-emacs ~/.emacs.d"
+    execute "yes | ~/.emacs.d/bin/doom install"
+  fi
+}
+
+function install-node-yarn {
+  print "installing node & yarn"
+
+  if [ -x "$(command -v yarn)" ]; then
+    skip "yarn binary found"
+  else
+    {
+      YARN_REPO=$(curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo)
+
+      echo $PASSWORD | sudo --stdin true && echo "$YARN_REPO" | sudo tee /etc/yum.repos.d/yarn.repo
+    } > /dev/null
+
+    execute-with-password "dnf install yarn -y"
+  fi
+}
+
+function install-tmux {
+  print "installing tmux"
+
+  if [ -d "$HOME/.tmux" ]; then
+    skip "$HOME/.tmux found"
+  else
+    execute-with-password "dnf install -y tmux"
+    execute "cd"
+    execute "rm -r ~/.tmux"
+    execute "git clone https://github.com/gpakosz/.tmux.git"
+    execute "ln -s -f .tmux/.tmux.conf"
+  fi
+}
+
+function install-js-packages {
+  print "installing js packages"
+
+  if [ -x "$(command -v npm)" ]; then
+    execute "mkdir ~/.npm-global"
+    execute "npm config set prefix '~/.npm-global'"
+    execute "export PATH=~/.npm-global/bin:$PATH"
+
+    execute "npm install -g js-beautify stylelint marked"
+  else
+    skip "npm binary not found"
+  fi
+}
+
+function change-hostname {
+  print "changing hostname"
+
+  execute "hostnamectl set-hostname $NEW_HOSTNAME"
+}
+
+function install-postgres {
+  print "installing postgres"
+
+  execute-with-password "dnf install -y postgresql-server postgresql-contrib libpq-devel"
+  execute-with-password "systemctl enable postgresql"
+  execute-with-password "postgresql-setup --initdb --unit postgresql"
+  execute-with-password "systemctl start postgresql"
+}
+
+function install-redis {
+  print "installing redis"
+
+  execute-with-password "dnf install redis -y"
+  execute-with-password "systemctl start redis.service"
+  execute-with-password "systemctl enable redis.service"
+}
+
+function install-elasticsearch {
+  execute "podman pull docker.io/library/elasticsearch:7.9.2"
+  execute "podman run -d --name elasticsearch7 -p 9200:9200 -p 9300:9300 -e \"discovery.type=single-node\" elasticsearch:7.9.2"
+}
+
+function install-gui-packages {
+  print 'installing gui packages'
+
+  execute-with-password "dnf install -y gnome-tweak-tool thunderbird deluge"
+
+  # this is done to initialize snap and avoid the following error:
+  # error: too early for operation, device not yet seeded or device model not acknowledged
+  execute-with-password "snap install hello-world"
+  sleep 30
+  execute-with-password "snap install telegram-desktop"
+  execute-with-password "snap install slack --classic"
+  execute-with-password "snap install skype --classic"
+  execute-with-password "snap install spotify"
+  execute-with-password "snap install ngrok"
+}
+
+function main {
+  exit-if-run-as-sudo
+  check-password-correctness
+  update-system-packages
+  install-packages
+  configure-gnome
+  install-rpm-fusion
+  install-ruby-deps
+  install-rvm
+  compile-ruby
+  install-gems
+  install-node-yarn
+  install-js-packages
+  install-dotfiles
+  install-fonts
+  install-xcape
+  install-tmux
+  install-emacs
+  install-postgres
+  install-redis
+  install-elasticsearch
+  change-hostname
+  install-gui-packages
+
+  print "Done."
+}
+
+main
