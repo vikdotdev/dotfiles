@@ -87,6 +87,7 @@ else
 
     cd
     [ -s "$HOME/.profile" ] && mv .profile .profile.default
+    [ -s "$HOME/.bash_profile" ] && mv .bash_profile .bash_profile.default
     [ -s "$HOME/.bashrc" ] && mv .bashrc .bashrc.default
     [ -s "$HOME/.inputrc" ] && mv .inputrc .inputrc.default
     cd && ./Repositories/dotfiles/bin/bin/s-dotfiles-sync
@@ -94,7 +95,7 @@ else
 fi
 
 
-echo "Installing Doom.."
+echo "Installing Doom..."
 if [ -f "$HOME/.emacs.d/bin/doom" ]; then
   skipping "$HOME/.emacs.d/bin/doom binary found"
 else
@@ -149,7 +150,7 @@ if [ -x "$(command -v npm)" ]; then
   } &> /dev/null
 fi
 
-echo "Installing ruby 2.7.2 ..."
+echo "Installing ruby..."
 if [ -x "$(command -v ruby | grep ~/.rvm/rubies/ruby-2.7.2)" ]; then
   skipping "Ruby 2.7.2 found"
 else
@@ -168,3 +169,16 @@ if [ -x "$(command -v gem)" ]; then
     gem install tmuxinator
   } &> /dev/null
 fi
+
+
+echo "Configuring GNOME..."
+gsettings set org.gnome.desktop.peripherals.touchpad natural-scroll false
+gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
+gsettings set org.gnome.desktop.peripherals.keyboard delay "250"
+gsettings set org.gnome.desktop.peripherals.keyboard repeat-interval "20"
+
+gsettings set org.gnome.desktop.wm.keybindings toggle-maximized "['<Super>k']"
+gsettings set org.gnome.desktop.interface gtk-theme "Adwaita-dark"
+
+echo "Changing hostname..."
+hostnamectl set-hostname pad
