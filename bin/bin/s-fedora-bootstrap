@@ -1,8 +1,10 @@
 #!/bin/bash
-
+# Author: Viktor Habchak @vikdotdev at github.com
+#
+# This script is designed to bootstrap my Fedora 33 GNOME development workstation.
 
 if [ $EUID -eq 0 ]; then
-  echo "Do not run this script as sudo."
+  echo "Do not run this script as sudo. Aborting"
   exit 1
 fi
 
@@ -12,6 +14,12 @@ function skipping {
   echo "$1. Skipping"
 }
 
+if echo "$PASSWORD" | sudo --stdin false; then
+  echo "Incorrect password. Aborting"
+  exit 1
+fi
+
+echo
 echo 'Updating...'
 {
   echo $PASSWORD | sudo --stdin dnf update -y
