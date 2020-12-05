@@ -1,8 +1,10 @@
 #!/bin/bash
 
 if [ -x "$(command -v xcape)" ] && [ "$(hostname)" == "$LAPTOP_HOSTNAME" ]; then
-  # make capslock behave like ctrl:
-  setxkbmap -option ctrl:nocaps
+  if setxkbmap -query | (! grep "ctrl:nocaps"); then
+    # make capslock behave like ctrl:
+    setxkbmap -option ctrl:nocaps
+  fi
 
   pgrep xcape && pgrep xcape | xargs kill
   xcape -e 'Control_L=Escape'
