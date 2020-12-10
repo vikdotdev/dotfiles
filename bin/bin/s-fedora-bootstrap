@@ -65,7 +65,13 @@ function execute-with-password {
 function check-password-correctness {
   [ -z "$PASSWORD" ] && print 'Password is empty. Aborting' && exit 1
 
-  if echo "$PASSWORD" | sudo --stdin false; then
+  local INCORRECT=0
+
+  {
+    echo "$PASSWORD" | sudo --stdin false && INCORRECT=1
+  } > /dev/null
+
+  if [ "$INCORRECT" -eq 1 ]; then
     print "Incorrect password. Aborting"
     exit 1
   fi
