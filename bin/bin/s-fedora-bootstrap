@@ -271,6 +271,9 @@ function install-postgres {
   execute-with-password "systemctl enable postgresql"
   execute-with-password "postgresql-setup --initdb --unit postgresql"
   execute-with-password "systemctl start postgresql"
+  execute-with-password "-u postgres createuser $USER -s"
+  execute createdb
+  execute-with-password "-u postgres psql -c \"ALTER USER $USER WITH PASSWORD 'password';\""
 }
 
 function install-redis {
