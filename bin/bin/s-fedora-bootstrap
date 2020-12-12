@@ -34,11 +34,15 @@ read -sp 'Password: ' PASSWORD
 echo
 
 function skip {
-  echo "bootstrap >>> $1. Skipping" | tee -a ~/fedora-bootstrap.log
+  echo "bootstrap >>> $1. Skipping" | tee -a ~/.local/share/fedora-bootstrap/output.log
 }
 
 function print {
-  echo "bootstrap >>>" "$@" | tee -a ~/fedora-bootstrap.log
+  echo "bootstrap >>>" "$@" | tee -a ~/.local/share/fedora-bootstrap/output.log
+}
+
+function prepare-log-directory {
+  mkdir -p ~/.local/share/fedora-bootstrap
 }
 
 function exit-if-run-as-sudo {
@@ -49,17 +53,17 @@ function exit-if-run-as-sudo {
 }
 
 function execute {
-  echo "[$(date +%D-%T)] $@" >> ~/fedora-bootstrap.log
+  echo "[$(date +%D-%T)] $@" >> ~/.local/share/fedora-bootstrap/output.log
   {
     eval "$@"
   } &>> ~/fedora-bootstrap.log
 }
 
 function execute-with-password {
-  echo "[$(date +%D-%T)] sudo $@" >> ~/fedora-bootstrap.log
+  echo "[$(date +%D-%T)] sudo $@" >> ~/.local/share/fedora-bootstrap/output.log
   {
     eval "echo $PASSWORD | sudo --stdin $@"
-  } &>> ~/fedora-bootstrap.log
+  } &>> ~/.local/share/fedora-bootstrap/output.log
 }
 
 function check-password-correctness {
@@ -308,6 +312,7 @@ function install-gui-packages {
 function main {
   exit-if-run-as-sudo
   check-password-correctness
+  prepare-log-directory
   update-system-packages
   install-packages
   configure-gnome
