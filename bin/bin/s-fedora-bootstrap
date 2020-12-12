@@ -112,6 +112,7 @@ function configure-gnome {
   execute "gsettings set org.gnome.desktop.input-sources xkb-options \"['lv3:ralt_switch', 'ctrl:nocaps', 'caps:escape']\""
   execute "gsettings set org.gnome.desktop.wm.keybindings toggle-maximized \"['<Super>k']\""
   execute "gsettings set org.gnome.desktop.interface gtk-theme \"Adwaita-dark\""
+  execute "gsettings set org.gnome.desktop.input-sources sources \"[('xkb', 'us'), ('xkb', 'ua')]\""
 }
 
 function install-ruby-deps {
