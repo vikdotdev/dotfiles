@@ -19,5 +19,7 @@ export LESS_TERMCAP_ue="$(printf '%b' '[0m')"; a="${a%_}"
 [ -s "$HOME/bin/s-scroll" ] && \. "$HOME/bin/s-scroll"
 [ -s "$HOME/.Xmodmap" ] && xmodmap ~/.Xmodmap
 
+export PATH="$PATH:$HOME/.emacs.d/bin"
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="$HOME/.npm-global/bin:$PATH"
+export PATH="$PATH:`pwd`/Repositories/flutter/bin"

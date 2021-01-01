@@ -59,6 +59,11 @@
 
 ;; Mappings
 (map! :localleader
+      :map ruby-mode-map
+      :prefix ("i" . "Inf ruby")
+      :desc "Open Inf ruby console" "c" 'inf-ruby-console-auto)
+
+(map! :localleader
       :map es-mode-map
       :prefix ("e" . "ElasticSearch")
       :desc "Execute under point" "e" 'es-execute-request-dwim)
@@ -71,3 +76,5 @@
 
 ;; Variables
 (setq es-always-pretty-print t)
+(setq lsp-dart-sdk-dir "~/Repositories/flutter/bin")
+(setq lsp-dart-flutter-sdk-dir "~/Repositories/flutter/bin")

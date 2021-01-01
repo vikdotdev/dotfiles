@@ -150,6 +150,7 @@ function install-gems {
   if [ -x "$(command -v gem)" ]; then
     execute "gem install bundler"
     execute "gem install tmuxinator"
+    execute "gem install rufo"
   fi
 }
 
