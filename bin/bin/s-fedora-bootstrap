@@ -4,9 +4,7 @@
 #
 # This script is designed to bootstrap my Fedora 33 GNOME development workstation.
 # TODO add tmp file to store functions completed in the past
-# TODO install flutter
 # TODO install vpn
-# TODO install zoom
 
 NEW_HOSTNAME=pad # default hostname
 
@@ -309,6 +307,30 @@ function install-gui-packages {
   execute-with-password "snap install skype --classic"
   execute-with-password "snap install spotify"
   execute-with-password "snap install ngrok"
+  execute-with-password "dnf install https://zoom.us/client/latest/zoom_x86_64.rpm"
+}
+
+function install-flutter {
+  execute '[ ! -d "$HOME/Repositories" ] && mkdir ~/Repositories'
+  execute "cd ~/Repositories"
+  execute "git clone https://github.com/flutter/flutter.git"
+  execute "dart"
+}
+
+function install-android-studio {
+  # WIP
+  local URL=$(curl -0 https://developer.android.com/studio#downloads | grep -o --regexp='https:\/\/redirector\.gvt1\.com\/edgedl\/android\/studio\/ide-zips\/[0-9\.]*\/android-studio-ide-[0-9\.]*-linux\.tar\.gz')
+  wget "$URL"
+  # extract it into /opt
+  # TODO add postinstall notices to finish android studio installation
+
+  # install sdk
+  # Android/Sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-28"
+}
+
+function install-anyconnect {
+  # WIP
+  echo wip
 }
 
 function main {
@@ -333,6 +355,7 @@ function main {
   install-postgres
   install-redis
   install-elasticsearch
+  install-flutter
   change-hostname
   install-gui-packages
 
