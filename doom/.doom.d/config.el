@@ -64,6 +64,16 @@
       :desc "Open Inf ruby console" "c" 'inf-ruby-console-auto)
 
 (map! :localleader
+      :map dart-mode-map
+      :desc "Hot reload" "h" 'flutter-run-or-hot-reload
+      :desc "Performance overlay" "p" 'flutter-performance-overlay
+      :desc "Inspector" "i" 'flutter-inspector
+      :desc "Screenshot" "s" 'flutter-screenshot
+      :desc "Rendering tree" "t" 'flutter-rendering-tree
+      :desc "Quit" "q" 'flutter-quit
+      :desc "Hot restart" "r" 'flutter-hot-restart)
+
+(map! :localleader
       :map es-mode-map
       :prefix ("e" . "ElasticSearch")
       :desc "Execute under point" "e" 'es-execute-request-dwim)
@@ -76,5 +86,5 @@
 
 ;; Variables
 (setq es-always-pretty-print t)
-(setq lsp-dart-sdk-dir "~/Repositories/flutter/bin")
-(setq lsp-dart-flutter-sdk-dir "~/Repositories/flutter/bin")
+(setq lsp-dart-sdk-dir "~/Repositories/flutter/bin/cache/dart-sdk")
+(setq lsp-dart-flutter-sdk-dir "~/Repositories/flutter")
