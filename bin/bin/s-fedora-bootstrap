@@ -103,11 +103,18 @@ function install-rpm-fusion {
 function configure-gnome {
   print "configuring GNOME"
 
+  if [ "$NEW_HOSTNAME" == "pad" ]; then
+    execute "gsettings set org.gnome.desktop.input-sources xkb-options \"['lv3:ralt_switch', 'ctrl:nocaps', 'caps:escape']\""
+  fi
+
+  if [ "$NEW_HOSTNAME" == "top" ]; then
+    execute "gsettings set org.gnome.desktop.input-sources xkb-options \"['lv3:ralt_switch', 'grp:caps_toggle']\""
+  fi
+
   execute "gsettings set org.gnome.desktop.peripherals.touchpad natural-scroll false"
   execute "gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true"
   execute "gsettings set org.gnome.desktop.peripherals.keyboard delay '250'"
   execute "gsettings set org.gnome.desktop.peripherals.keyboard repeat-interval '20'"
-  execute "gsettings set org.gnome.desktop.input-sources xkb-options \"['lv3:ralt_switch', 'ctrl:nocaps', 'caps:escape']\""
   execute "gsettings set org.gnome.desktop.wm.keybindings toggle-maximized \"['<Super>k']\""
   execute "gsettings set org.gnome.desktop.interface gtk-theme \"Adwaita-dark\""
   execute "gsettings set org.gnome.desktop.input-sources sources \"[('xkb', 'us'), ('xkb', 'ua')]\""
