@@ -58,6 +58,35 @@
 ;; they are implemented.
 
 ;; Mappings
+;; (map!
+;;   :map smartparens-mode-map
+;;   ;; smartparens maps (navigation ops)
+;;   :nvie "C-M-f" #'sp-forward-sexp
+;;   :nvie "C-M-b" #'sp-backward-sexp
+;;   :nvie "C-M-u" #'sp-backward-up-sexp
+;;   :nvie "C-M-d" #'sp-down-sexp
+;;   ;; smartparens maps (split join slurp barf)
+;;   :nie "M-s" #'sp-split-sexp
+;;   :nie "M-j" #'sp-join-sexp
+;;   :nvie "SPC-{" #'sp-backward-slurp-sexp
+;;   :nvie "C-}" #'sp-backward-barf-sexp)
+
+(map! :leader
+  :prefix "c"
+        :desc "Wrap with []" "[" #'sp-wrap-square
+        :desc "Wrap with []" "]" #'sp-wrap-square
+        :desc "Wrap with {}" "{" #'sp-wrap-curly
+        :desc "Wrap with {}" "}" #'sp-wrap-curly
+        :desc "Wrap with ()" "(" #'sp-wrap-round
+        :desc "Wrap with ()" ")" #'sp-wrap-round
+        :desc "Split"        "p" #'sp-split-sexp
+        :desc "Join"         "j" #'sp-join-sexp
+        :desc "Unwrap"       "u" #'sp-unwrap-sexp)
+
+(map! :leader
+  :prefix "t"
+  :desc "Toggle comments"  "m" #'hide/show-comments-toggle)
+
 (map! :localleader
       :map ruby-mode-map
       :prefix ("i" . "Inf ruby")
@@ -65,13 +94,32 @@
 
 (map! :localleader
       :map dart-mode-map
+      :prefix ("e" . "emulator")
       :desc "Hot reload" "h" 'flutter-run-or-hot-reload
       :desc "Performance overlay" "p" 'flutter-performance-overlay
       :desc "Inspector" "i" 'flutter-inspector
       :desc "Screenshot" "s" 'flutter-screenshot
-      :desc "Rendering tree" "t" 'flutter-rendering-tree
+      :desc "Construction lines" "c" 'flutter-construction-lines
       :desc "Quit" "q" 'flutter-quit
       :desc "Hot restart" "r" 'flutter-hot-restart)
+
+(map! :localleader
+      :map dart-mode-map
+      :prefix ("c" . "code")
+      :desc "Apply lsp-ui code action" "a" 'lsp-ui-sideline-apply-code-actions)
+
+
+(map! :localleader
+      :map dart-mode-map
+      :prefix ("d" . "docs")
+      :desc "focus frame" "f" 'lsp-ui-doc-focus-frame
+      :desc "show docs under point" "p" 'lsp-ui-doc-show)
+
+;; (map! :localleader
+;;       :map lsp-ui-doc-frame-mode
+;;       :prefix ("d" . "docs")
+;;       :desc "unfocus frame" "u" 'lsp-ui-doc-unfocus-frame
+;;       :desc "show docs under point" "p" 'lsp-ui-doc-show)
 
 (map! :localleader
       :map es-mode-map

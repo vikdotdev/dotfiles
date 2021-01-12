@@ -159,7 +159,10 @@
        ;;rest              ; Emacs as a REST client
        ;;rst               ; ReST in peace
        ;; rust              ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
-       (ruby +rails)       ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
+       (ruby
+         +lsp
+         +rvm
+         +rails)       ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
        ;;scala             ; java, but good
        ;;scheme            ; a fully conniving family of lisps
        sh                ; she sells {ba,z,fi}sh shells on the C xor
