@@ -156,6 +156,8 @@ function install-gems {
     execute "gem install bundler"
     execute "gem install tmuxinator"
     execute "gem install rufo"
+    execute "gem install solargraph"
+    execute "gem install pry-doc"
   fi
 }
 
