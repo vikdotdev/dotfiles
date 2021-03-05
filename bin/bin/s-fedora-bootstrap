@@ -88,7 +88,7 @@ function update-system-packages {
 function install-packages {
   print 'installing utils'
 
-  execute-with-password "dnf install -y vim stow imwheel wget unzip xclip git curl clang git-credential-libsecret snapd"
+  execute-with-password "dnf install -y vim stow imwheel wget unzip xclip git curl clang git-credential-libsecret snapd sensible-browser"
   execute-with-password "ln -s /var/lib/snapd/snap /snap"
 }
 
@@ -114,7 +114,7 @@ function configure-gnome {
   execute "gsettings set org.gnome.desktop.peripherals.touchpad natural-scroll false"
   execute "gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true"
   execute "gsettings set org.gnome.desktop.peripherals.keyboard delay '250'"
-  execute "gsettings set org.gnome.desktop.peripherals.keyboard repeat-interval '20'"
+  execute "gsettings set org.gnome.desktop.peripherals.keyboard repeat-interval '40'"
   execute "gsettings set org.gnome.desktop.wm.keybindings toggle-maximized \"['<Super>k']\""
   execute "gsettings set org.gnome.desktop.interface gtk-theme \"Adwaita-dark\""
   execute "gsettings set org.gnome.desktop.input-sources sources \"[('xkb', 'us'), ('xkb', 'ua')]\""
@@ -158,6 +158,7 @@ function install-gems {
     execute "gem install rufo"
     execute "gem install solargraph"
     execute "gem install pry-doc"
+    execute "gem install steep"
   fi
 }
 
@@ -340,6 +341,32 @@ function install-android-studio {
 function install-anyconnect {
   # WIP
   echo wip
+}
+
+function install-gnome-extension {
+# set -euo pipefail
+  uri="gamemodechristian.kellner.me.v4.shell-extension.zip"
+  store_url="https://extensions.gnome.org/extension-data"
+  extensions_path="$HOME/.local/share/gnome-shell/extensions/"
+  zip="gnome-extension.zip"
+
+  cd "$(xdg-user-dir DOWNLOAD)"
+  wget "$store_url/$uri" -O "$zip"
+
+  uuid=$(unzip -c "$zip" metadata.json | grep uuid | cut -d \" -f4)
+
+  if [[ ! -d "$extensions_path/$uuid" ]]; then
+      mkdir "$extensions_path/$uuid"
+      unzip -q "$zip" -d "$extensions_path/$uuid"
+      gnome-extensions enable "$uuid"
+  fi
+
+  trap 'rm "$zip"' ERR INT TERM EXIT
+}
+
+function install-gnome-extensions {
+  install-gnome-extension "shell-volume-mixerderhofbauer.at.v37.shell-extension.zip"
+  install-gnome-extension "gamemodechristian.kellner.me.v4.shell-extension.zip"
 }
 
 function main {

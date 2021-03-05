@@ -2,7 +2,7 @@
 
 export EDITOR="emacs -nw"
 export GIT_EDITOR="$EDITOR"
-export DESKTOP_HOSTNAME="top"
+export DESKTOP_HOSTNAME="umbra"
 export LAPTOP_HOSTNAME="pad"
 
 # less/man colors
@@ -17,10 +17,16 @@ export LESS_TERMCAP_ue="$(printf '%b' '[0m')"; a="${a%_}"
 
 [ -s "$HOME/bin/s-kbd" ] && \. "$HOME/bin/s-kbd"
 [ -s "$HOME/bin/s-scroll" ] && \. "$HOME/bin/s-scroll"
-[ -s "$HOME/.Xmodmap" ] && xmodmap ~/.Xmodmap
 
 export PATH="$PATH:$HOME/.emacs.d/bin"
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="$HOME/.npm-global/bin:$PATH"
 export PATH="$PATH:`pwd`/Repositories/flutter/bin"
 export PATH="$PATH":"$HOME/.pub-cache/bin"
+
+eval "$(gh completion -s bash)"
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"
+
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*

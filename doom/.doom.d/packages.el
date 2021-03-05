@@ -58,3 +58,4 @@
 ;; (package! telega)
 ;; (package! bitwarden :recipe (:host github :repo "seanfarley/emacs-bitwarden"))
 (package! hide-comnt)
+(package! evil-terminal-cursor-changer)

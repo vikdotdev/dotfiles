@@ -71,9 +71,10 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   e="emacs &" \
   et="emacs -nw" \
   ed="emacs --eval '(dired \"~\")' &" \
-  etd="emacs -nw --eval '(dired \"~\")'"
+  etd="emacs -nw --eval '(dired \"~\")'" \
+  mux="tmuxinator"
 
-export PS1="\[\e[01;34m\]\u\[\e[m\]\[\e[01;33m\]@\[\e[m\]\[\e[01;32m\]\h\[\e[m\] \[\e[01;36m\]\w\[\e[m\] \[\e[01;35m\]\`parse_git_branch\`\[\e[m\]"
+export PS1="\[\e[33m\]\u\[\e[m\]\[\e[36m\]@\[\e[m\]\[\e[35m\]\h\[\e[m\]: \[\e[32m\]\w\[\e[m\] \[\e[36m\]\\$\[\e[m\] "
 
 export PATH="$PATH:$HOME/bin"
 
@@ -84,5 +85,4 @@ export NVM_DIR="$HOME/.nvm"
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-
+export PATH="$HOME/.rvm/bin:$PATH" # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.

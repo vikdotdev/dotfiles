@@ -11,3 +11,7 @@ if [ -x "$(command -v xcape)" ] && [ "$(hostname)" == "$LAPTOP_HOSTNAME" ]; then
   xcape -e 'Shift_L=bracketleft'
   xcape -e 'Shift_R=bracketright'
 fi
+
+if [ "$(hostname)" == "$LAPTOP_HOSTNAME" ] && [ -s "$HOME/.Xmodmap" ]; then
+  xmodmap ~/.Xmodmap
+fi

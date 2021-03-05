@@ -82,6 +82,9 @@
        spell             ; tasing you for misspelling mispelling
        grammar           ; tasing grammar mistake every you make
 
+       :os
+       tty               ; improve the terminal Emacs experience
+
        :tools
        ;;ansible
        ;;debugger          ; FIXME stepping through code, to help you add bugs
@@ -156,7 +159,7 @@
        ;;python            ; beautiful is better than ugly
        ;;qt                ; the 'cutest' gui framework ever
        ;;racket            ; a DSL for DSLs
-       ;;rest              ; Emacs as a REST client
+       rest              ; Emacs as a REST client
        ;;rst               ; ReST in peace
        ;; rust              ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
        (ruby

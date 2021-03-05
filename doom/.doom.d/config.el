@@ -24,16 +24,21 @@
 ;;
 ;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
 ;; font string. You generally only need these two:
-(setq doom-font (font-spec :family "Iosevka Curly" :size 15))
+(setq doom-font (font-spec :family "Iosevka Curly" :size 16))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-moonlight)
+;; (setq doom-theme 'doom-miramare)
+;; (setq doom-theme 'doom-nova)
+;; (setq doom-theme 'doom-dark+)
+(setq doom-theme 'vikdotdev-dracula)
+;; (setq doom-theme 'doom-dracula)
+;; (setq doom-theme 'doom-dracula-vikdotdev)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/Repositories/org-docs/")
+(setq org-directory "~/Repositories/docs/")
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -136,3 +141,49 @@
 (setq es-always-pretty-print t)
 (setq lsp-dart-sdk-dir "~/Repositories/flutter/bin/cache/dart-sdk")
 (setq lsp-dart-flutter-sdk-dir "~/Repositories/flutter")
+(setq-default default-input-method 'ukrainian-computer)
+
+(defun my-find-file-check-make-large-file-read-only-hook ()
+  "If a file is over a given size, make the buffer read only."
+  (when (> (buffer-size) (* 1024 1024))
+    (setq buffer-read-only t)
+    (buffer-disable-undo)
+    (fundamental-mode)))
+
+(add-hook 'find-file-hook 'my-find-file-check-make-large-file-read-only-hook)
+;; this one should be included by tty package in init.el
+(use-package! evil-terminal-cursor-changer
+  :hook (tty-setup . evil-terminal-cursor-changer-activate))
+
+
+
+(defun rcd/dired-view ()
+  "View files, either as HTML or media"
+  (interactive)
+  (let* ((files (dired-get-marked-files))
+     (how-many (length files))
+     (extensions (mapcar 'file-name-extension files))
+     (extensions (mapcar 'downcase extensions)))
+(cond ((member "html" extensions) (eww-open-file (car files)))
+      ((member "mp4" extensions) (emms-play-dired))
+      ((member "mp3" extensions) (emms-play-dired))
+      ((member "ogg" extensions) (emms-play-dired))
+      (t (if (> how-many 1) (xdg-open-files files)
+	   (xdg-open (car files) t))))))
+
+(defun xdg-open (file &optional async)
+  "Opens file with xdg-open. Without optional argument ASYNC, it will wait for the file to finish playing or review."
+  (let ((command (format "xdg-open '%s'" file)))
+(if async
+    (async-shell-command command)
+  (shell-command command))))
+
+(defun xdg-open-files (files)
+  "Opens list of files with xdg-open one by one, waiting for each to finish."
+  (dolist (file files)
+(xdg-open file)))
+
+;; Finally mapping the key V to dired-mode-map
+
+(map! :map dired-mode-map
+           :g "C-c o"  'rcd/dired-view)
