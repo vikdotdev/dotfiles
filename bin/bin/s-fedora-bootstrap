@@ -89,7 +89,7 @@ function update-system-packages {
 function install-packages {
   print 'installing utils'
 
-  execute-with-password "dnf install -y vim stow imwheel wget unzip xclip git curl clang git-credential-libsecret snapd sensible-browser"
+  execute-with-password "dnf install -y vim stow imwheel wget unzip xclip git curl clang git-credential-libsecret snapd sensible-browser xdotool"
   execute-with-password "ln -s /var/lib/snapd/snap /snap"
 }
 
