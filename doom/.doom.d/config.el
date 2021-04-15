@@ -24,7 +24,7 @@
 ;;
 ;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
 ;; font string. You generally only need these two:
-(setq doom-font (font-spec :family "Iosevka Curly" :size 16))
+;; (setq doom-font (font-spec :family "Iosevka Curly" :size 16))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
@@ -131,6 +131,9 @@
       :prefix ("e" . "ElasticSearch")
       :desc "Execute under point" "e" 'es-execute-request-dwim)
 
+(map! "C-`" nil)
+(map! "C-`" #'+popup/raise)
+
 ;; (map! :localleader
 ;;       :map ruby-mode-map
 ;;       :prefix ("b" . "Bundler")
@@ -187,3 +190,5 @@
 
 (map! :map dired-mode-map
            :g "C-c o"  'rcd/dired-view)
+
+(add-hook 'after-init-hook 'inf-ruby-switch-setup)
