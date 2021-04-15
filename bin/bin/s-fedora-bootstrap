@@ -5,6 +5,7 @@
 # This script is designed to bootstrap my Fedora 33 GNOME development workstation.
 # TODO add tmp file to store functions completed in the past
 # TODO install vpn
+# TODO install bitwarden
 
 NEW_HOSTNAME=pad # default hostname
 
@@ -369,6 +370,11 @@ function install-gnome-extensions {
   install-gnome-extension "gamemodechristian.kellner.me.v4.shell-extension.zip"
 }
 
+function install-spotify {
+  execute-with-password "dnf copr enable atim/spotify-tui -y && dnf install spotify-tui"
+  secret-tool store --label='name you choose' application rust-keyring service spotifyd username lm31qi6j0fxd1s24bbs5spni5
+}
+
 function main {
   exit-if-run-as-sudo
   check-password-correctness
@@ -394,6 +400,7 @@ function main {
   install-flutter
   change-hostname
   install-gui-packages
+  install-spotify
 
   print "Done."
 }
