@@ -60,8 +60,6 @@ function parse_git_dirty {
 }
 
 alias ls="ls -hN --color=auto --group-directories-first" \
-  ..2="cd ../.." \
-  ..3="cd ../../.." \
   ll="ls -l" \
   la="ls -A" \
   lal="ll -A" \
@@ -73,6 +71,8 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   ed="emacs --eval '(dired \"~\")' &" \
   etd="emacs -nw --eval '(dired \"~\")'" \
   mux="tmuxinator"
+
+export TERM=xterm-256color
 
 export PS1="\[\e[33m\]\u\[\e[m\]\[\e[36m\]@\[\e[m\]\[\e[35m\]\h\[\e[m\]: \[\e[32m\]\w\[\e[m\] \[\e[36m\]\\$\[\e[m\] "
 
@@ -86,3 +86,5 @@ export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 export PATH="$HOME/.rvm/bin:$PATH" # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+
+alias luamake=/home/vik/Repositories/lua-language-server/3rd/luamake/luamake
