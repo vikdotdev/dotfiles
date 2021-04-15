@@ -308,3 +308,13 @@ bind -r H resize-pane -L 15
 bind -r J resize-pane -D 15
 bind -r K resize-pane -U 15
 bind -r L resize-pane -R 15
+
+set -g base-index 1           # start windows numbering at 1
+
+# makes italics work
+set -g default-terminal "tmux-256color"
+# first git clone https://github.com/schasse/tmux-jump ~/.tmux-jump
+run-shell ~/.tmux-jump/tmux-jump.tmux
+set -g @jump-key 'g'
+# set -g @jump-bg-color '\e[0m\e[90m'
+# set -g @jump-fg-color '\e[1m\e[31m'
