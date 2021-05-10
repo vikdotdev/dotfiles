@@ -70,9 +70,11 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   diff="diff --color=auto" \
   e="emacs &" \
   et="emacs -nw" \
+  etc="emacs -nw --with-profile custom" \
   ed="emacs --eval '(dired \"~\")' &" \
   etd="emacs -nw --eval '(dired \"~\")'" \
-  mux="tmuxinator"
+  mux="tmuxinator" \
+  magit='git rev-parse --git-dir > /dev/null 2>&1 && emacs -nw --eval "(magit-status \"$(git rev-parse --show-toplevel)\")"'
 
 export PS1="\[\e[33m\]\u\[\e[m\]\[\e[36m\]@\[\e[m\]\[\e[35m\]\h\[\e[m\]: \[\e[32m\]\w\[\e[m\] \[\e[36m\]\\$\[\e[m\] "
 

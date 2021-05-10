@@ -59,3 +59,7 @@
 ;; (package! bitwarden :recipe (:host github :repo "seanfarley/emacs-bitwarden"))
 (package! hide-comnt)
 (package! evil-terminal-cursor-changer)
+(package! tree-sitter)
+(package! tree-sitter-langs)
+
+(package! ob-restclient)

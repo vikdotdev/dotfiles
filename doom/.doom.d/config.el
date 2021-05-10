@@ -192,3 +192,9 @@
            :g "C-c o"  'rcd/dired-view)
 
 (add-hook 'after-init-hook 'inf-ruby-switch-setup)
+
+(use-package! tree-sitter
+  :config
+  (require 'tree-sitter-langs)
+  (global-tree-sitter-mode)
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
