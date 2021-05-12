@@ -8,11 +8,10 @@ font:
     family: 'Iosevka Curly'
     style: Bold
 
-
 colors:
   primary:
-    background: '0x121212'
-    foreground: '0xbbc2cf'
+    background: '#282a36'
+    foreground: '#bbc2cf'
     bright_foreground: '#eeeeee'
 
   cursor:
@@ -34,12 +33,11 @@ colors:
     white:   '#a1aab8'
 
   bright:
-    black:   '#7c8f8f'
+    black:   '#080808'
     red:     '#ff5189'
     green:   '#36c692'
     yellow:  '#bfbf97'
     blue:    '#74b2ff'
     magenta: '#ae81ff'
     cyan:    '#85dc85'
-    white:   '#e2637f'
-
+    white:   '#eeeeee'

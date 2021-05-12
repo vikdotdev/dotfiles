@@ -6,6 +6,18 @@
 # TODO add tmp file to store functions completed in the past
 # TODO install vpn
 # TODO install bitwarden
+# TODO install ninja build system (for lua ls)
+# npm install -g vscode-json-languageserver
+# npm i -g bash-language-server
+# npm install -g vscode-css-languageserver-bin
+# npm install -g vscode-html-languageserver-bin
+# npm i -g sql-language-server
+# npm install -g yaml-language-server
+#
+# deno
+# curl -fsSL https://deno.land/x/install/install.sh | sh
+# add for nvims persistent undo
+# mkdir -p .local/share/nvim/undo
 
 NEW_HOSTNAME=pad # default hostname
 
