@@ -2,10 +2,10 @@ draw_bold_text_with_bright_colors: true
 
 font:
   normal:
-    family: 'Iosevka Curly'
+    family: 'Iosevka'
     style: Regular
   bold:
-    family: 'Iosevka Curly'
+    family: 'Iosevka'
     style: Bold
 
 colors:
@@ -33,8 +33,8 @@ colors:
     white:   '#a1aab8'
 
   bright:
-    black:   '#080808'
-    red:     '#ff5189'
+    black:   '#666666'
+    red:     '#d13643'
     green:   '#36c692'
     yellow:  '#bfbf97'
     blue:    '#74b2ff'

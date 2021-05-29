@@ -315,7 +315,11 @@ set -g default-terminal screen-256color
 set-option -ga terminal-overrides ",screen-256color:Tc"
 
 # first git clone https://github.com/schasse/tmux-jump ~/.tmux-jump
+# TODO add url view to installation script
 run-shell ~/.tmux-jump/tmux-jump.tmux
+run-shell ~/.tmux-urlview/urlview.tmux
+# set -g @plugin 'tmux-plugins/tmux-urlview'
 set -g @jump-key 'g'
+set -g @urlview-key 'u'
 # set -g @jump-bg-color '\e[0m\e[90m'
 # set -g @jump-fg-color '\e[1m\e[31m'

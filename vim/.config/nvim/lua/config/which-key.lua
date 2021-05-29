@@ -82,6 +82,7 @@ local normal_keymap = {
   t = {
     name = '+toggle',
     l = {":lua require('util').toggle_line_numbers()<CR>", 'line numbers'},
+    x = {'<Cmd>TSContextToggle<CR>', 'context'},
     c = {":CompletionToggle<CR>", 'completion'},
     -- i = {":IndentLinesToggle<CR>", 'indent guides'},
     C = {":ColorizerToggle<CR>", 'colorizer'},
@@ -93,15 +94,17 @@ local normal_keymap = {
   o = {
     name = '+open',
     s = {'<Cmd>Startify<CR>', 'startify'},
-    -- t terminal in new buffer
+    t = {'<Cmd>term<CR>', 'terminal here'},
     -- T terminal in this buffer
   },
   g = {
     name = '+git',
+    n = {'<Cmd>lua require"gitsigns".next_hunk()<CR>', 'next hunk'},
+    p = {'<Cmd>lua require"gitsigns".prev_hunk()<CR>', 'prev hunk'},
     S = {'<Cmd>lua require"gitsigns".stage_hunk()<CR>', 'stage'},
     U = {'<Cmd>lua require"gitsigns".undo_stage_hunk()<CR>', 'undo stage'},
     R = {'<Cmd>lua require"gitsigns".reset_hunk()<CR>', 'reset'},
-    p = {'<Cmd>lua require"gitsigns".preview_hunk()<CR>', 'preview'},
+    d = {'<Cmd>lua require"gitsigns".preview_hunk()<CR>', 'diff'},
     -- B = {'<Cmd>lua require("config/functions").blame_toggle()<CR>', 'blame toggle'},
     B = {'<Cmd>Gitsigns toggle_current_line_blame<CR>', 'blame toggle'},
     b = {'<Cmd>Telescope git_branches<CR>', 'branches'},

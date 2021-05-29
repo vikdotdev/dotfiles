@@ -1,6 +1,6 @@
 [ -s "$HOME/.profile.default" ] && . "$HOME/.profile.default"
 
-export EDITOR="emacs -nw"
+export EDITOR="nvim"
 export GIT_EDITOR="$EDITOR"
 export DESKTOP_HOSTNAME="umbra"
 export LAPTOP_HOSTNAME="pad"

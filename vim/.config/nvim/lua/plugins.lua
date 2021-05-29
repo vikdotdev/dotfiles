@@ -15,7 +15,7 @@ return require('packer').startup(function(use)
   use({'AckslD/nvim-whichkey-setup.lua', requires = {'liuchengxu/vim-which-key'}})
   use({'norcalli/nvim-colorizer.lua'})
   use({'diepm/vim-rest-console'})
-  use({'jiangmiao/auto-pairs'})
+  use({'windwp/nvim-autopairs'})
   use({'tpope/vim-commentary'})
   -- use({'preservim/nerdtree'})
   use({'editorconfig/editorconfig-vim'})
@@ -25,6 +25,7 @@ return require('packer').startup(function(use)
   use({'nvim-treesitter/nvim-treesitter',
     run = {':TSUpdate'},
     branch = 'master'})
+  use({'romgrk/nvim-treesitter-context'})
     -- branch = 'revert-1252-comment-combined'})
   -- use({'aquach/vim-http-client'})
   use({'~/Repositories/rest.nvim'})
@@ -33,12 +34,13 @@ return require('packer').startup(function(use)
   use({'tpope/vim-surround'})
   use({'mbbill/undotree', config = [[vim.g.undotree_SetFocusWhenToggle = 1]]})
 -- Load on an autocommand event
-  use({'andymass/vim-matchup', event = 'VimEnter'})
+  -- use({'andymass/vim-matchup', event = 'VimEnter'})
   use({'lewis6991/gitsigns.nvim',
     requires = { 'nvim-lua/plenary.nvim' },
     config = function() require('gitsigns').setup() end
   })
   use({'kyazdani42/nvim-tree.lua'})
+  use({'tpope/vim-repeat'})
 end)
 
 -- Lazy loading:

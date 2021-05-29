@@ -10,6 +10,8 @@
   add-unmerged = "!f() { git diff --name-status --diff-filter=U | cut -f2 ; }; git add `f`"
 [core]
 	autocrlf = input
+[diff]
+  command = git diff --color-words='[^[:space:]]|([[:alnum:]]|UTF_8_GUARD)+'
 [commit]
 	verbose = true
 [github]

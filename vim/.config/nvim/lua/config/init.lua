@@ -25,6 +25,9 @@ vim.g.updatetime = 600
 
 -- hel
 -- require('config/neogit')
+
+vim.cmd('set termguicolors')
+
 require('config/lsp')
 require('config/which-key')
 require('config/colorizer')
@@ -36,13 +39,13 @@ require('config/gitsigns')
 require('config/nvim_tree')
 require('config/startify')
 require('config/treesitter')
+require('config/autopairs')
 
 vim.cmd('au TextYankPost * lua vim.highlight.on_yank {on_visual = false}')
 vim.cmd('syntax enable')
 vim.cmd('filetype plugin indent on')
 vim.cmd('set textwidth=0')
 vim.cmd('set noshowmode')
-vim.cmd('set termguicolors')
 vim.cmd('colorscheme palenight')
 vim.cmd('set colorcolumn=90')
 vim.cmd('set cursorline')
@@ -54,6 +57,7 @@ vim.cmd([[nnoremap <Esc> :silent! nohls<CR>]])
 vim.cmd([[vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>]])
 vim.cmd([[au WinEnter * setlocal cursorline]])
 vim.cmd([[au WinLeave * setlocal nocursorline]])
+vim.cmd([[nnoremap Q <nop>]])
 
 -- vim.cmd([[nnoremap ya :silent! ggyG<C-o><CR>]])
 
@@ -66,7 +70,7 @@ vim.cmd([[au WinLeave * setlocal nocursorline]])
 -- vim.api.nvim_set_keymap("n", "<C-o>", "<C-o> <bar> :lua require('util').flash_cursorline()<CR>", { noremap = true })
 -- vim.api.nvim_set_keymap("n", "<C-i>", "<C-i> <bar> :lua require('util').flash_cursorline()<CR>", { noremap = true })
 -- vim.cmd([[nnoremap <C-o> <C-o> :silent! nohls<CR>]])
-vim.cmd([[au WinEnter * lua require('util').flash_cursorline()]])
+-- vim.cmd([[au WinEnter * lua require('util').flash_cursorline()]])
 vim.cmd("autocmd BufEnter * lua require('completion').on_attach()")
 vim.cmd("autocmd User Startified setlocal cursorline")
 vim.cmd([[set completeopt=menuone,noinsert,noselect]])
