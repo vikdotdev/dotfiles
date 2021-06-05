@@ -66,6 +66,7 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   mkd="mkdir -pv" \
   grep="grep --color=auto" \
   diff="diff --color=auto" \
+  q="exit" \
   e="emacs &" \
   et="emacs -nw" \
   etc="emacs -nw --with-profile custom" \
