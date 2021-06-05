@@ -41,3 +41,6 @@ colors:
     magenta: '#ae81ff'
     cyan:    '#85dc85'
     white:   '#eeeeee'
+
+key_bindings:
+  - { key: P, mods: Control, action: Paste }
