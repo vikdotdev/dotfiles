@@ -11,8 +11,21 @@
 [core]
 	autocrlf = input
 [diff]
-  command = git diff --color-words='[^[:space:]]|([[:alnum:]]|UTF_8_GUARD)+'
+  ; command = git diff --color-words='[^[:space:]]|([[:alnum:]]|UTF_8_GUARD)+'
 [commit]
 	verbose = true
 [github]
 	user = vikdotdev
+[pager]
+  diff = delta
+  log = delta
+  reflog = delta
+  show = delta
+
+[delta]
+  syntax-theme = Dracula
+  navigate = true
+  side-by-side = true
+
+[interactive]
+  diffFilter = delta --color-only -s -n
