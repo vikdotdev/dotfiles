@@ -15,9 +15,14 @@ local visual_keymap = {
   -- K = {':move \'<-2<CR>gv-gv', 'move line up'},
   -- J = {':move \'>+1<CR>gv-gv', 'move line down'},
   -- r = {':%s/<C-r><C-w>/hello/c<CR>', 'replace selection'},
-  r = {
-    name = '+repl',
+  i = {
+    name = '+iron/repl',
     s = {':lua require("iron").core.visual_send()<CR>', 'send range'}
+  },
+  p = {
+    name = '+prettify',
+    j = {':!jq<CR>', 'json'},
+    -- J = {'vip:!jq<CR>', 'json'} -- not working
   },
   l = {
     name = '+lsp',
@@ -41,6 +46,7 @@ local normal_keymap = {
     L = {'<C-w>L', 'move right'},
     K = {'<C-w>K', 'move up'},
     J = {'<C-w>J', 'move down'},
+    p = {'<C-w>p', 'previous'},
     d = {":close<CR>", 'delete'},
     m = {"<C-w>_<C-w>|", 'maximize'},
     o = {":only<CR>", 'only'},
@@ -59,13 +65,13 @@ local normal_keymap = {
   },
   f = {
     name = '+file',
-    t = {'<Cmd>NvimTreeToggle<CR>', 'tree'},
-    g = {'<Cmd>Telescope live_grep<CR>', 'grep'},
+    g = {"<Cmd>lua require('util').telescope_grep()<CR>", 'grep'},
+    G = {"<Cmd>lua require('util').telescope_grep({ grep_open_files = true })<CR>", 'grep open files'},
     s = {'<Cmd>w!<CR>', 'save'},
     l = {'<Cmd>NvimTreeFindFile<CR>', 'locate'},
     r = {'<Cmd>Telescope oldfiles<CR>', 'recent'},
     f = {"<Cmd>Telescope file_browser<CR>", 'files'},
-    c = {"<Cmd>lua require('telescope.builtin').find_files({ find_command = {'rg', '--hidden', '--files'}})<CR>", 'from cwd'},
+    -- c = {"<Cmd>lua require('telescope.builtin').find_files({ find_command = {'rg', '--hidden', '--files'}})<CR>", 'from cwd'},
     D = {'<Cmd>call delete(expand("%")) | bdelete!<CR>', 'delete'},
   },
   s = {
@@ -95,13 +101,19 @@ local normal_keymap = {
     name = '+open',
     s = {'<Cmd>Startify<CR>', 'startify'},
     t = {'<Cmd>term<CR>', 'terminal here'},
+    q = {'<Cmd>copen<CR>', 'quickfix list'},
+    f = {'<Cmd>NvimTreeToggle<CR>', 'file tree'},
+    -- move to toggle menu once able to toggle it?
+    -- for winnr in range(1, winnr('$'))
+    --     echo getwinvar(winnr, '&syntax') == 'qf'
+    -- endfor
     -- T terminal in this buffer
   },
   g = {
     name = '+git',
     n = {'<Cmd>lua require"gitsigns".next_hunk()<CR>', 'next hunk'},
     p = {'<Cmd>lua require"gitsigns".prev_hunk()<CR>', 'prev hunk'},
-    S = {'<Cmd>lua require"gitsigns".stage_hunk()<CR>', 'stage'},
+    s = {'<Cmd>lua require"gitsigns".stage_hunk()<CR>', 'stage'},
     U = {'<Cmd>lua require"gitsigns".undo_stage_hunk()<CR>', 'undo stage'},
     R = {'<Cmd>lua require"gitsigns".reset_hunk()<CR>', 'reset'},
     d = {'<Cmd>lua require"gitsigns".preview_hunk()<CR>', 'diff'},
@@ -110,7 +122,9 @@ local normal_keymap = {
     b = {'<Cmd>Telescope git_branches<CR>', 'branches'},
     c = {'<Cmd>Telescope git_commits<CR>', 'commits'},
     C = {'<Cmd>Telescope git_bcommits<CR>', 'buffer commits'},
-    s = {'<Cmd>Telescope git_status<CR>', 'status'},
+    g = {'<Cmd>Telescope git_status<CR>', 'status'},
+    t = {'<Cmd>lua require("util").telescope_git_files()<CR>', 'test'}
+--
   },
   b = {
     name = '+buffer',
@@ -134,6 +148,7 @@ local normal_keymap = {
     k = {'<Cmd>Telescope keymaps<CR>', 'keymaps'},
     s = {'<Cmd>Telescope search_history<CR>', 'search history'},
     f = {'<Cmd>Telescope filetypes<CR>', 'filetypes'},
+    b = {'<Cmd>Telescope builtin<CR>', 'telescope built=ins'},
   },
   m = {
     name = '+maintenance',
@@ -147,7 +162,11 @@ local normal_keymap = {
   --   name = '+project',
   -- },
   r = {
-    name = '+repl',
+    name = '+run',
+    r = {'<Cmd>lua require("rest-nvim").run()<CR>', 'restclient request'},
+  },
+  i = {
+    name = '+iron/repl',
     r = {'<Cmd>lua require("iron").core.repeat_cmd()<CR>', 'repeat last command'},
     f = {'<Cmd>lua require("iron").core.focus_on(vim.bo.filetype)<CR>', 'focus'},
     w = {'<Cmd>IronWatchCurrentFile<CR>', 'watch file'},

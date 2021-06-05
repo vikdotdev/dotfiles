@@ -21,11 +21,15 @@ echo -n test:password | base64 | awk '{print "Basic " $0}'
 
 ## Neovim
 ### Thing to do
+- think on how to utilize Telescope quickfix
+- remote / at the beginning of galaxyline
+- fix rest not working with multiline json
+- fix telescope git search to work recursively from cwd if not in git repository
+- add gg G to telescope previews if possible, or use less
 - add more autopairs
-- fix issues with autochdir or whatever with telescope search
 - think about blackhole register yanking a pasting (gy and gp shortcuts?)
+- or learn how to use registers
   <!-- vnoremap gp "_c<C-r><C-o>+<Esc> -->
-- improve ripgrep matching to be similar to DOOM * (with spaces)
 - custom buffer manager like bufkill in lua
 - when killing a buffer go to last visited buffer instead of the one higher on stack?
 - set alternate buffer alter killing a buffer
@@ -41,11 +45,10 @@ echo -n test:password | base64 | awk '{print "Basic " $0}'
 - suda.vim
 - minimap.vim
 - folke/todo-comments.nvim
-- jdaddy.vim
-- endwise.vim
 - copy from sensible.vim
-- signature.vim
+- signature.vim and learn to use marks
 - sneak.vim
+
 ### Thing to future
 - consider nvim-compe
 - maybe try diagnostic ls
@@ -59,7 +62,9 @@ echo -n test:password | base64 | awk '{print "Basic " $0}'
 print(vim.api.nvim_buf_add_highlight(0, -1, 'Visual', 0, 0, -1))
 ```
 
+
 ### some vim stuff
+select multiple lines, type 'o' to jump between selection ends, :h v_o
 - read about registers
 zz for center
 CTRL-o in insert mode

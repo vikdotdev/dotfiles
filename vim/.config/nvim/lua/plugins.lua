@@ -1,5 +1,4 @@
 return require('packer').startup(function(use)
-  -- Packer can manage itself
   use({'wbthomason/packer.nvim'})
   -- use({'TimUntersberger/neogit'})
   use({ 'hkupty/iron.nvim', config = [[require('config.iron')]] })
@@ -14,7 +13,7 @@ return require('packer').startup(function(use)
   use({'nvim-lua/completion-nvim'})
   use({'AckslD/nvim-whichkey-setup.lua', requires = {'liuchengxu/vim-which-key'}})
   use({'norcalli/nvim-colorizer.lua'})
-  use({'diepm/vim-rest-console'})
+  -- use({'diepm/vim-rest-console'})
   use({'windwp/nvim-autopairs'})
   use({'tpope/vim-commentary'})
   -- use({'preservim/nerdtree'})
@@ -28,7 +27,7 @@ return require('packer').startup(function(use)
   use({'romgrk/nvim-treesitter-context'})
     -- branch = 'revert-1252-comment-combined'})
   -- use({'aquach/vim-http-client'})
-  use({'~/Repositories/rest.nvim'})
+  -- use({'~/Repositories/rest.nvim'})
   -- use({'mhinz/vim-signify'})
   use({'mhinz/vim-startify'})
   use({'tpope/vim-surround'})
@@ -41,6 +40,13 @@ return require('packer').startup(function(use)
   })
   use({'kyazdani42/nvim-tree.lua'})
   use({'tpope/vim-repeat'})
+  -- use({'NTBBloodbath/rest.nvim'})
+  use({ 'NTBBloodbath/rest.nvim', requires = { 'nvim-lua/plenary.nvim' } })
+  -- use({'tpope/vim-endwise'}) -- does not work out of the box
+
+  -- not that useful, may be useful for selecting
+  -- around json to format it with jq
+  -- use({'tpope/vim-jdaddy'})
 end)
 
 -- Lazy loading:
