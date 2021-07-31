@@ -8,6 +8,17 @@
 [alias]
   edit-unmerged = "!f() { git diff --name-status --diff-filter=U | cut -f2 ; }; vim `f`"
   add-unmerged = "!f() { git diff --name-status --diff-filter=U | cut -f2 ; }; git add `f`"
+  ci = commit
+  st = status
+  br = branch --show-current
+  co = checkout
+  fe = fetch
+  cl = clean
+  cherry = cherry-pick
+  di = diff
+  dif = diff
+  res = restore
+  authors = log --pretty=format:'%an <%ae>'
 [core]
 	autocrlf = input
 [diff]
@@ -21,6 +32,7 @@
   log = delta
   reflog = delta
   show = delta
+  ; stash = delta
 
 [delta]
   syntax-theme = Dracula
