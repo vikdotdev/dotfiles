@@ -1,0 +1,16 @@
+#!/bin/bash
+
+MONITOR_LABEL=Monitor
+MONITOR_VALUE=hdmi-stereo-extra
+HEADPHONES_LABEL=Headphones
+HEADPHONES_VALUE=analog-stereo
+
+DEVICE=`printf "$MONITOR_LABEL\n$HEADPHONES_LABEL" | rofi -i -dmenu -p 'Sound output'`
+
+declare -A device_mapping=( ["$MONITOR_LABEL"]="$MONITOR_VALUE" ["$HEADPHONES_LABEL"]="$HEADPHONES_VALUE" )
+
+SINK_ID=`pactl list sinks short | grep "${device_mapping["$DEVICE"]}" | cut -f 1`
+
+notify-send "Selecting $DEVICE as default audio sink."
+
+pactl set-default-sink "$SINK_ID"
