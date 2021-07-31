@@ -5,12 +5,18 @@
 # This script is designed to bootstrap my Fedora 33 GNOME development workstation.
 # TODO add tmp file to store functions completed in the past
 # TODO install vpn
+# TODO install gh
+# sudo dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
+# sudo dnf install gh
+# TODO install rofi
 # TODO install bitwarden
 # TODO install ninja build system (for lua ls)
+# TODO TSInstall all for nvim initial boot
 # npm install -g vscode-json-languageserver
 # npm i -g bash-language-server
-# npm install -g vscode-css-languageserver-bin
-# npm install -g vscode-html-languageserver-bin
+# OBSOLETE npm install -g vscode-css-languageserver-bin
+# OBSOLETE npm install -g vscode-html-languageserver-bin
+# npm i -g vscode-langservers-extracted
 # npm i -g sql-language-server
 # npm install -g yaml-language-server
 #
