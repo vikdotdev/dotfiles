@@ -2,13 +2,6 @@
 -- found (e.g. lgi). If LuaRocks is not installed, do nothing.
 pcall(require, "luarocks.loader")
 
--- xrandr --output DP-2 --mode 3440x1440 --rate 144
--- add this to .xinitrc
--- compton --vsync opengl
--- xset r rate 250 45
--- rotate wibar
-
--- kbdcfg.layout = { { "us", "" }, { "ru,us", "phonetic" } }
 -- Standard awesome library
 local gears = require("gears")
 local awful = require("awful")
@@ -234,9 +227,22 @@ root.buttons(gears.table.join(
 ))
 -- }}}
 
+
 -- {{{ Key bindings
+
+-- todo add playerctl to install script/essential packages
 globalkeys = gears.table.join(
-    awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
+    awful.key({}, "XF86AudioRaiseVolume", function() os.execute("s-pa-volume +5%") end),
+    awful.key({}, "XF86AudioLowerVolume", function() os.execute("s-pa-volume -5%") end),
+    awful.key({}, "XF86AudioMute", function() os.execute("pactl set-sink-mute @DEFAULT_SINK@ toggle") end),
+    awful.key({ }, "XF86AudioPlay", function () awful.util.spawn("playerctl play-pause") end),
+    awful.key({ }, "XF86AudioNext", function () awful.util.spawn("playerctl next") end),
+    awful.key({ }, "XF86AudioPrev", function () awful.util.spawn("playerctl previous") end),
+    awful.key({ modkey }, "s", function () awful.spawn.with_shell("s-pa-select-sink") end,
+              {description="select audio sink", group="scripts"}),
+    awful.key({ modkey }, "space", awful.widget.keyboardlayout().next_layout,
+              {description="next layout", group="awesome"}),
+    awful.key({ modkey,           }, "/",      hotkeys_popup.show_help,
               {description="show help", group="awesome"}),
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev,
               {description = "view previous", group = "tag"}),
@@ -284,7 +290,7 @@ globalkeys = gears.table.join(
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
               {description = "open a terminal", group = "launcher"}),
-    awful.key({ modkey,           }, "r", function () awful.spawn('rofi -i -show drun') end,
+    awful.key({ modkey,           }, "r", function () awful.spawn('rofi -modi drun -i -show drun -p "Run"') end,
               {description = "rofi run", group = "launcher"}),
     awful.key({ modkey, "Control" }, "r", awesome.restart,
               {description = "reload awesome", group = "awesome"}),
@@ -571,3 +577,11 @@ end)
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
+
+beautiful.useless_gap = 3
+
+local function module(filename)
+  dofile(awful.util.getdir("config") .. "/" .. filename)
+end
+
+module('startup.lua')
