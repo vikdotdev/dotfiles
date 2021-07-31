@@ -6,7 +6,7 @@ export DESKTOP_HOSTNAME="umbra"
 export LAPTOP_HOSTNAME="pad"
 
 # less/man colors
-export LESS=-R
+export LESS='-R --mouse --wheel-lines=3'
 export LESS_TERMCAP_mb="$(printf '%b' '[1;31m')"; a="${a%_}"
 export LESS_TERMCAP_md="$(printf '%b' '[1;36m')"; a="${a%_}"
 export LESS_TERMCAP_me="$(printf '%b' '[0m')"; a="${a%_}"
