@@ -7,13 +7,13 @@
 # of setting upper volume boundary for the default sink.
 
 getdefaultsinkname() {
-  pacmd stat | awk -F": " '/^Default sink name: /{print $2}'
+  pactl info | awk -F": " '/^Default Sink: /{print $2}'
 }
 
 getdefaultsinkvol() {
-  pacmd list-sinks |
-    awk '/^\s+name: /{indefault = $2 == "<'$(getdefaultsinkname)'>"}
-         /^\s+volume: / && indefault {print $5; exit}'
+  pactl list sinks |
+    awk '/^\s+Name: /{indefault = $2 == "'$(getdefaultsinkname)'"}
+         /^\s+Volume: / && indefault {print $5; exit}'
 }
 
 setdefaulsinkvol() {
