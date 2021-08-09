@@ -1,0 +1,29 @@
+#!/bin/bash
+
+read -p "Push to a origin/$(git branch --show-current)? " -n 1 -r
+echo
+
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+  git push -u origin $(git branch --show-current)
+fi
+
+REPLY='n'
+
+read -p "Create pull request? " -n 1 -r
+echo
+
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+  gh pr create --fill
+fi
+
+REPLY='n'
+
+read -p "Open pull request in browser? " -n 1 -r
+echo
+
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+  gh pr view --web
+fi
