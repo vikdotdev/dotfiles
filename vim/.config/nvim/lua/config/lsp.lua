@@ -1,3 +1,5 @@
+vim.g.completion_enable_snippet = 'Neosnippet'
+
 require('lspconfig').solargraph.setup({
   autoformat = true, -- EXPERIMENTAL
   on_attach = require('completion').on_attach,

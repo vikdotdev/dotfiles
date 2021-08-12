@@ -15,9 +15,13 @@ local visual_keymap = {
   -- K = {':move \'<-2<CR>gv-gv', 'move line up'},
   -- J = {':move \'>+1<CR>gv-gv', 'move line down'},
   -- r = {':%s/<C-r><C-w>/hello/c<CR>', 'replace selection'},
-  r = {
-    name = '+repl',
+  i = {
+    name = '+iron/repl',
     s = {':lua require("iron").core.visual_send()<CR>', 'send range'}
+  },
+  p = {
+    name = '+prettify',
+    j = {':!jq<CR>', 'json'},
   },
   l = {
     name = '+lsp',
@@ -26,7 +30,7 @@ local visual_keymap = {
 }
 
 local normal_keymap = {
-  ['<leader>'] = {'<Cmd>Telescope git_files<CR>', 'file find'},
+  ['<leader>'] = {"<Cmd>lua require('util').telescope_git_files()<CR>", 'file find'},
   q = {
     name = '+quit/session',
     q = {':qa<CR>', 'quit'},
@@ -41,6 +45,7 @@ local normal_keymap = {
     L = {'<C-w>L', 'move right'},
     K = {'<C-w>K', 'move up'},
     J = {'<C-w>J', 'move down'},
+    p = {'<C-w>p', 'previous'},
     d = {":close<CR>", 'delete'},
     m = {"<C-w>_<C-w>|", 'maximize'},
     o = {":only<CR>", 'only'},
@@ -59,13 +64,14 @@ local normal_keymap = {
   },
   f = {
     name = '+file',
-    t = {'<Cmd>NvimTreeToggle<CR>', 'tree'},
-    g = {'<Cmd>Telescope live_grep<CR>', 'grep'},
+    g = {"<Cmd>lua require('util').telescope_grep()<CR>", 'grep'},
+    G = {"<Cmd>lua require('util').telescope_grep({ grep_open_files = true })<CR>", 'grep open files'},
     s = {'<Cmd>w!<CR>', 'save'},
     l = {'<Cmd>NvimTreeFindFile<CR>', 'locate'},
     r = {'<Cmd>Telescope oldfiles<CR>', 'recent'},
     f = {"<Cmd>Telescope file_browser<CR>", 'files'},
-    c = {"<Cmd>lua require('telescope.builtin').find_files({ find_command = {'rg', '--hidden', '--files'}})<CR>", 'from cwd'},
+    t = {'<Cmd>NvimTreeToggle<CR>', 'file tree'},
+    -- c = {"<Cmd>lua require('telescope.builtin').find_files({ find_command = {'rg', '--hidden', '--files'}})<CR>", 'from cwd'},
     D = {'<Cmd>call delete(expand("%")) | bdelete!<CR>', 'delete'},
   },
   s = {
@@ -73,6 +79,11 @@ local normal_keymap = {
     c = {'<Cmd>Telescope commands<CR>', 'commands'},
     h = {'<Cmd>Telescope command_history<CR>', 'history'},
     b = {'<Cmd>Telescope current_buffer_fuzzy_find<CR>', 'current buffer'},
+  },
+  y = {
+    name = '+yank',
+    p = {"<Cmd>lua require('util').yank_filepath()<CR>", 'absolute path'},
+    f = {"<Cmd>lua require('util').yank_filename()<CR>", 'file name'},
   },
   c = {
     name = '+command',
@@ -95,22 +106,21 @@ local normal_keymap = {
     name = '+open',
     s = {'<Cmd>Startify<CR>', 'startify'},
     t = {'<Cmd>term<CR>', 'terminal here'},
-    -- T terminal in this buffer
+    q = {'<Cmd>copen<CR>', 'quickfix list'},
   },
   g = {
     name = '+git',
     n = {'<Cmd>lua require"gitsigns".next_hunk()<CR>', 'next hunk'},
     p = {'<Cmd>lua require"gitsigns".prev_hunk()<CR>', 'prev hunk'},
-    S = {'<Cmd>lua require"gitsigns".stage_hunk()<CR>', 'stage'},
+    s = {'<Cmd>lua require"gitsigns".stage_hunk()<CR>', 'stage'},
     U = {'<Cmd>lua require"gitsigns".undo_stage_hunk()<CR>', 'undo stage'},
     R = {'<Cmd>lua require"gitsigns".reset_hunk()<CR>', 'reset'},
     d = {'<Cmd>lua require"gitsigns".preview_hunk()<CR>', 'diff'},
-    -- B = {'<Cmd>lua require("config/functions").blame_toggle()<CR>', 'blame toggle'},
     B = {'<Cmd>Gitsigns toggle_current_line_blame<CR>', 'blame toggle'},
     b = {'<Cmd>Telescope git_branches<CR>', 'branches'},
     c = {'<Cmd>Telescope git_commits<CR>', 'commits'},
     C = {'<Cmd>Telescope git_bcommits<CR>', 'buffer commits'},
-    s = {'<Cmd>Telescope git_status<CR>', 'status'},
+    g = {'<Cmd>Telescope git_status<CR>', 'status'},
   },
   b = {
     name = '+buffer',
@@ -134,20 +144,18 @@ local normal_keymap = {
     k = {'<Cmd>Telescope keymaps<CR>', 'keymaps'},
     s = {'<Cmd>Telescope search_history<CR>', 'search history'},
     f = {'<Cmd>Telescope filetypes<CR>', 'filetypes'},
+    b = {'<Cmd>Telescope builtin<CR>', 'telescope built-ins'},
   },
   m = {
     name = '+maintenance',
     r = {'<Cmd>luafile %<CR>', 'reload file'},
-    -- i = {'<Cmd>PackerInstall<CR>', 'install'},
     s = {'<Cmd>PackerSync<CR>', 'sync'},
-    -- c = {'<Cmd>PackerClean<CR>', 'clean'},
-    -- u = {'<Cmd>PackerUpdate<CR>', 'update'},
   },
   -- p = {
   --   name = '+project',
   -- },
-  r = {
-    name = '+repl',
+  i = {
+    name = '+iron/repl',
     r = {'<Cmd>lua require("iron").core.repeat_cmd()<CR>', 'repeat last command'},
     f = {'<Cmd>lua require("iron").core.focus_on(vim.bo.filetype)<CR>', 'focus'},
     w = {'<Cmd>IronWatchCurrentFile<CR>', 'watch file'},

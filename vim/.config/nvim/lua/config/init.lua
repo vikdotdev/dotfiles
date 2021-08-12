@@ -57,10 +57,10 @@ vim.cmd([[nnoremap <Esc> :silent! nohls<CR>]])
 vim.cmd([[vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>]])
 vim.cmd([[au WinEnter * setlocal cursorline]])
 vim.cmd([[au WinLeave * setlocal nocursorline]])
+vim.cmd([[autocmd! WinEnter * setlocal nowinfixheight]])
 vim.cmd([[nnoremap Q <nop>]])
-
+-- vim.cmd([[nnoremap o <CR><C-w>p]])
 -- vim.cmd([[nnoremap ya :silent! ggyG<C-o><CR>]])
-
 -- vim.cmd('set autochdir')
 -- vim.cmd [[vnoremap < <gv]]
 -- vim.cmd [[vnoremap > >gv]]

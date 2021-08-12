@@ -6,3 +6,5 @@ wget https://raw.githubusercontent.com/vikdotdev/dotfiles/master/bin/bin/s-fedor
 chmod +x s-fedora-bootstrap
 ./s-fedora-bootstrap
 rm s-fedora-bootstrap
+```
+

@@ -4,6 +4,11 @@ function Util.kill_current_buffer()
   vim.api.nvim_buf_delete(0, {})
 end
 
+function Util.merge_tables(a, b)
+  for k,v in pairs(b) do a[k] = v end
+  return a
+end
+
 function Util.toggle_line_numbers()
   if vim.wo.number and vim.wo.relativenumber then
     vim.wo.number = true
@@ -30,10 +35,13 @@ function Util.shallow_copy(source)
   return target
 end
 
+function Util.git_path_to_current_repository()
+  return vim.api.nvim_call_function('finddir', { '.git/..', vim.fn.expand('%:p:h')..';'})
+end
+
 function Util.git_path_to_current_buffer()
-  local root_to_repo = vim.api.nvim_call_function('finddir', { '.git/..', vim.fn.expand('%:p:h')..';'})
+  local root_to_repo = Util.git_path_to_current_repository()
   local full_path = vim.fn.expand('%:p')
-  -- function
 
   if string.match(full_path, root_to_repo) then
     return string.gsub(full_path, root_to_repo, '') or ''
@@ -116,6 +124,31 @@ function Util.flash_cursorline()
   -- vim.cmd([[hi CursorLine guifg=#000000 guibg=#ffffff]])
   --
   -- print(vim.inspect(vim.api.nvim__buf_stats(0)))
+end
+
+function Util.telescope_git_files()
+  require('telescope.builtin').git_files({
+    prompt_title = '<git files>',
+    cwd = Util.git_path_to_current_repository()
+  })
+end
+
+function Util.telescope_grep(opts)
+  if opts == nil then opts = {} end
+  require('telescope.builtin').live_grep(
+    Util.merge_tables(opts, {
+      prompt_title = '<git grep>',
+      cwd = Util.git_path_to_current_repository()
+    })
+  )
+end
+
+function Util.yank_filepath()
+  vim.fn.setreg('+', vim.fn.expand('%:p'))
+end
+
+function Util.yank_filename()
+  vim.fn.setreg('+', vim.fn.expand('%:f'))
 end
 
 --- Get a ts compatible range of the current visual selection.
