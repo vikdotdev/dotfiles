@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [ "$(hostname)" == "$LAPTOP_HOSTNAME" ] && [ -s "$HOME/.Xmodmap" ]; then
+  xmodmap ~/.Xmodmap
+fi
+
 if [ -x "$(command -v xcape)" ] && [ "$(hostname)" == "$LAPTOP_HOSTNAME" ]; then
   if setxkbmap -query | (! grep "ctrl:nocaps"); then
     # make capslock behave like ctrl:
@@ -10,8 +14,6 @@ if [ -x "$(command -v xcape)" ] && [ "$(hostname)" == "$LAPTOP_HOSTNAME" ]; then
   xcape -e 'Control_L=Escape'
   xcape -e 'Shift_L=bracketleft'
   xcape -e 'Shift_R=bracketright'
+  xcape -e 'Super_L=Tab'
 fi
 
-if [ "$(hostname)" == "$LAPTOP_HOSTNAME" ] && [ -s "$HOME/.Xmodmap" ]; then
-  xmodmap ~/.Xmodmap
-fi
