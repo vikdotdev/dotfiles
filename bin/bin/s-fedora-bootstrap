@@ -1,27 +1,10 @@
 #!/bin/bash
-# Author: Viktor Habchak
-#   @vikdotdev at github.com
+# Author: Viktor Habchak, @vikdotdev at github.com
 #
-# This script is designed to bootstrap my Fedora 33 GNOME development workstation.
-# TODO add tmp file to store functions completed in the past
-# TODO install vpn
-# TODO install gh
-# sudo dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
-# sudo dnf install gh
-# TODO install rofi
-# TODO install bitwarden
+# This script is intended to quick-install my setup on Fedora 34 workstation.
+# TODO install vpn / make a flatpak?
+# TODO install lightdm, remove gdm? add config and autostart service
 # TODO install ninja build system (for lua ls)
-# TODO TSInstall all for nvim initial boot
-# npm install -g vscode-json-languageserver
-# npm i -g bash-language-server
-# OBSOLETE npm install -g vscode-css-languageserver-bin
-# OBSOLETE npm install -g vscode-html-languageserver-bin
-# npm i -g vscode-langservers-extracted
-# npm i -g sql-language-server
-# npm install -g yaml-language-server
-
-# add default wallpapers folder to dotfiles?
-# mkdir -p .local/share/wallpapers
 
 # install backlight control to /etc/X11/xorg.conf
 # Section "Device"
@@ -29,15 +12,10 @@
 #     Driver      "intel"
 #     Option      "Backlight"  "intel_backlight"
 # EndSection
-~
-~
-#
-# deno
-# curl -fsSL https://deno.land/x/install/install.sh | sh
-# add for nvims persistent undo
-# mkdir -p .local/share/nvim/undo
 
 NEW_HOSTNAME=pad # default hostname
+LOG_DIR=~/.local/share/plonk
+LOG_PATH="$LOG_DIR/output.log"
 
 while [[ $# -gt 0 ]]; do
   key="$1"
@@ -63,45 +41,42 @@ read -sp 'Password: ' PASSWORD
 echo
 
 function skip {
-  echo "bootstrap >>> $1. Skipping" | tee -a ~/.local/share/fedora-bootstrap/output.log
+  echo "PLONK >>> $1. Skipping" | tee -a $LOG_PATH
 }
 
 function print {
-  echo "bootstrap >>>" "$@" | tee -a ~/.local/share/fedora-bootstrap/output.log
+  echo "PLONK >>>" "$@" | tee -a $LOG_PATH
 }
 
-function prepare-log-directory {
-  mkdir -p ~/.local/share/fedora-bootstrap
+function execute {
+  echo "[$(date +%D-%T)] $@" >> $LOG_PATH
+  {
+    eval "$@"
+  } &>> $LOG_PATH
+}
+
+function execute-with-password {
+  echo "[$(date +%D-%T)] sudo $@" >> $LOG_PATH
+  {
+    eval "echo $PASSWORD | sudo --stdin $@"
+  } &>> $LOG_PATH
 }
 
 function exit-if-run-as-sudo {
   if [ $EUID -eq 0 ]; then
-    print "Script run as sudo. Aborting"
+    print "Script is meant to be run without sudo. Aborting"
     exit 1
   fi
 }
 
-function execute {
-  echo "[$(date +%D-%T)] $@" >> ~/.local/share/fedora-bootstrap/output.log
-  {
-    eval "$@"
-  } &>> ~/fedora-bootstrap.log
-}
-
-function execute-with-password {
-  echo "[$(date +%D-%T)] sudo $@" >> ~/.local/share/fedora-bootstrap/output.log
-  {
-    eval "echo $PASSWORD | sudo --stdin $@"
-  } &>> ~/.local/share/fedora-bootstrap/output.log
-}
-
 function check-password-correctness {
+  sudo -k
   [ -z "$PASSWORD" ] && print 'Password is empty. Aborting' && exit 1
 
-  local INCORRECT=0
+  local INCORRECT=1
 
   {
-    echo "$PASSWORD" | sudo --stdin false && INCORRECT=1
+    echo "$PASSWORD" | sudo -S -v &> /dev/null && INCORRECT=0
   } > /dev/null
 
   if [ "$INCORRECT" -eq 1 ]; then
@@ -110,96 +85,62 @@ function check-password-correctness {
   fi
 }
 
-function update-system-packages {
-  print 'updating system packages'
+function prepare-log-directory {
+  mkdir -p $LOG_DIR
+
+  print "Installation logs are stored in $LOG_DIR"
+  print 'watch -n 0.5 tail -n $(tput cols) [path]' $LOG_PATH
+}
+
+function update-packages {
+  print 'updating packages'
 
   execute-with-password "dnf update -y"
 }
 
-function install-packages {
-  print 'installing utils'
+function install-dotfiles-dependencies {
+  print 'installing dotfiles dependencies'
+
+  # ShellCheck editorconfig replaced by TS
+  execute-with-password "dnf install -y stow neovim imwheel wget unzip xclip git curl clang git-credential-libsecret sensible-browser xdotool rofi ripgrep fd-find git-delta screenkey compton aspell aspell-en"
+
+  prepare-neovim-undo
+  install-tmux
+  install-xcape
+  install-github-cli
+  install-nodejs
+  install-ruby
+  install-awesome
 
   execute-with-password "dnf install -y vim stow imwheel wget unzip xclip git curl clang git-credential-libsecret snapd sensible-browser xdotool git-delta screenkey compton stack redshift urlview xbacklight"
   execute-with-password "ln -s /var/lib/snapd/snap /snap"
+  curl -fsSL https://deno.land/x/install/install.sh | sh
 }
 
-function install-rpm-fusion {
-  print 'installing rpmfusion'
-
-  execute-with-password "dnf install -y https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
-  execute-with-password "dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm"
-  execute-with-password "dnf groupupdate Multimedia -y"
+function prepare-neovim-undo {
+  mkdir -p .local/share/nvim/undo
 }
 
-function configure-gnome {
-  print "configuring GNOME"
+function install-tmux {
+  print "installing tmux"
 
-  if [ "$NEW_HOSTNAME" == "pad" ]; then
-    execute "gsettings set org.gnome.desktop.input-sources xkb-options \"['lv3:ralt_switch', 'ctrl:nocaps', 'caps:escape']\""
-  fi
-
-  if [ "$NEW_HOSTNAME" == "top" ]; then
-    execute "gsettings set org.gnome.desktop.input-sources xkb-options \"['lv3:ralt_switch', 'grp:caps_toggle']\""
-  fi
-
-  execute "gsettings set org.gnome.desktop.peripherals.touchpad natural-scroll false"
-  execute "gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true"
-  execute "gsettings set org.gnome.desktop.peripherals.keyboard delay '250'"
-  execute "gsettings set org.gnome.desktop.peripherals.keyboard repeat-interval '40'"
-  execute "gsettings set org.gnome.desktop.wm.keybindings toggle-maximized \"['<Super>k']\""
-  execute "gsettings set org.gnome.desktop.interface gtk-theme \"Adwaita-dark\""
-  execute "gsettings set org.gnome.desktop.input-sources sources \"[('xkb', 'us'), ('xkb', 'ua')]\""
-}
-
-function install-ruby-deps {
-  print "installing ruby dependencies"
-
-  execute-with-password "dnf install -y patch autoconf automake bison glibc-headers libffi-devel libtool libyaml-devel patch readline-devel sqlite-devel zlib-devel openssl-devel glibc-headers"
-}
-
-function install-rvm {
-  print "installing rvm"
-
-  if [ -x "$(command -v rvm)" ]; then
-    skip "rvm binary found"
+  if [ -d "$HOME/.tmux" ]; then
+    skip "$HOME/.tmux found"
   else
-    execute "\curl -sSL https://get.rvm.io | bash"
-    execute "source ~/.rvm/scripts/rvm"
-  fi
-}
-
-function compile-ruby {
-  print "compiling ruby"
-
-  if [ -x "$(command -v ruby | grep ~/.rvm/rubies/ruby-2.7.2)" ]; then
-    skip "Ruby 2.7.2 found"
-  else
-    execute "rvm autolibs disable"
-    execute "rvm install ruby 2.7.2"
-    execute "rvm use 2.7.2 --default"
-  fi
-}
-
-function install-gems {
-  print "installing gems"
-
-  if [ -x "$(command -v gem)" ]; then
-    execute "gem install bundler"
-    execute "gem install tmuxinator"
-    execute "gem install rufo"
-    execute "gem install solargraph"
-    execute "gem install pry-doc"
-    execute "gem install steep"
+    execute-with-password "dnf install -y tmux"
+    execute "cd"
+    execute "rm -r ~/.tmux"
+    execute "git clone https://github.com/gpakosz/.tmux.git"
+    execute "ln -s -f .tmux/.tmux.conf"
   fi
 }
 
 function install-xcape {
-  print 'installing xcape'
+  print 'building xcape'
 
   if [ -x "$(command -v xcape)" ]; then
     skip 'xcape binary found'
   else
-
     execute '[ ! -d "$HOME/Repositories" ] && mkdir ~/Repositories'
     execute "cd ~/Repositories"
     execute "git clone https://github.com/alols/xcape.git"
@@ -210,20 +151,88 @@ function install-xcape {
   fi
 }
 
-function install-fonts {
-  print "installing iosevka"
+function install-github-cli {
+  execute-with-password "dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo"
+  execute-with-password "dnf install -y gh"
+}
 
-  font_files=$(ls ~/.fonts/iosevka-* 2> /dev/null | wc -l)
-  if [ "$font_files" != "0" ]
-  then
-    skip "~/.fonts/iosevka-* found"
+function install-nodejs {
+  print "installing node & yarn"
+
+  if [ -x "$(command -v yarn)" ]; then
+    skip "yarn binary found"
   else
-    execute "cd ~/Downloads"
-    execute "wget --no-verbose --show-progress --progress=bar:force https://github.com/be5invis/Iosevka/releases/download/v3.0.0-rc.5/07-iosevka-curly-3.0.0-rc.5.zip"
-    execute "mkdir ~/.fonts"
-    execute "command -v unzip && unzip 07-iosevka-curly-3.0.0-rc.5.zip 'ttf/*' -d ~/.fonts/"
-    execute "cd ~/.fonts && mv ttf/* . && rm -rf ttf"
+    {
+      YARN_REPO=$(curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo)
+
+      echo $PASSWORD | sudo --stdin true && echo "$YARN_REPO" | sudo tee /etc/yum.repos.d/yarn.repo
+    } > /dev/null
+
+    execute-with-password "dnf install yarn -y"
   fi
+
+  install-npm-dotfiles-dependencies
+}
+
+function setup-npm-path {
+  print "setting up npm path"
+
+  if [ -x "$(command -v npm)" ] && [ ! -d ~/.npm-global ]; then
+    execute "mkdir ~/.npm-global"
+    execute "npm config set prefix '~/.npm-global'"
+    execute "export PATH=~/.npm-global/bin:$PATH"
+  else
+    skip "npm binary not found"
+  fi
+}
+
+function install-npm-dotfiles-dependencies {
+  print "installing npm dotfiles dependencies"
+
+  if [ -x "$(command -v npm)" ]; then
+    setup-npm-path
+    execute "npm install -g js-beautify stylelint marked vscode-json-languageserver bash-language-server vscode-langservers-extracted sql-language-server yaml-language-server dockerfile-language-server-nodejs diagnostic-languageserver"
+  else
+    skip "npm binary not found"
+  fi
+}
+
+function install-ruby {
+  print "installing ruby dependencies"
+
+  execute-with-password "dnf install -y patch autoconf automake bison glibc-headers libffi-devel libtool libyaml-devel patch readline-devel sqlite-devel zlib-devel openssl-devel glibc-headers"
+
+  print "installing rvm"
+
+  if [ -x "$(command -v rvm)" ]; then
+    skip "rvm binary found"
+  else
+    execute "\curl -sSL https://get.rvm.io | bash"
+    execute "source ~/.rvm/scripts/rvm"
+  fi
+
+  print "building ruby"
+
+  if [ -x "$(command -v ruby | grep ~/.rvm/rubies)" ]; then
+    skip "ruby rvm binary found"
+  else
+    execute "rvm autolibs disable"
+    execute "rvm install ruby 3"
+    execute "rvm use 3 --default"
+  fi
+
+  print "installing gems"
+
+  if [ -x "$(command -v gem)" ]; then
+    execute "gem install bundler"
+    execute "gem install tmuxinator"
+    execute "gem install solargraph"
+    execute "gem install pry-doc"
+  fi
+}
+
+function install-awesome {
+  execute-with-password "dnf install -y awesome playerctl"
 }
 
 function install-dotfiles {
@@ -245,68 +254,49 @@ function install-dotfiles {
   fi
 }
 
-function install-emacs {
-  print "installing emacs"
+function install-packages {
+  print 'installing rpmfusion'
 
-  if [ -f "$HOME/.emacs.d/bin/doom" ]; then
-    skip "$HOME/.emacs.d/bin/doom binary found"
-  else
-    execute-with-password "dnf install -y emacs ripgrep fd-find editorconfig ShellCheck aspell aspell-en"
+  execute-with-password 'dnf install -y https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm'
+  execute-with-password 'dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E fedora).noarch.rpm'
+  execute-with-password "dnf groupupdate Multimedia -y"
 
-    execute "cd && rm -r ~/.emacs"
-    execute "cd && git clone https://github.com/hlissner/doom-emacs ~/.emacs.d"
-    execute "yes | ~/.emacs.d/bin/doom install"
-  fi
+  install-misc-packages
+  install-npm-packages
+  install-gui-packages
+  install-postgres
+  install-redis
+  # install-docker
+  # install-elasticsearch
 }
 
-function install-node-yarn {
-  print "installing node & yarn"
-
-  if [ -x "$(command -v yarn)" ]; then
-    skip "yarn binary found"
-  else
-    {
-      YARN_REPO=$(curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo)
-
-      echo $PASSWORD | sudo --stdin true && echo "$YARN_REPO" | sudo tee /etc/yum.repos.d/yarn.repo
-    } > /dev/null
-
-    execute-with-password "dnf install yarn -y"
-  fi
+function install-misc-packages {
+  execute-with-password 'dnf install -y redshift peek ncdu tldr syncthing'
 }
 
-function install-tmux {
-  print "installing tmux"
-
-  if [ -d "$HOME/.tmux" ]; then
-    skip "$HOME/.tmux found"
-  else
-    execute-with-password "dnf install -y tmux"
-    execute "cd"
-    execute "rm -r ~/.tmux"
-    execute "git clone https://github.com/gpakosz/.tmux.git"
-    execute "ln -s -f .tmux/.tmux.conf"
-  fi
-}
-
-function install-js-packages {
-  print "installing js packages"
+function install-npm-packages {
+  print "installing npm packages"
 
   if [ -x "$(command -v npm)" ]; then
-    execute "mkdir ~/.npm-global"
-    execute "npm config set prefix '~/.npm-global'"
-    execute "export PATH=~/.npm-global/bin:$PATH"
-
-    execute "npm install -g js-beautify stylelint marked"
+    setup-npm-path
+    execute "npm install -g @bitwarden/cli ngrok"
   else
     skip "npm binary not found"
   fi
 }
 
-function change-hostname {
-  print "changing hostname"
+function install-gui-packages {
+  print 'installing gui packages'
 
-  execute "hostnamectl set-hostname $NEW_HOSTNAME"
+  # TODO this needs sudo
+  flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
+  execute-with-password "dnf install -y thunderbird deluge skypeforlinux"
+  flatpak install flathub org.telegram.desktop
+  flatpak install flathub com.spotify.Client
+  flatpak install flathub com.github.IsmaelMartinez.teams_for_linux
+  # flatpak install flathub com.microsoft.Teams
+  execute-with-password "dnf install https://zoom.us/client/latest/zoom_x86_64.rpm"
 }
 
 function install-postgres {
@@ -329,80 +319,56 @@ function install-redis {
   execute-with-password "systemctl enable redis.service"
 }
 
-function install-elasticsearch {
-  execute "podman pull docker.io/library/elasticsearch:7.9.2"
-  execute "podman run -d --name elasticsearch7 -p 9200:9200 -p 9300:9300 -e \"discovery.type=single-node\" elasticsearch:7.9.2"
-}
+# UNFINISHED make sure this runs on latest kernel
+# function install-docker {
+#   execute-with-password "dnf -y install dnf-plugins-core"
+#   execute-with-password "tee /etc/yum.repos.d/docker-ce.repo<<EOF
+#   [docker-ce-stable]
+#   name=Docker CE Stable - \$basearch
+#   baseurl=https://download.docker.com/linux/fedora/34/\$basearch/stable
+#   enabled=1
+#   gpgcheck=1
+#   gpgkey=https://download.docker.com/linux/fedora/gpg
+#   EOF"
+#   execute-with-password "dnf makecache"
+#   execute-with-password "dnf install -y docker-ce docker-ce-cli containerd.io docker-compose"
+#   execute-with-password "sudo curl -L https://raw.githubusercontent.com/docker/compose/master/contrib/completion/bash/docker-compose -o /etc/bash_completion.d/docker-compose"
+#   execute-with-password "systemctl enable --now docker"
+#   execute-with-password "usermod -aG docker $(whoami)"
+#   execute "newgrp docker"
+# }
 
-function install-gui-packages {
-  print 'installing gui packages'
+# function install-elasticsearch {
+#   # TODO change to docker
+#   execute "podman pull docker.io/library/elasticsearch:7.9.2"
+#   execute "podman run -d --name elasticsearch7 -p 9200:9200 -p 9300:9300 -e \"discovery.type=single-node\" elasticsearch:7.9.2"
+# }
 
-  execute-with-password "dnf install -y gnome-tweak-tool thunderbird deluge"
+function install-fonts {
+  print "installing iosevka"
 
-  # this is done to initialize snap and avoid the following error:
-  # error: too early for operation, device not yet seeded or device model not acknowledged
-  execute-with-password "snap install hello-world"
-  sleep 30
-  execute-with-password "snap install telegram-desktop"
-  execute-with-password "snap install slack --classic"
-  execute-with-password "snap install skype --classic"
-  execute-with-password "snap install spotify"
-  execute-with-password "snap install ngrok"
-  execute-with-password "dnf install https://zoom.us/client/latest/zoom_x86_64.rpm"
-}
-
-function install-flutter {
-  execute '[ ! -d "$HOME/Repositories" ] && mkdir ~/Repositories'
-  execute "cd ~/Repositories"
-  execute "git clone https://github.com/flutter/flutter.git"
-  execute "dart"
-}
-
-function install-android-studio {
-  # WIP
-  local URL=$(curl -0 https://developer.android.com/studio#downloads | grep -o --regexp='https:\/\/redirector\.gvt1\.com\/edgedl\/android\/studio\/ide-zips\/[0-9\.]*\/android-studio-ide-[0-9\.]*-linux\.tar\.gz')
-  wget "$URL"
-  # extract it into /opt
-  # TODO add postinstall notices to finish android studio installation
-
-  # install sdk
-  # Android/Sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-28"
-}
-
-function install-anyconnect {
-  # WIP
-  echo wip
-}
-
-function install-gnome-extension {
-# set -euo pipefail
-  uri="gamemodechristian.kellner.me.v4.shell-extension.zip"
-  store_url="https://extensions.gnome.org/extension-data"
-  extensions_path="$HOME/.local/share/gnome-shell/extensions/"
-  zip="gnome-extension.zip"
-
-  cd "$(xdg-user-dir DOWNLOAD)"
-  wget "$store_url/$uri" -O "$zip"
-
-  uuid=$(unzip -c "$zip" metadata.json | grep uuid | cut -d \" -f4)
-
-  if [[ ! -d "$extensions_path/$uuid" ]]; then
-      mkdir "$extensions_path/$uuid"
-      unzip -q "$zip" -d "$extensions_path/$uuid"
-      gnome-extensions enable "$uuid"
+  font_files=$(ls ~/.fonts/iosevka-* 2> /dev/null | wc -l)
+  if [ "$font_files" != "0" ]
+  then
+    skip "~/.fonts/iosevka-* found"
+  else
+    execute "cd ~/Downloads"
+    execute "wget --no-verbose --show-progress --progress=bar:force https://github.com/be5invis/Iosevka/releases/download/v3.0.0-rc.5/07-iosevka-curly-3.0.0-rc.5.zip"
+    execute "mkdir ~/.fonts"
+    execute "command -v unzip && unzip 07-iosevka-curly-3.0.0-rc.5.zip 'ttf/*' -d ~/.fonts/"
+    execute "cd ~/.fonts && mv ttf/* . && rm -rf ttf"
   fi
-
-  trap 'rm "$zip"' ERR INT TERM EXIT
 }
 
-function install-gnome-extensions {
-  install-gnome-extension "shell-volume-mixerderhofbauer.at.v37.shell-extension.zip"
-  install-gnome-extension "gamemodechristian.kellner.me.v4.shell-extension.zip"
+function install-wallpapers {
+  # TODO populate
+  mkdir -p .local/share/wallpapers
 }
 
-function install-spotify {
-  execute-with-password "dnf copr enable atim/spotify-tui -y && dnf install spotify-tui"
-  secret-tool store --label='name you choose' application rust-keyring service spotifyd username lm31qi6j0fxd1s24bbs5spni5
+function update-hostname {
+  print "changing hostname"
+
+  execute "hostnamectl set-hostname $NEW_HOSTNAME"
 }
 
 function install-kmonad {
@@ -435,33 +401,21 @@ function run-services {
 function main {
   exit-if-run-as-sudo
   prepare-log-directory
-  check-password-correctness
-  update-system-packages
-  install-packages
-  configure-gnome
-  install-rpm-fusion
-  install-ruby-deps
-  install-rvm
-  compile-ruby
-  install-gems
-  install-node-yarn
-  install-js-packages
+  update-hostname
+  update-packages
+  install-dotfiles-dependencies
   install-dotfiles
+  install-packages
   install-fonts
-  install-xcape
-  install-tmux
-  install-emacs
-  install-postgres
-  install-redis
-  install-elasticsearch
-  install-flutter
-  change-hostname
-  install-gui-packages
-  install-spotify
   install-kmonad
   run-services
+  install-wallpapers
 
   print "Done."
 }
 
 main
+
+function post-install {
+  # do postinstall stuff e.g. docker
+}
