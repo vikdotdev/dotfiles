@@ -40,7 +40,7 @@ function Util.git_path_to_current_repository()
 end
 
 function Util.git_path_to_current_buffer()
-  local root_to_repo = Util.git_path_to_current_repository()
+  local root_to_repo = Util.git_path_to_current_repository() .. '/'
   local full_path = vim.fn.expand('%:p')
 
   if string.match(full_path, root_to_repo) then
@@ -144,11 +144,20 @@ function Util.telescope_grep(opts)
 end
 
 function Util.yank_filepath()
-  vim.fn.setreg('+', vim.fn.expand('%:p'))
+  Util.copy_to_clipboard(vim.fn.expand('%:p'))
 end
 
 function Util.yank_filename()
-  vim.fn.setreg('+', vim.fn.expand('%:f'))
+  Util.copy_to_clipboard(vim.fn.expand('%:t'))
+end
+
+function Util.yank_filepath_from_repo()
+  Util.copy_to_clipboard(Util.git_path_to_current_buffer())
+end
+
+function Util.copy_to_clipboard(value)
+  vim.fn.setreg('+', value)
+  print('Copied to clipboard ' .. value)
 end
 
 --- Get a ts compatible range of the current visual selection.
