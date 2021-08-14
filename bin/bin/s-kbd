@@ -1,13 +1,15 @@
 #!/bin/bash
 
-if [ "$(hostname)" == "$LAPTOP_HOSTNAME" ] && [ -s "$HOME/.Xmodmap" ]; then
-  xmodmap ~/.Xmodmap
-fi
-
 if [ -x "$(command -v xcape)" ] && [ "$(hostname)" == "$LAPTOP_HOSTNAME" ]; then
   if setxkbmap -query | (! grep "ctrl:nocaps"); then
     # make capslock behave like ctrl:
     setxkbmap -option ctrl:nocaps
+
+    # be sure to source xmodmap AFTER setxkbmap declaration
+    # apparently xmodmap is partly overridden by setxkbmap
+    if [ -s "$HOME/.Xmodmap" ]; then
+      xmodmap "$HOME/.Xmodmap"
+    fi
   fi
 
   pgrep xcape && pgrep xcape | xargs kill
@@ -16,4 +18,5 @@ if [ -x "$(command -v xcape)" ] && [ "$(hostname)" == "$LAPTOP_HOSTNAME" ]; then
   xcape -e 'Shift_R=bracketright'
   xcape -e 'Super_L=Tab'
 fi
+
 

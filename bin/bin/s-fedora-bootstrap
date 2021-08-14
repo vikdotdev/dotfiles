@@ -19,6 +19,7 @@
 # npm i -g vscode-langservers-extracted
 # npm i -g sql-language-server
 # npm install -g yaml-language-server
+# install jq
 #
 # deno
 # curl -fsSL https://deno.land/x/install/install.sh | sh
@@ -32,7 +33,7 @@ while [[ $# -gt 0 ]]; do
 
   case $key in
       -d|--desktop)
-      NEW_HOSTNAME=top
+      NEW_HOSTNAME=umbra
       shift
       shift
       ;;
