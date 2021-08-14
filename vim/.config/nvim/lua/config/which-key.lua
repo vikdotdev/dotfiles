@@ -117,6 +117,7 @@ local normal_keymap = {
     U = {'<Cmd>lua require"gitsigns".undo_stage_hunk()<CR>', 'undo stage'},
     R = {'<Cmd>lua require"gitsigns".reset_hunk()<CR>', 'reset'},
     d = {'<Cmd>lua require"gitsigns".preview_hunk()<CR>', 'diff'},
+    v = {'<Cmd>lua require"gitsigns.actions".select_hunk()<CR>', 'visual select hunk'},
     B = {'<Cmd>Gitsigns toggle_current_line_blame<CR>', 'blame toggle'},
     b = {'<Cmd>Telescope git_branches<CR>', 'branches'},
     c = {'<Cmd>Telescope git_commits<CR>', 'commits'},
