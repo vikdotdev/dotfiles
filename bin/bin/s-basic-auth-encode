@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Author: Viktor Habchak
+#   @vikdotdev at github.com
+
+read -p 'Username: ' USERNAME
+
+# add -s flag to hide password
+read -p 'Password: ' PASSWORD
+
+VALUE=$(echo -n "$USERNAME:$PASSWORD" | base64 -w 0 | awk '{print "Basic " $0}')
+echo "$VALUE" | xclip -selection clipboard
+
+echo "$VALUE" | fold -w 80
+echo
+echo Copied to clipboard.
