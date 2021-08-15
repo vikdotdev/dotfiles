@@ -10,6 +10,7 @@ return require('packer').startup(function(use)
   })
   use({'neovim/nvim-lspconfig'})
   use({'nvim-lua/completion-nvim'})
+  -- TODO: replace with folke/which-key.nvim
   use({'AckslD/nvim-whichkey-setup.lua', requires = {'liuchengxu/vim-which-key'}})
   use({'norcalli/nvim-colorizer.lua'})
   use({'windwp/nvim-autopairs'})

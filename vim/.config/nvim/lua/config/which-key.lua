@@ -3,18 +3,15 @@ local wk = require('whichkey_setup')
 vim.g.which_key_disable_default_offset = true
 
 wk.config({
-    hide_statusline = false,
-    default_keymap_settings = {
-        silent=true,
-        noremap=true,
-    },
+  hide_statusline = false,
+  default_keymap_settings = {
+    silent = true,
+    noremap = true,
+  },
 })
 
 -- NOTE: <Cmd> does not work in visual mode, use : instead
 local visual_keymap = {
-  -- K = {':move \'<-2<CR>gv-gv', 'move line up'},
-  -- J = {':move \'>+1<CR>gv-gv', 'move line down'},
-  -- r = {':%s/<C-r><C-w>/hello/c<CR>', 'replace selection'},
   i = {
     name = '+iron/repl',
     s = {':lua require("iron").core.visual_send()<CR>', 'send range'}
@@ -57,11 +54,6 @@ local normal_keymap = {
     S = {"<Cmd>resize +3<CR>", 'grow horizontally'},
     V = {"<Cmd>vertical resize +5<CR>", 'grow vertically'},
   },
-
-  e = {
-    name = '+edit',
-    -- r = {[[y/\V<C-R>=escape(@",'/\')<CR>]], "replace selection"}
-  },
   f = {
     name = '+file',
     g = {"<Cmd>lua require('util').telescope_grep()<CR>", 'grep'},
@@ -71,7 +63,7 @@ local normal_keymap = {
     r = {'<Cmd>Telescope oldfiles<CR>', 'recent'},
     f = {"<Cmd>Telescope file_browser<CR>", 'files'},
     t = {'<Cmd>NvimTreeToggle<CR>', 'file tree'},
-    -- c = {"<Cmd>lua require('telescope.builtin').find_files({ find_command = {'rg', '--hidden', '--files'}})<CR>", 'from cwd'},
+    c = {"<Cmd>lua require('telescope.builtin').find_files({ find_command = {'rg', '--hidden', '--files'}})<CR>", 'from cwd'},
     D = {'<Cmd>call delete(expand("%")) | bdelete!<CR>', 'delete'},
   },
   s = {
@@ -95,13 +87,14 @@ local normal_keymap = {
     name = '+toggle',
     l = {":lua require('util').toggle_line_numbers()<CR>", 'line numbers'},
     x = {'<Cmd>TSContextToggle<CR>', 'context'},
-    c = {":CompletionToggle<CR>", 'completion'},
-    -- i = {":IndentLinesToggle<CR>", 'indent guides'},
-    C = {":ColorizerToggle<CR>", 'colorizer'},
+    C = {":CompletionToggle<CR>", 'completion'},
+    i = {":lua print('NOT IMPLEMENTED')<CR>", 'indent guides'},
+    i = {":lua print('NOT IMPLEMENTED')<CR>", 'indent guides'},
+    c = {":ColorizerToggle<CR>", 'colorizer'},
     R = {":lua require('util').toggle_readonly()<CR>", 'readonly'}, -- needs work
     w = {":set wrap!<CR>", 'word wrap'},
     u = {":UndotreeToggle<CR>", 'undo tree'},
-    --   <leader>tc = comments
+    ['/'] = {":lua print('NOT IMPLEMENTED')<CR>", 'comments'},
   },
   o = {
     name = '+open',
@@ -153,9 +146,6 @@ local normal_keymap = {
     r = {'<Cmd>luafile %<CR>', 'reload file'},
     s = {'<Cmd>PackerSync<CR>', 'sync'},
   },
-  -- p = {
-  --   name = '+project',
-  -- },
   i = {
     name = '+iron/repl',
     r = {'<Cmd>lua require("iron").core.repeat_cmd()<CR>', 'repeat last command'},
@@ -171,7 +161,6 @@ local normal_keymap = {
     q = {'<Cmd>LspStop<CR>', 'stop server'},
     Q = {'<Cmd>LspStart<CR>', 'start server'},
     d = {'<Cmd>Telescope lsp_definitions<CR>', 'definition'},
-    -- TODO: possibly change this for gg=G
     F = {'<cmd>lua vim.lsp.buf.formatting()<CR>', 'format buffer'},
     h = {'<Cmd>lua vim.lsp.buf.hover()<CR>', 'hover'},
     s = {'<Cmd>lua vim.lsp.buf.signature_help()<CR>', 'show signature'},
@@ -181,7 +170,6 @@ local normal_keymap = {
     R = {'<Cmd>lua vim.lsp.buf.rename()<CR>', 'rename'},
     l = {'<Cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', 'diagnose line'},
     D = {'<Cmd>Telescope lsp_document_diagnostics<CR>', 'diagnose'},
-    -- bugged, TODO: needs investigation (multiple of the same reference)
     a = {'<Cmd>Telescope lsp_code_actions<CR>', 'action'},
     -- t = {'<cmd>lua vim.lsp.buf.type_definition()<CR>', 'type definition'},
     -- i = {'<cmd>lua vim.lsp.buf.implementation()<CR>', 'implementation'},
@@ -194,6 +182,12 @@ local normal_keymap = {
       l = {'<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', 'inspect'},
     }
   }
+  -- p = {
+  --   name = '+project',
+  -- },
+  -- e = {
+  --   name = '+edit',
+  -- },
 }
 
 wk.register_keymap('leader', normal_keymap)
