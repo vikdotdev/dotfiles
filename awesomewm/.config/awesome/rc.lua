@@ -244,6 +244,9 @@ globalkeys = gears.table.join(
     awful.key({}, "XF86AudioNext", function () awful.util.spawn("playerctl next") end),
     awful.key({}, "XF86AudioPrev", function () awful.util.spawn("playerctl previous") end),
 
+    awful.key({}, "XF86MonBrightnessUp", function() os.execute("xbacklight -inc 5") end),
+    awful.key({}, "XF86MonBrightnessDown", function() os.execute("xbacklight -dec 5") end),
+
     awful.key({ modkey }, "s", function () awful.spawn.with_shell("s-pa-select-sink") end,
               {description="select audio sink", group="scripts"}),
     awful.key({ modkey }, "space", awful.widget.keyboardlayout().next_layout,

@@ -19,7 +19,18 @@
 # npm i -g vscode-langservers-extracted
 # npm i -g sql-language-server
 # npm install -g yaml-language-server
-# install jq
+
+# add default wallpapers folder to dotfiles?
+# mkdir -p .local/share/wallpapers
+
+# install backlight control to /etc/X11/xorg.conf
+# Section "Device"
+#     Identifier  "Intel Graphics"
+#     Driver      "intel"
+#     Option      "Backlight"  "intel_backlight"
+# EndSection
+~
+~
 #
 # deno
 # curl -fsSL https://deno.land/x/install/install.sh | sh
@@ -108,7 +119,7 @@ function update-system-packages {
 function install-packages {
   print 'installing utils'
 
-  execute-with-password "dnf install -y vim stow imwheel wget unzip xclip git curl clang git-credential-libsecret snapd sensible-browser xdotool"
+  execute-with-password "dnf install -y vim stow imwheel wget unzip xclip git curl clang git-credential-libsecret snapd sensible-browser xdotool git-delta"
   execute-with-password "ln -s /var/lib/snapd/snap /snap"
 }
 
