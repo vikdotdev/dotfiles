@@ -1,12 +1,11 @@
 [user]
 	email = vikdotdev@gmail.com
 	name = Viktor Habchak
+	signingkey = 525FF9AECD3C79C6
 [credential]
-  # on ubuntu
-	# helper = /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret
 	helper = /usr/libexec/git-core/git-credential-libsecret
 [alias]
-  edit-unmerged = "!f() { git diff --name-status --diff-filter=U | cut -f2 ; }; vim `f`"
+  edit-unmerged = "!f() { git diff --name-status --diff-filter=U | cut -f2 ; }; nvim `f`"
   add-unmerged = "!f() { git diff --name-status --diff-filter=U | cut -f2 ; }; git add `f`"
   ci = commit
   st = status
@@ -21,10 +20,9 @@
   authors = log --pretty=format:'%an <%ae>'
 [core]
 	autocrlf = input
-[diff]
-  ; command = git diff --color-words='[^[:space:]]|([[:alnum:]]|UTF_8_GUARD)+'
 [commit]
 	verbose = true
+	gpgsign = true
 [github]
 	user = vikdotdev
 [pager]
@@ -32,12 +30,11 @@
   log = delta
   reflog = delta
   show = delta
-  ; stash = delta
-
 [delta]
   syntax-theme = Dracula
   navigate = true
   side-by-side = true
-
 [interactive]
   diffFilter = delta --color-only -s -n
+[gpg]
+	program = gpg
