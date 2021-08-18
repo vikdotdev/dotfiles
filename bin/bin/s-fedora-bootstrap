@@ -407,8 +407,8 @@ function install-spotify {
 
 function main {
   exit-if-run-as-sudo
-  check-password-correctness
   prepare-log-directory
+  check-password-correctness
   update-system-packages
   install-packages
   configure-gnome
