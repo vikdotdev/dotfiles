@@ -4,7 +4,6 @@ return require('packer').startup(function(use)
   use({
     'nvim-telescope/telescope.nvim',
     requires = {
-      {'nvim-lua/popup.nvim'},
       {'nvim-lua/plenary.nvim'}
     }
   })
@@ -15,11 +14,12 @@ return require('packer').startup(function(use)
   use({'norcalli/nvim-colorizer.lua'})
   use({'windwp/nvim-autopairs'})
   use({'tpope/vim-commentary'})
-  use({'editorconfig/editorconfig-vim'})
+  -- use({'editorconfig/editorconfig-vim'})
   use({'qpkorr/vim-bufkill'})
   use({'drewtempelmeyer/palenight.vim'})
   use({'glepnir/galaxyline.nvim', branch = 'main' })
   use({'nvim-treesitter/nvim-treesitter',
+    ensure_installed = 'maintained',
     run = {':TSUpdate'},
     branch = 'master'})
   use({'romgrk/nvim-treesitter-context'})
@@ -32,6 +32,5 @@ return require('packer').startup(function(use)
   })
   use({'kyazdani42/nvim-tree.lua'})
   use({'tpope/vim-repeat'})
-  use({ 'Shougo/neosnippet.vim' })
-  use({ 'Shougo/neosnippet-snippets', requires = { 'Shougo/neosnippet.vim' } })
+  use({'norcalli/snippets.nvim'})
 end)

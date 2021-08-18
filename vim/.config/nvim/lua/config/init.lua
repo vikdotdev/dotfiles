@@ -23,9 +23,6 @@ vim.o.showtabline = 1
 vim.o.mouse = 'a'
 vim.g.updatetime = 600
 
--- hel
--- require('config/neogit')
-
 vim.cmd('set termguicolors')
 
 require('config/lsp')
@@ -33,7 +30,6 @@ require('config/which-key')
 require('config/colorizer')
 require('config/telescope')
 require('config/iron')
-
 require('config/galaxyline')
 require('config/gitsigns')
 require('config/nvim_tree')
@@ -66,7 +62,6 @@ vim.cmd([[nnoremap Q <nop>]])
 -- vim.cmd [[vnoremap > >gv]]
 
 -- Plugin specific commands
-
 -- vim.api.nvim_set_keymap("n", "<C-o>", "<C-o> <bar> :lua require('util').flash_cursorline()<CR>", { noremap = true })
 -- vim.api.nvim_set_keymap("n", "<C-i>", "<C-i> <bar> :lua require('util').flash_cursorline()<CR>", { noremap = true })
 -- vim.cmd([[nnoremap <C-o> <C-o> :silent! nohls<CR>]])
