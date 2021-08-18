@@ -35,6 +35,10 @@ function Util.shallow_copy(source)
   return target
 end
 
+function Util.is_empty(string)
+  return string == nil or string == ''
+end
+
 function Util.git_path_to_current_repository()
   return vim.api.nvim_call_function('finddir', { '.git/..', vim.fn.expand('%:p:h')..';'})
 end
@@ -127,10 +131,20 @@ function Util.flash_cursorline()
 end
 
 function Util.telescope_git_files()
-  require('telescope.builtin').git_files({
-    prompt_title = '<git files>',
-    cwd = Util.git_path_to_current_repository()
-  })
+  local cwd = Util.git_path_to_current_repository()
+
+  if Util.is_empty(cwd) then 
+    print('Not in git repository. Searching relative to current working directory ' .. vim.fn.getcwd())
+
+    Util.telescope_find_files()
+  else
+    require('telescope.builtin').git_files({ prompt_title = '<git files>', cwd = cwd })
+  end
+
+end
+
+function Util.telescope_find_files()
+  require('telescope.builtin').find_files({ find_command = {'rg', '--hidden', '--files'}})
 end
 
 function Util.telescope_grep(opts)
