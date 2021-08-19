@@ -60,24 +60,17 @@ function parse_git_dirty {
 }
 
 alias ls="ls -hN --color=auto --group-directories-first" \
+  e="exit" \
   ll="ls -l" \
   la="ls -A" \
   lal="ll -A" \
-  mkd="mkdir -pv" \
   grep="grep --color=auto" \
   diff="diff --color=auto" \
-  q="exit" \
-  e="emacs &" \
-  et="emacs -nw" \
-  etc="emacs -nw --with-profile custom" \
-  ed="emacs --eval '(dired \"~\")' &" \
-  etd="emacs -nw --eval '(dired \"~\")'" \
-  mux="tmuxinator" \
-  magit='git rev-parse --git-dir > /dev/null 2>&1 && emacs -nw --eval "(magit-status \"$(git rev-parse --show-toplevel)\")"'
+  mux="tmuxinator"
 
 export TERM=xterm-256color
 
-export PS1="\[\e[33m\]\u\[\e[m\]\[\e[36m\]@\[\e[m\]\[\e[35m\]\h\[\e[m\]: \[\e[32m\]\w\[\e[m\] \[\e[36m\]\\$\[\e[m\] "
+export PS1="\[\e[33m\]\u\[\e[m\]\[\e[36m\]@\[\e[m\]\[\e[35m\]\h\[\e[m\]: \[\e[32m\]\w\[\e[m\] \[\e[m\]\[\e[35m\]`parse_git_branch`\[\e[m\]\[\e[36m\]\\$\[\e[m\] "
 
 export PATH="$PATH:$HOME/bin"
 
