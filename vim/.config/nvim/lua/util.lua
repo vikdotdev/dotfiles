@@ -1,12 +1,12 @@
-local Util = { }
+local Util = {}
 
 function Util.kill_current_buffer()
   vim.api.nvim_buf_delete(0, {})
 end
 
-function Util.merge_tables(a, b)
-  for k,v in pairs(b) do a[k] = v end
-  return a
+function Util.merge_tables(x, y)
+  for key, value in pairs(y) do x[key] = value end
+  return x
 end
 
 function Util.toggle_line_numbers()
@@ -54,15 +54,6 @@ function Util.git_path_to_current_buffer()
   end
 end
 
-function Util.packer_sync()
-  local packer = require('packer')
-
-  -- luafile %
-
-  packer.compile()
-  packer.sync()
-end
-
 function Util.create_augroups(definitions)
   for group_name, definition in pairs(definitions) do
     vim.api.nvim_command('augroup '..group_name)
@@ -97,63 +88,39 @@ function Util.blame_toggle()
       }
     })
   end
-
-end
-
-function Util.set_alternate_buffer()
-  if string.len(vim.fn.expand('#')) == 0 then
-
-  else
-  end
-end
-
-function Util.flash_cursorline()
-  vim.cmd([[hi CursorFlash guifg=#aaafef guibg=#0a8e8f]])
-
-  local window = vim.api.nvim_win_get_number(0)
-  local ns_id = vim.api.nvim_create_namespace('flash_cursor')
-  local current_lnum = vim.api.nvim__buf_stats(0)['current_lnum'] - 1
-
-  -- vim.fn.timer_stopall()
-  vim.api.nvim_buf_add_highlight(window, ns_id, 'CursorFlash', current_lnum, 0, -1)
-  local timer_id = vim.fn.timer_start(600, function()
-    vim.api.nvim_buf_clear_namespace(window, ns_id, 0, -1)
-  end)
-  -- print(vim.inspect(vim.fn.timer_info(timer_id)))
-
-
-  -- local initial = vim.api.nvim_get_hl_by_name('cursorline', true)
-  -- print(vim.inspect(vim.api.nvim_get_hl_by_name('cursorline', true)))
-  -- vim.api.nvim_set_hl(43, 'CursorLine', { background = 2896444 })
-  -- vim.cmd([[hi CursorLine guifg=#000000 guibg=#ffffff]])
-  --
-  -- print(vim.inspect(vim.api.nvim__buf_stats(0)))
 end
 
 function Util.telescope_git_files()
   local cwd = Util.git_path_to_current_repository()
 
-  if Util.is_empty(cwd) then 
-    print('Not in git repository. Searching relative to current working directory ' .. vim.fn.getcwd())
+  if Util.is_empty(cwd) then
+    cwd = vim.fn.getcwd()
+    print('Not in git repository. Searching relative to current working directory ' .. cwd)
 
-    Util.telescope_find_files()
+    Util.telescope_find_files(cwd)
   else
+    print('Searching in ' .. cwd)
     require('telescope.builtin').git_files({ prompt_title = '<git files>', cwd = cwd })
   end
-
 end
 
-function Util.telescope_find_files()
-  require('telescope.builtin').find_files({ find_command = {'rg', '--hidden', '--files'}})
+function Util.telescope_find_files(cwd)
+  if Util.is_empty(cwd) then cwd = vim.fn.getcwd() end
+  require('telescope.builtin').find_files({ cwd = cwd,
+    find_command = {'rg', '--hidden', '--files'}})
 end
 
 function Util.telescope_grep(opts)
+  local cwd = Util.git_path_to_current_repository()
+
+  if Util.is_empty(cwd) then cwd = vim.fn.getcwd() end
+
+  print('Searching in ' .. cwd)
+
   if opts == nil then opts = {} end
+
   require('telescope.builtin').live_grep(
-    Util.merge_tables(opts, {
-      prompt_title = '<git grep>',
-      cwd = Util.git_path_to_current_repository()
-    })
+    Util.merge_tables(opts, { prompt_title = '<git grep>', cwd = cwd })
   )
 end
 
@@ -184,6 +151,45 @@ end
 --     return csrow - 1, cscol - 1, cerow - 1, cecol
 --   else
 --     return cerow - 1, cecol - 1, csrow - 1, cscol
+--   end
+-- end
+
+-- function Util.packer_sync()
+--   local packer = require('packer')
+
+--   -- luafile %
+
+--   packer.compile()
+--   packer.sync()
+-- end
+
+--function Util.flash_cursorline()
+--  vim.cmd([[hi CursorFlash guifg=#aaafef guibg=#0a8e8f]])
+
+--  local window = vim.api.nvim_win_get_number(0)
+--  local ns_id = vim.api.nvim_create_namespace('flash_cursor')
+--  local current_lnum = vim.api.nvim__buf_stats(0)['current_lnum'] - 1
+
+--  -- vim.fn.timer_stopall()
+--  vim.api.nvim_buf_add_highlight(window, ns_id, 'CursorFlash', current_lnum, 0, -1)
+--  local timer_id = vim.fn.timer_start(600, function()
+--    vim.api.nvim_buf_clear_namespace(window, ns_id, 0, -1)
+--  end)
+--  -- print(vim.inspect(vim.fn.timer_info(timer_id)))
+
+
+--  -- local initial = vim.api.nvim_get_hl_by_name('cursorline', true)
+--  -- print(vim.inspect(vim.api.nvim_get_hl_by_name('cursorline', true)))
+--  -- vim.api.nvim_set_hl(43, 'CursorLine', { background = 2896444 })
+--  -- vim.cmd([[hi CursorLine guifg=#000000 guibg=#ffffff]])
+--  --
+--  -- print(vim.inspect(vim.api.nvim__buf_stats(0)))
+--end
+
+-- function Util.set_alternate_buffer()
+--   if string.len(vim.fn.expand('#')) == 0 then
+
+--   else
 --   end
 -- end
 
