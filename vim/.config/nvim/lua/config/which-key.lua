@@ -130,9 +130,6 @@ local normal_keymap = {
     d = {":BD<CR>", 'delete'},
     k = {":BW<CR>", 'wipe'},
   },
-  n = {
-    name = '+notes',
-  },
   h = {
     name = '+help',
     t = {'<Cmd>Telescope help_tags<CR>', 'tags'},
@@ -190,6 +187,9 @@ local normal_keymap = {
   -- },
   -- e = {
   --   name = '+edit',
+  -- },
+  -- n = {
+  --   name = '+notes',
   -- },
 }
 

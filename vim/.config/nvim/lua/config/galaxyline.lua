@@ -245,6 +245,16 @@ gls.right[6] = {
 }
 
 gls.right[7] = {
+  LineInfo = {
+    provider = 'LineColumn',
+    highlight = { colors.fg, colors.bg },
+    condition = function() return width_above(45) end,
+    separator = ' ',
+    separator_highlight = { colors.bg, colors.bg },
+  }
+}
+
+gls.right[8] = {
   PerCent = {
     provider = "LinePercent",
     separator = " ",
@@ -253,7 +263,7 @@ gls.right[7] = {
   }
 }
 
-gls.right[8] = {
+gls.right[9] = {
   rightRounded = {
     provider = function() return "  " end,
     highlight = {colors.fg, colors.bg}

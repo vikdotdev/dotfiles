@@ -8,7 +8,7 @@ return require('packer').startup(function(use)
   use({'AckslD/nvim-whichkey-setup.lua', requires = {'liuchengxu/vim-which-key'}})
   use({'norcalli/nvim-colorizer.lua'})
   use({'windwp/nvim-autopairs'})
-  -- TODO: replace with terrortylor/nvim-comment
+  -- TODO: replace with terrortylor/nvim-comment ?
   use({'tpope/vim-commentary'})
   -- use({'editorconfig/editorconfig-vim'})
   use({'qpkorr/vim-bufkill'})
