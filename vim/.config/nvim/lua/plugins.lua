@@ -1,18 +1,14 @@
 return require('packer').startup(function(use)
   use({'wbthomason/packer.nvim'})
-  use({ 'hkupty/iron.nvim', config = [[require('config.iron')]] })
-  use({
-    'nvim-telescope/telescope.nvim',
-    requires = {
-      {'nvim-lua/plenary.nvim'}
-    }
-  })
+  use({'hkupty/iron.nvim', config = [[require('config.iron')]] })
+  use({'nvim-telescope/telescope.nvim', requires = {'nvim-lua/plenary.nvim'}})
   use({'neovim/nvim-lspconfig'})
   use({'nvim-lua/completion-nvim'})
   -- TODO: replace with folke/which-key.nvim
   use({'AckslD/nvim-whichkey-setup.lua', requires = {'liuchengxu/vim-which-key'}})
   use({'norcalli/nvim-colorizer.lua'})
   use({'windwp/nvim-autopairs'})
+  -- TODO: replace with terrortylor/nvim-comment
   use({'tpope/vim-commentary'})
   -- use({'editorconfig/editorconfig-vim'})
   use({'qpkorr/vim-bufkill'})

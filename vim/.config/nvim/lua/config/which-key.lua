@@ -58,6 +58,7 @@ local normal_keymap = {
     name = '+file',
     g = {"<Cmd>lua require('util').telescope_grep()<CR>", 'grep'},
     G = {"<Cmd>lua require('util').telescope_grep({ grep_open_files = true })<CR>", 'grep open files'},
+    -- a = {"<Cmd>lua require('util').telescope_grep({ grep_open_files = true })<CR>", 'grep all files'},
     s = {'<Cmd>w!<CR>', 'save'},
     l = {'<Cmd>NvimTreeFindFile<CR>', 'locate'},
     r = {'<Cmd>Telescope oldfiles<CR>', 'recent'},
