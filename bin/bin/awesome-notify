@@ -1,0 +1,23 @@
+#!/bin/bash
+
+while getopts t:b:h: flag
+do
+  case "${flag}" in
+    t) title=${OPTARG};;
+    b) body=${OPTARG};;
+  esac
+done
+
+[ -z "$body" ] && echo 'No body provided. Aborting' && exit 1
+
+awesome-client "
+  local naughty = require('naughty')
+
+  _notification = naughty.notify({
+    replaces_id = (_notification and _notification.id or nil),
+    title    = '$title',
+    position = 'top_middle',
+    text     = '$body',
+    timeout  = 2,
+  })
+"
