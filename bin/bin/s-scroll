@@ -1,8 +1,8 @@
 #!/bin/bash
 
-if [ -x "$(command -v imwheel)" ]; then
+if [ -x "$(command -v imwheel)" ] && [ "$(hostname)" == "$DESKTOP_HOSTNAME" ]; then
   pgrep imwheel && pgrep imwheel | xargs kill
   imwheel
 else
-  echo 'No imwheel binary found' 
+  echo 'No imwheel binary found'
 fi
