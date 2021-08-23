@@ -89,6 +89,10 @@ require'lspconfig'.html.setup {
 
 require'lspconfig'.yamlls.setup{}
 
+require'lspconfig'.diagnosticls.setup{}
+
+require'lspconfig'.dockerls.setup{}
+
 -- require'lspconfig'.sqlls.setup{
 --   cmd = {"sql-language-server", "up", "--method", "stdio"};
 -- }
