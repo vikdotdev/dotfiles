@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Made obsolete by KMonad.
+
 if [ -x "$(command -v xcape)" ] && [ "$(hostname)" == "$LAPTOP_HOSTNAME" ]; then
   if setxkbmap -query | (! grep "ctrl:nocaps"); then
     # make capslock behave like ctrl:

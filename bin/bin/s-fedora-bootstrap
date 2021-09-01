@@ -119,7 +119,7 @@ function update-system-packages {
 function install-packages {
   print 'installing utils'
 
-  execute-with-password "dnf install -y vim stow imwheel wget unzip xclip git curl clang git-credential-libsecret snapd sensible-browser xdotool git-delta screenkey compton"
+  execute-with-password "dnf install -y vim stow imwheel wget unzip xclip git curl clang git-credential-libsecret snapd sensible-browser xdotool git-delta screenkey compton stack"
   execute-with-password "ln -s /var/lib/snapd/snap /snap"
 }
 
@@ -405,6 +405,29 @@ function install-spotify {
   secret-tool store --label='name you choose' application rust-keyring service spotifyd username lm31qi6j0fxd1s24bbs5spni5
 }
 
+function install-kmonad {
+  if [ -x "$(command -v kmonad)" ]; then
+    skip 'kmonad binary found'
+  else
+    execute-with-password "usermod -aG input $USER"
+    execute-with-password "groupadd uinput"
+    execute-with-password "usermod -aG uinput $USER"
+    echo 'KERNEL=="uinput", MODE="0660", GROUP="uinput", OPTIONS+="static_node=uinput"' | execute-with-password "tee /etc/udev/rules.d/90-uinput.rules"
+
+    # This seems to be needed because uinput isn't compiled as a loadable module these days.
+    # See https://github.com/chrippa/ds4drv/issues/93#issuecomment-265300511
+    echo uinput | execute-with-password "tee /etc/modules-load.d/uinput.conf"
+
+    execute '[ ! -d "$HOME/Repositories" ] && mkdir ~/Repositories'
+    execute "cd ~/Repositories"
+    execute "git clone https://github.com/kmonad/kmonad.git"
+    execute "cd kmonad"
+
+    execute "stack install"
+    execute "systemctl --user start --now kmonad.service"
+  fi
+}
+
 function main {
   exit-if-run-as-sudo
   prepare-log-directory
@@ -431,6 +454,7 @@ function main {
   change-hostname
   install-gui-packages
   install-spotify
+  install-kmonad
 
   print "Done."
 }

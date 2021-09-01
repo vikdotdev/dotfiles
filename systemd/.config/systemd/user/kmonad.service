@@ -1,0 +1,10 @@
+[Unit]
+Description=Launch KMonad
+
+[Service]
+Type=simple
+StandardOutput=journal
+ExecStart=/bin/bash -c "%h/.local/bin/kmonad %h/.config/kmonad/laptop.kbd"
+
+[Install]
+WantedBy=default.target
