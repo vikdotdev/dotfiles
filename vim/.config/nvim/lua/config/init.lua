@@ -51,24 +51,11 @@ vim.cmd(':tnoremap <Esc> <C-\\><C-n>')
 vim.cmd("autocmd VimResized * wincmd =")
 vim.cmd([[nnoremap <Esc> :silent! nohls<CR>]])
 vim.cmd([[vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>]])
-vim.cmd([[au WinEnter * setlocal cursorline]])
-vim.cmd([[au WinLeave * setlocal nocursorline]])
 vim.cmd([[autocmd! WinEnter * setlocal nowinfixheight]])
 vim.cmd([[nnoremap Q <nop>]])
-vim.cmd([[autocmd BufWritePre * %s/\s\+$//e]]) -- deletes trailing whitespace
--- vim.cmd([[nnoremap o <CR><C-w>p]])
+vim.cmd([[autocmd BufWritePre * %s/\s\+$//e]])
 -- vim.cmd([[nnoremap ya :silent! ggyG<C-o><CR>]])
--- vim.cmd('set autochdir')
--- vim.cmd [[vnoremap < <gv]]
--- vim.cmd [[vnoremap > >gv]]
-
--- Plugin specific commands
--- vim.api.nvim_set_keymap("n", "<C-o>", "<C-o> <bar> :lua require('util').flash_cursorline()<CR>", { noremap = true })
--- vim.api.nvim_set_keymap("n", "<C-i>", "<C-i> <bar> :lua require('util').flash_cursorline()<CR>", { noremap = true })
--- vim.cmd([[nnoremap <C-o> <C-o> :silent! nohls<CR>]])
--- vim.cmd([[au WinEnter * lua require('util').flash_cursorline()]])
 vim.cmd("autocmd BufEnter * lua require('completion').on_attach()")
-vim.cmd("autocmd User Startified setlocal cursorline")
 vim.cmd([[set completeopt=menuone,noinsert,noselect]])
 vim.cmd([[inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<Tab>"]])
 vim.cmd([[inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<S-Tab>"]])
@@ -76,5 +63,13 @@ vim.cmd([[imap <tab> <Plug>(completion_smart_tab)]])
 vim.cmd([[imap <silent> <C-Space> <Plug>(completion_trigger)]])
 vim.cmd([[au FileType html let b:AutoPairs = AutoPairsDefine({'<!--' : '-->'}, ['{'])]])
 vim.cmd([[au FileType eruby let b:AutoPairs = AutoPairsDefine({'<%' : '%>'})]])
--- vim.cmd [[set foldmethod=expr]]
--- vim.cmd [[set foldexpr=nvim_treesitter#foldexpr()]]
+
+require('util').create_augroups({
+  CursorLine = {
+    "VimEnter * setlocal cursorline",
+    "WinEnter * setlocal cursorline",
+    "BufWinEnter * setlocal cursorline",
+    "WinLeave * setlocal nocursorline"
+  }
+})
+
