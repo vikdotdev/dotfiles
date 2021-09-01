@@ -1,4 +1,5 @@
-keycode 21  = grave asciitilde grave asciitilde
-keycode 49  = equal plus equal plus
-keycode 133 = Tab ISO_Left_Tab Tab ISO_Left_Tab
-keycode 23  = Super_L NoSymbol Super_L
+! Made obsolete by KMonad
+! keycode 21  = grave asciitilde grave asciitilde
+! keycode 49  = equal plus equal plus
+! keycode 133 = Tab ISO_Left_Tab Tab ISO_Left_Tab
+! keycode 23  = Super_L NoSymbol Super_L

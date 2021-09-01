@@ -424,6 +424,7 @@ function install-kmonad {
     execute "cd kmonad"
 
     execute "stack install"
+    execute "systemctl --user start --now kmonad.service"
   fi
 }
 
