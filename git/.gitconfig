@@ -22,7 +22,7 @@
 	autocrlf = input
 [commit]
 	verbose = true
-	gpgsign = true
+	; gpgsign = true
 [github]
 	user = vikdotdev
 [pager]
