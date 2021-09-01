@@ -70,7 +70,7 @@ alias ls="ls -hN --color=auto --group-directories-first" \
 
 export TERM=xterm-256color
 
-export PS1="\[\e[33m\]\u\[\e[m\]\[\e[36m\]@\[\e[m\]\[\e[35m\]\h\[\e[m\]: \[\e[32m\]\w\[\e[m\] \[\e[m\]\[\e[35m\]`parse_git_branch`\[\e[m\]\[\e[36m\]\\$\[\e[m\] "
+export PS1='\[\e[33m\]\u\[\e[m\]\[\e[36m\]@\[\e[m\]\[\e[35m\]\h\[\e[m\]: \[\e[32m\]\w\[\e[m\] \[\e[m\]\[\e[35m\]$(parse_git_branch)\[\e[m\]\[\e[36m\]\\$\[\e[m\] '
 
 export PATH="$PATH:$HOME/bin"
 
