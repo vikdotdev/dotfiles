@@ -1,10 +1,12 @@
 [Unit]
 Description=Launch Redshift
+After=graphical-session.target
 
 [Service]
 Type=simple
 StandardOutput=journal
 ExecStart=/usr/bin/redshift
+Restart=always
 
 [Install]
-WantedBy=default.target
+WantedBy=graphical-session.target
