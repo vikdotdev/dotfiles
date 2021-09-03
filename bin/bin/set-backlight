@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Author: Viktor Habchak <vikdotdev@gmail.com>
+
+while getopts i:d: flag
+do
+  case "${flag}" in
+    i) INC_BY=${OPTARG};;
+    d) DEC_BY=${OPTARG};;
+  esac
+done
+
+[ ! -x "$(command -v xbacklight)" ] && [ ! "$(hostname)" == "$LAPTOP_HOSTNAME" ] && echo 'xbacklight is not on PATH' && exit 1
+
+UPPER_BOUND=100
+LOWER_BOUND=1
+
+if [ ! -z "$INC_BY" ]; then
+  xbacklight -inc $INC_BY
+elif [ ! -z "$DEC_BY" ]; then
+  if (( $(echo "$(xbacklight -get) > $DEC_BY" | bc -l) )); then
+    xbacklight -dec $DEC_BY
+  else
+    xbacklight -set $LOWER_BOUND
+  fi
+fi
