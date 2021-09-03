@@ -44,8 +44,12 @@ function Util.git_path_to_current_repository()
 end
 
 function Util.git_path_to_current_buffer()
-  local root_to_repo = Util.git_path_to_current_repository() .. '/'
+  local root_to_repo = Util.git_path_to_current_repository()
   local full_path = vim.fn.expand('%:p')
+
+  if Util.is_empty(root_to_repo) then return full_path end
+
+  root_to_repo = root_to_repo .. '/'
 
   if string.match(full_path, root_to_repo) then
     return string.gsub(full_path, root_to_repo, '') or ''
