@@ -79,6 +79,7 @@ local normal_keymap = {
   y = {
     name = '+yank',
     p = {"<Cmd>lua require('util').yank_filepath()<CR>", 'absolute path'},
+    d = {"<Cmd>lua require('util').yank_dirpath()<CR>", 'absolute dir path'},
     f = {"<Cmd>lua require('util').yank_filename()<CR>", 'file name'},
     r = {"<Cmd>lua require('util').yank_filepath_from_repo()<CR>", 'repo file path'},
   },
