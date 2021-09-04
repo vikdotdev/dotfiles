@@ -74,6 +74,7 @@ local normal_keymap = {
     c = {'<Cmd>Telescope commands<CR>', 'commands'},
     h = {'<Cmd>Telescope command_history<CR>', 'history'},
     b = {'<Cmd>Telescope current_buffer_fuzzy_find<CR>', 'current buffer'},
+    l = {"<Cmd>lua require('telescope.builtin').resume()<CR>", 'resume last'},
   },
   y = {
     name = '+yank',
