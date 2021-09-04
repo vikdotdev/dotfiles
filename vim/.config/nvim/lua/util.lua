@@ -132,6 +132,10 @@ function Util.yank_filepath()
   Util.copy_to_clipboard(vim.fn.expand('%:p'))
 end
 
+function Util.yank_dirpath()
+  Util.copy_to_clipboard(vim.fn.expand('%:p:h'))
+end
+
 function Util.yank_filename()
   Util.copy_to_clipboard(vim.fn.expand('%:t'))
 end
