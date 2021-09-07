@@ -66,7 +66,9 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   lal="ll -A" \
   grep="grep --color=auto" \
   diff="diff --color=auto" \
-  mux="tmuxinator"
+  t="tmuxinator" \
+  open="xdg-open" \
+  o="xdg-open"
 
 export TERM=xterm-256color
 
