@@ -1,18 +1,3 @@
-draw_bold_text_with_bright_colors: true
-key_bindings:
-  - key: P
-    mods: Control
-    action: Paste
-  - key: Y
-    mods: Control
-    action: Copy
-font:
-  normal:
-    family: Iosevka
-    style: Regular
-  bold:
-    family: Iosevka
-    style: Bold
 colors:
   primary:
     background: '#282a36'

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+setfont /lib/kbd/consolefonts/solar24x32.psfu.gz

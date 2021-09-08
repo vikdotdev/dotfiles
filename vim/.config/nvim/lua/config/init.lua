@@ -36,6 +36,7 @@ require('config/nvim_tree')
 require('config/startify')
 require('config/treesitter')
 require('config/autopairs')
+require('config/theme')
 
 vim.cmd('au TextYankPost * lua vim.highlight.on_yank {on_visual = false}')
 vim.cmd('syntax enable')
@@ -63,6 +64,7 @@ vim.cmd([[imap <tab> <Plug>(completion_smart_tab)]])
 vim.cmd([[imap <silent> <C-Space> <Plug>(completion_trigger)]])
 vim.cmd([[au FileType html let b:AutoPairs = AutoPairsDefine({'<!--' : '-->'}, ['{'])]])
 vim.cmd([[au FileType eruby let b:AutoPairs = AutoPairsDefine({'<%' : '%>'})]])
+vim.cmd([[autocmd Signal SIGUSR1 lua print('Whoa, signal received!')]])
 
 require('util').create_augroups({
   CursorLine = {

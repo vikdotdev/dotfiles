@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+
+NVIM_THEME = { light: 'PaperColor', dark: 'palenight' }
+VARIANT = ARGV.first&.to_sym
+
+system <<~EOS
+for sid in $(tmux list-sessions | cut -d ':' -f 1); do
+  for wid in $(tmux list-windows -t $sid | cut -d ':' -f 1); do
+    for pix in $(tmux list-panes -t $wid -F '\#{pane_id}:\#{pane_tty}'); do
+      paneid=$(echo $pix | cut -d ':' -f 1)
+      panetty=$(echo $pix | cut -d ':' -f 2)
+      for tty in $(echo $panetty); do
+        lsof $tty | cut -d ' ' -f 1 | grep -E 'nvim' > /dev/null 2>&1 && {
+          tmux send-keys -t $paneid escape ENTER
+          tmux send-keys -t $paneid ':colorscheme #{NVIM_THEME[VARIANT]}' ENTER
+          #{VARIANT == :light && "tmux send-keys -t $paneid ':set bg=light' ENTER"}
+        }
+      done
+    done
+  done
+done
+EOS
+
+system <<~EOS
+cat ~/.config/alacritty/general.yml ~/.config/alacritty/theme-#{VARIANT}.yml > ~/.config/alacritty/alacritty.yml
+EOS
+
+# `tmux setw -g window-active-style fg='#333333',bg='#b7b7b7'`
+# `tmux setw -g window-style fg='#333333',bg='#b7b7b7'`
+
+

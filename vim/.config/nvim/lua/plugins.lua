@@ -13,6 +13,7 @@ return require('packer').startup(function(use)
   -- use({'editorconfig/editorconfig-vim'})
   use({'qpkorr/vim-bufkill'})
   use({'drewtempelmeyer/palenight.vim'})
+  use({'NLKNguyen/papercolor-theme'})
   use({'glepnir/galaxyline.nvim', branch = 'main' })
   use({'nvim-treesitter/nvim-treesitter',
     ensure_installed = 'maintained',

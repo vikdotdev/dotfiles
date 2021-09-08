@@ -5,6 +5,8 @@ export GIT_EDITOR="$EDITOR"
 export DESKTOP_HOSTNAME="umbra"
 export LAPTOP_HOSTNAME="pad"
 
+export CURRENT_THEME_PATH="$HOME/.local/current_theme"
+
 # less/man colors
 export LESS='-R --mouse --wheel-lines=3'
 export LESS_TERMCAP_mb="$(printf '%b' '[1;31m')"; a="${a%_}"
