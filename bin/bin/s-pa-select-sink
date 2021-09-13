@@ -14,3 +14,5 @@ SINK_ID=`pactl list sinks short | grep "${device_mapping["$DEVICE"]}" | cut -f 1
 notify-send "Selecting $DEVICE as default audio sink."
 
 pactl set-default-sink "$SINK_ID"
+
+[ -x "$(command -v pulseeffects)" ] && pulseeffects -r
