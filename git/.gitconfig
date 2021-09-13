@@ -13,10 +13,12 @@
   co = checkout
   fe = fetch
   cl = clean
-  cherry = cherry-pick
+  rs = restore
+  rb = rebase
+  pu = pull
+  pf = push --force-with-lease
+  cp = cherry-pick
   di = diff
-  dif = diff
-  res = restore
   authors = log --pretty=format:'%an <%ae>'
 [core]
 	autocrlf = input
