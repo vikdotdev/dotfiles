@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# Used to mimic a directory structure with fake empty files.
+
+shopt -s globstar
+
+while getopts s:d: flag
+do
+  case "${flag}" in
+    s) source=${OPTARG};;
+    d) destination=${OPTARG};;
+  esac
+done
+
+[ -z "$source" ] && echo 'No source provided. Aborting' && exit 1
+[ -z "$destination" ] && echo 'No destination provided. Aborting' && exit 1
+
+PREVLOCATION="$(pwd)"
+cd "$source"
+
+find . -type d -exec mkdir -p "$PREVLOCATION/$destination/"{} \;
+find . -type f -exec touch "$PREVLOCATION/$destination/"{} \;
