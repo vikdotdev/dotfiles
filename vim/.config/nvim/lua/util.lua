@@ -149,6 +149,16 @@ function Util.copy_to_clipboard(value)
   print('Copied to clipboard ' .. value)
 end
 
+function Util.toggle_spell()
+  if vim.api.nvim_exec([[setlocal spell?]], true) == 'nospell' then
+    vim.cmd([[setlocal spell]])
+    print('Spell check is on')
+  else
+    vim.cmd([[setlocal nospell]])
+    print('Spell check is off')
+  end
+end
+
 --- Get a ts compatible range of the current visual selection.
 --
 -- The range of ts nodes start with 0 and the ending range is exclusive.

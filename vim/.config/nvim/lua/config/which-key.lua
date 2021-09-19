@@ -99,6 +99,7 @@ local normal_keymap = {
     R = {":lua require('util').toggle_readonly()<CR>", 'readonly'}, -- needs work
     w = {":set wrap!<CR>", 'word wrap'},
     u = {":UndotreeToggle<CR>", 'undo tree'},
+    s = {":lua require('util').toggle_spell()<CR>", 'spell check'},
     ['/'] = {":lua print('NOT IMPLEMENTED')<CR>", 'comments'},
   },
   o = {
