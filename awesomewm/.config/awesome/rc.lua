@@ -5,6 +5,8 @@ pcall(require, "luarocks.loader")
 -- Standard awesome library
 local gears = require("gears")
 local awful = require("awful")
+local battery_widget = require("awesome-wm-widgets.battery-widget.battery")
+local brightness_widget = require("awesome-wm-widgets.brightness-widget.brightness")
 require("awful.autofocus")
 
 -- Widget and layout library
@@ -108,6 +110,16 @@ awful.layout.layouts = {
 
 -- Keyboard map indicator and switcher
 mykeyboardlayout = awful.widget.keyboardlayout()
+volume_widget = wibox.widget{
+    -- markup = os.execute([[pactl list sinks | egrep "^.Volume"]]),
+    -- text = awful.spawn([[pactl list sinks | egrep "^.Volume"]]),
+    text = awful.spawn.easy_async_with_shell([[echo $EDITOR]], function(stdout, a, b, c)
+      return c
+    end),
+    align  = 'center',
+    valign = 'center',
+    widget = wibox.widget.textbox
+}
 
 -- {{{ Wibar
 -- Create a textclock widget
@@ -215,6 +227,13 @@ awful.screen.connect_for_each_screen(function(s)
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             mykeyboardlayout,
+            battery_widget(),
+            volume_widget,
+            awful.widget.watch([[pactl sinks list ]]),
+            -- brightness_widget{
+            --     type = 'icon_and_text',
+            --     program = 'xbacklight',
+            -- },
             wibox.widget.systray(),
             mytextclock,
             s.mylayoutbox,
