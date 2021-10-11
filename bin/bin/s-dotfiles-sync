@@ -6,7 +6,7 @@ DIRS=$(ls "$DOTFILES_FOLDER" -I "$IGNORED_FILES")
 [[ ! -d "$DOTFILES_FOLDER" ]] && echo 'No ~/Repositories/dotfiles directory found.' && exit 1
 if [ -x "$(command -v stow)" ]; then
   echo "Stowing ..."
-  stow --verbose=1 --dir="$DOTFILES_FOLDER" --target="$HOME" $@ $DIRS
+  stow --no-folding --verbose=1 --dir="$DOTFILES_FOLDER" --target="$HOME" $@ $DIRS
 else
   echo 'GNU stow not found. Aborting'
 fi
