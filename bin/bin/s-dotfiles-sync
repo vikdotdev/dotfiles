@@ -1,9 +1,9 @@
 #!/bin/bash
 
-DOTFILES_FOLDER="$HOME/Repositories/dotfiles"
+DOTFILES_FOLDER="$HOME/repos/dotfiles"
 IGNORED_FILES="README.md"
 DIRS=$(ls "$DOTFILES_FOLDER" -I "$IGNORED_FILES")
-[[ ! -d "$DOTFILES_FOLDER" ]] && echo 'No ~/Repositories/dotfiles directory found.' && exit 1
+[[ ! -d "$DOTFILES_FOLDER" ]] && echo 'No ~/repos/dotfiles directory found.' && exit 1
 if [ -x "$(command -v stow)" ]; then
   echo "Stowing ..."
   stow --no-folding --verbose=1 --dir="$DOTFILES_FOLDER" --target="$HOME" $@ $DIRS
