@@ -63,12 +63,18 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   e="exit" \
   ll="ls -l" \
   la="ls -A" \
-  lal="ll -A" \
   grep="grep --color=auto" \
   diff="diff --color=auto" \
-  t="tmuxinator" \
+  t="tmux" \
+  tt="tmuxinator" \
+  o="xdg-open" \
   open="xdg-open" \
-  o="xdg-open"
+  y="xclip -selection clipboard" \
+  yank="xclip -selection clipboard"
+
+gotoroot() {
+  \cd "$(git rev-parse --show-toplevel)"
+}
 
 export TERM=xterm-256color
 

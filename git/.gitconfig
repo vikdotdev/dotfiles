@@ -19,6 +19,7 @@
   pf = push --force-with-lease
   cp = cherry-pick
   di = diff
+  root = rev-parse --show-toplevel
   authors = log --pretty=format:'%an <%ae>'
 [core]
 	autocrlf = input
