@@ -10,7 +10,7 @@ require('lspconfig').solargraph.setup({
 
 require('lspconfig').clangd.setup({})
 
-local sumneko_root_path = vim.fn.stdpath('cache')..'/../../Repositories/lua-language-server'
+local sumneko_root_path = vim.fn.stdpath('cache')..'/../../repos/lua-language-server'
 local sumneko_binary = sumneko_root_path.."/bin/Linux/lua-language-server"
 
 require('lspconfig').sumneko_lua.setup({
