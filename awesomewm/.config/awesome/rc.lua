@@ -452,7 +452,7 @@ awful.rules.rules = {
     -- All clients will match this rule.
     { rule = { },
       -- properties = { border_width = beautiful.border_width,
-      properties = { border_width = 4,
+      properties = { border_width = 2,
                      border_color = beautiful.border_normal,
                      focus = awful.client.focus.filter,
                      raise = true,
@@ -573,6 +573,13 @@ end)
 -- Enable sloppy focus, so that focus follows mouse.
 client.connect_signal("mouse::enter", function(c)
     c:emit_signal("request::activate", "mouse_enter", {raise = false})
+end)
+
+client.connect_signal("focus", function(c)
+  c.opacity=0.95
+end)
+client.connect_signal("unfocus", function(c)
+  c.opacity=0.85
 end)
 
 -- broken this when using a mouse and changing workspaces
