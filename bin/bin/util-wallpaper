@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-WALLPAPER_PATH="/home/$USER/Pictures/wallpapers/"
+WALLPAPER_PATH="$(xdg-user-dir PICTURES)/wallpapers/"
 
 mkdir -p "$WALLPAPER_PATH"
 
