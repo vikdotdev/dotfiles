@@ -85,4 +85,6 @@ export PATH="$PATH:$HOME/bin"
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 export PATH="$HOME/.rvm/bin:$PATH" # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 
+# Disable a propmt to install a command if not found
+unset command_not_found_handle
 alias luamake=/home/vik/repos/lua-language-server/3rd/luamake/luamake
