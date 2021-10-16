@@ -237,17 +237,17 @@ root.buttons(gears.table.join(
 -- todo add playerctl to install script/essential packages
 globalkeys = gears.table.join(
     -- Audio keys
-    awful.key({}, "XF86AudioRaiseVolume", function() os.execute("s-pa-volume +5%") end),
-    awful.key({}, "XF86AudioLowerVolume", function() os.execute("s-pa-volume -5%") end),
+    awful.key({}, "XF86AudioRaiseVolume", function() os.execute("util-volume +5%") end),
+    awful.key({}, "XF86AudioLowerVolume", function() os.execute("util-volume -5%") end),
     awful.key({}, "XF86AudioMute", function() os.execute("pactl set-sink-mute @DEFAULT_SINK@ toggle") end),
     awful.key({}, "XF86AudioPlay", function () awful.util.spawn("playerctl play-pause") end),
     awful.key({}, "XF86AudioNext", function () awful.util.spawn("playerctl next") end),
     awful.key({}, "XF86AudioPrev", function () awful.util.spawn("playerctl previous") end),
 
-    awful.key({}, "XF86MonBrightnessUp", function() os.execute("set-backlight -i 10") end),
-    awful.key({}, "XF86MonBrightnessDown", function() os.execute("set-backlight -d 10") end),
+    awful.key({}, "XF86MonBrightnessUp", function() os.execute("util-backlight -i 5") end),
+    awful.key({}, "XF86MonBrightnessDown", function() os.execute("util-backlight -d 5") end),
 
-    awful.key({ modkey }, "s", function () awful.spawn.with_shell("s-pa-select-sink") end,
+    awful.key({ modkey }, "s", function () awful.spawn.with_shell("util-rofi-sink") end,
               {description="select audio sink", group="scripts"}),
     awful.key({ modkey }, "space", awful.widget.keyboardlayout().next_layout,
               {description="toggle language layout", group="awesome"}),

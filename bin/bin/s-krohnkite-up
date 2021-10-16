@@ -1,4 +1,0 @@
-#!/bin/bash
-
-qdbus org.kde.kglobalaccel /component/kwin invokeShortcut 'Krohnkite: Up/Prev'
-s-mousefocus
