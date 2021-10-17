@@ -1,16 +1,14 @@
-local wk = require('whichkey_setup')
+local wk = require('which-key')
 
-vim.g.which_key_disable_default_offset = true
-
-wk.config({
-  hide_statusline = false,
-  default_keymap_settings = {
-    silent = true,
-    noremap = true,
-  },
+wk.setup({
+  plugins = {
+    spelling = {
+      enabled = true,
+      suggestions = 20
+    }
+  }
 })
 
--- NOTE: <Cmd> does not work in visual mode, use : instead
 local visual_keymap = {
   i = {
     name = '+iron/repl',
@@ -27,6 +25,7 @@ local visual_keymap = {
 }
 
 local normal_keymap = {
+  ['!'] = 'which_key_ignore', -- temporary, until bufkill is getting fixed
   ['<leader>'] = {"<Cmd>lua require('util').telescope_git_files()<CR>", 'file find'},
   q = {
     name = '+quit/session',
@@ -58,7 +57,6 @@ local normal_keymap = {
     name = '+file',
     g = {"<Cmd>lua require('util').telescope_grep()<CR>", 'grep'},
     G = {"<Cmd>lua require('util').telescope_grep({ grep_open_files = true })<CR>", 'grep open files'},
-    -- a = {"<Cmd>lua require('util').telescope_grep({ grep_open_files = true })<CR>", 'grep all files'},
     s = {'<Cmd>w!<CR>', 'save'},
     l = {'<Cmd>NvimTreeFindFile<CR>', 'locate'},
     r = {'<Cmd>Telescope oldfiles<CR>', 'recent'},
@@ -96,7 +94,7 @@ local normal_keymap = {
     i = {":lua print('NOT IMPLEMENTED')<CR>", 'indent guides'},
     i = {":lua print('NOT IMPLEMENTED')<CR>", 'indent guides'},
     c = {":ColorizerToggle<CR>", 'colorizer'},
-    R = {":lua require('util').toggle_readonly()<CR>", 'readonly'}, -- needs work
+    R = {":lua require('util').toggle_readonly()<CR>", 'readonly'},
     w = {":set wrap!<CR>", 'word wrap'},
     u = {":UndotreeToggle<CR>", 'undo tree'},
     s = {":lua require('util').toggle_spell()<CR>", 'spell check'},
@@ -146,8 +144,8 @@ local normal_keymap = {
   },
   m = {
     name = '+maintenance',
-    r = {'<Cmd>luafile %<CR>', 'reload file'},
-    s = {'<Cmd>PackerSync<CR>', 'sync'},
+    r = {'<Cmd>luafile %<CR>', 'reload lua buffer'},
+    s = {'<Cmd>PackerSync<CR>', 'sync plugins'},
   },
   i = {
     name = '+iron/repl',
@@ -172,29 +170,23 @@ local normal_keymap = {
     r = {'<Cmd>Telescope lsp_references<CR>', 'references'},
     R = {'<Cmd>lua vim.lsp.buf.rename()<CR>', 'rename'},
     l = {'<Cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', 'diagnose line'},
-    D = {'<Cmd>Telescope lsp_document_diagnostics<CR>', 'diagnose'},
+    g = {'<Cmd>Telescope lsp_document_diagnostics<CR>', 'diagnose'},
     a = {'<Cmd>Telescope lsp_code_actions<CR>', 'action'},
-    -- t = {'<cmd>lua vim.lsp.buf.type_definition()<CR>', 'type definition'},
-    -- i = {'<cmd>lua vim.lsp.buf.implementation()<CR>', 'implementation'},
-    -- D = {'<Cmd>lua vim.lsp.buf.declaration()<CR>', 'declaration'},
     i = {'<Cmd>LspInfo<CR>', 'info'},
     w = {
       name = '+workspace',
       a = {'<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', 'add folder'},
       r = {'<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', 'remove folder'},
-      l = {'<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', 'inspect'},
+      i = {'<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', 'inspect'},
     }
   }
   -- p = {
   --   name = '+project',
-  -- },
-  -- e = {
-  --   name = '+edit',
   -- },
   -- n = {
   --   name = '+notes',
   -- },
 }
 
-wk.register_keymap('leader', normal_keymap)
-wk.register_keymap('leader', visual_keymap, { mode = 'v', silent = false })
+wk.register(normal_keymap, { prefix = "<leader>" })
+wk.register(visual_keymap, { prefix = "<leader>", mode = 'v', silent = false })
