@@ -22,6 +22,9 @@ require('nvim-treesitter.configs').setup({
   },
   folding = {
     -- enable = true
+  },
+  context_commentstring = {
+    enable = true
   }
 })
 
