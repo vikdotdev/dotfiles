@@ -1,0 +1,130 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'ostruct'
+require 'mkmf'
+require 'pry'
+
+SOURCE_ENV_NAME = 'EXT_XDG_'
+# options = OpenStruct.new(source: ENV[SOURCE_ENV_NAME], target: ENV['HOME'], dry_run: false, debug: false)
+options = OpenStruct.new(source: '/home/vik/repos/dotfiles', target: ENV['HOME'], dry_run: false, verbose: false)
+
+parser = OptionParser.new do |opts|
+  opts.on('-sSOURCE', '--source=SOURCE', 'Specify source directory. Defaults to $SOME_VAR') do |source|
+    options.source = source
+  end
+
+  opts.on('-tTARGET', '--target=TARGET', 'Specify target directory. Defaults to $HOME') do |target|
+    options.target = target
+  end
+
+  opts.on('-d', '--dry-run', 'Do a dry run.') do
+    options.dry_run = true
+  end
+
+  opts.on('--verbose', 'Enable verbose logging.') do
+    options.verbose = true
+  end
+end
+
+# TODO create a local gem out of it?
+class Stower
+  attr_reader :options, :deleted_symlinks
+
+  def initialize(options)
+    @options = options
+    @deleted_symlinks = []
+  end
+
+  def stow!
+    ensure_source_present
+    ensure_source_exists
+    ensure_stow_present
+    ensure_correct_starting_directory
+
+    delete_broken_symlinks!
+
+    command = <<~COMMAND.split("\n").join(' ')
+      stow --no-folding --verbose=1
+      --dir="#{options.source}"
+      --target="#{options.target}"
+      #{stowable_dirs.join(' ')}
+    COMMAND
+
+    # if verbose
+    puts command
+    system(command)
+
+    print_report
+  end
+
+  private
+
+  def ensure_source_present
+    if options.source.nil?
+      puts "$#{SOURCE_ENV_NAME} is not present in the environment"
+      exit(1)
+    end
+  end
+
+  def ensure_source_exists
+    unless Dir.exist?(options.source)
+      puts "#{options.source} does not exist or is not a directory."
+      exit(1)
+    end
+  end
+
+  def ensure_stow_present
+    # unless find_executable('stow')
+    #   puts "stow is not on PATH."
+    #   exit(1)
+    # end
+  end
+
+  def ensure_correct_starting_directory
+    Dir.chdir(options.source)
+  end
+
+  def delete_broken_symlinks!
+    stowable_files.each do |path|
+      full_path = File.join(Dir.home, path)
+      if File.symlink?(full_path) && !File.exist?(full_path)
+        File.delete(full_path)
+        deleted_symlinks << full_path
+      end
+    end
+  end
+
+  def stowable_files
+    @stowable_files ||= stowable_dirs.map do |dir|
+      Dir.chdir(dir)
+
+      files = Dir.glob('**/*', File::FNM_DOTMATCH).map do |file|
+        next if File.directory?(file)
+
+        file
+      end
+
+      Dir.chdir(options.source)
+
+      files
+    end.flatten.compact
+  end
+
+  def stowable_dirs
+    @stowable_dirs ||= Dir.glob('*').filter { |dir| File.directory?(dir) }
+  end
+
+  def print_report
+    if deleted_symlinks.any?
+      puts 'Symlinks deleted:'
+      puts deleted_symlinks.join("\n")
+    end
+  end
+end
+
+
+# add help if no args
+parser.parse!
+
+Stower.new(options).stow!
