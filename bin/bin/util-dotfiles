@@ -1,12 +1,11 @@
 #!/bin/bash
 
-DOTFILES_FOLDER="$HOME/repos/dotfiles"
-IGNORED_FILES="README.md"
-DIRS=$(ls "$DOTFILES_FOLDER" -I "$IGNORED_FILES")
-[[ ! -d "$DOTFILES_FOLDER" ]] && echo 'No ~/repos/dotfiles directory found.' && exit 1
+DIRS=$(ls -l "$EXT_XDG_DOTFILES_DIR" | grep "^d" | rev | cut -d' ' -f 1 | rev)
+
+[[ ! -d "$EXT_XDG_DOTFILES_DIR" ]] && echo "$EXT_XDG_DOTFILES_DIR doesn't exist." && exit 1
 if [ -x "$(command -v stow)" ]; then
-  echo "Stowing ..."
-  stow --no-folding --verbose=1 --dir="$DOTFILES_FOLDER" --target="$HOME" $@ $DIRS
+  stow --no-folding --verbose=1 --dir="$EXT_XDG_DOTFILES_DIR" --target="$HOME/dotfiles" $@ $DIRS
+  echo "Done."
 else
-  echo 'GNU stow not found. Aborting'
+  echo "stow not found. Aborting"
 fi
