@@ -76,14 +76,10 @@ gotoroot() {
   \cd "$(git rev-parse --show-toplevel)"
 }
 
-export TERM=xterm-256color
-
 export PS1='\[\e[33m\]\u\[\e[m\]\[\e[36m\]@\[\e[m\]\[\e[35m\]\h\[\e[m\]: \[\e[32m\]\w\[\e[m\] \[\e[m\]\[\e[35m\]$(parse_git_branch)\[\e[m\]\[\e[36m\]\\$\[\e[m\] '
 
-export PATH="$PATH:$HOME/bin"
-
+# need this?
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-export PATH="$HOME/.rvm/bin:$PATH" # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 
 # Disable a propmt to install a command if not found
 unset command_not_found_handle
