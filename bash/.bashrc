@@ -59,6 +59,7 @@ function parse_git_dirty {
 	fi
 }
 
+alias luamake=/home/vik/repos/lua-language-server/3rd/luamake/luamake
 alias ls="ls -hN --color=auto --group-directories-first" \
   e="exit" \
   ll="ls -l" \
@@ -72,15 +73,10 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   y="xclip -selection clipboard" \
   yank="xclip -selection clipboard"
 
-gotoroot() {
-  \cd "$(git rev-parse --show-toplevel)"
-}
-
 export PS1='\[\e[33m\]\u\[\e[m\]\[\e[36m\]@\[\e[m\]\[\e[35m\]\h\[\e[m\]: \[\e[32m\]\w\[\e[m\] \[\e[m\]\[\e[35m\]$(parse_git_branch)\[\e[m\]\[\e[36m\]\\$\[\e[m\] '
 
-# need this?
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 
 # Disable a propmt to install a command if not found
 unset command_not_found_handle
-alias luamake=/home/vik/repos/lua-language-server/3rd/luamake/luamake
+
