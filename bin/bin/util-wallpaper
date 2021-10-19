@@ -1,10 +1,4 @@
 #!/usr/bin/env bash
-
-WALLPAPER_PATH="$(xdg-user-dir PICTURES)/wallpapers/"
-
-mkdir -p "$WALLPAPER_PATH"
-
-RANDOM_IMAGE=$(ls -p $WALLPAPER_PATH | grep -v / | egrep '*.jpg|*.png|*.jpeg' | shuf -n 1)
-
-ESCAPED_WALLPAPER_PATH=$(echo $WALLPAPER_PATH | sed 's;/;\\/;g')
+RANDOM_IMAGE=$(ls -p $EXT_XDG_WALLPAPER_DIR | grep -v / | egrep '*.jpg|*.png|*.jpeg' | shuf -n 1)
+ESCAPED_WALLPAPER_PATH=$(echo $EXT_XDG_WALLPAPER_DIR | sed 's;/;\\/;g')
 feh --bg-fill $(echo $RANDOM_IMAGE | sed -e "s/^/$ESCAPED_WALLPAPER_PATH/")
