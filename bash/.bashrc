@@ -7,11 +7,6 @@ stty -ixon
 shopt -s autocd
 shopt -s dotglob
 
-HISTSIZE=
-HISTFILESIZE=
-export HISTCONTROL=ignoreboth:erasedups
-export HISTIGNORE="pwd:ls:ll:la"
-
 # get current branch in git repo
 function parse_git_branch() {
 	BRANCH=`git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
@@ -73,8 +68,12 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   y="xclip -selection clipboard" \
   yank="xclip -selection clipboard"
 
-export PS1='\[\e[33m\]\u\[\e[m\]\[\e[36m\]@\[\e[m\]\[\e[35m\]\h\[\e[m\]: \[\e[32m\]\w\[\e[m\] \[\e[m\]\[\e[35m\]$(parse_git_branch)\[\e[m\]\[\e[36m\]\\$\[\e[m\] '
+HISTSIZE=
+HISTFILESIZE=
+export HISTCONTROL=ignoreboth:erasedups
+export HISTIGNORE="pwd:ls:ll:la"
 export TERM=xterm-256color
+export PS1='\[\e[33m\]\u\[\e[m\]\[\e[36m\]@\[\e[m\]\[\e[35m\]\h\[\e[m\]: \[\e[32m\]\w\[\e[m\] \[\e[m\]\[\e[35m\]$(parse_git_branch)\[\e[m\]\[\e[36m\]\\$\[\e[m\] '
 
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 
