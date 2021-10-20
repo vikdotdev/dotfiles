@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+def ensure_installed(gem)
+  `gem install #{gem}` unless `gem list`.lines.grep(/^#{gem} \(.*\)/)
+end
+
+puts 'Ensuring necessary gems are installed...'
+
+%w[bundler solargraph pry-byebug solargraph tmuxinator].each { |gem| ensure_installed(gem) }
