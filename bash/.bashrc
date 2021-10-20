@@ -74,6 +74,7 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   yank="xclip -selection clipboard"
 
 export PS1='\[\e[33m\]\u\[\e[m\]\[\e[36m\]@\[\e[m\]\[\e[35m\]\h\[\e[m\]: \[\e[32m\]\w\[\e[m\] \[\e[m\]\[\e[35m\]$(parse_git_branch)\[\e[m\]\[\e[36m\]\\$\[\e[m\] '
+export TERM=xterm-256color
 
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 

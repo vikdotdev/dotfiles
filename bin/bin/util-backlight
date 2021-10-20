@@ -10,7 +10,7 @@ do
   esac
 done
 
-[ ! -x "$(command -v xbacklight)" ] && [ ! "$(hostname)" == "$LAPTOP_HOSTNAME" ] && echo 'xbacklight is not on PATH' && exit 1
+[ ! -x "$(command -v xbacklight)" ] && echo 'xbacklight is not on PATH' && exit 1
 
 UPPER_BOUND=100
 LOWER_BOUND=1

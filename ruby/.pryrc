@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Leading space is important here to avoid pry regex check
-# ENV['PAGER'] = ' less --raw-control-chars --mouse --wheel-lines=3 -F -X'
+ENV['PAGER'] = ' less --raw-control-chars --mouse --wheel-lines=3 -F -X'
 
 Pry.config.editor = ENV['EDITOR']
 
