@@ -6,7 +6,8 @@ wk.setup({
       enabled = true,
       suggestions = 20
     }
-  }
+  },
+  ignore_missing = true
 })
 
 local visual_keymap = {
@@ -124,12 +125,10 @@ local normal_keymap = {
   b = {
     name = '+buffer',
     b = {'<Cmd>Telescope buffers<CR>', 'buffers'},
-    n = {':BF<CR>', 'next'},
-    p = {':BB<CR>', 'previous'},
-    l = {':BA<CR>', 'last'},
-    u = {":BU<CR>", 'unload'},
-    d = {":BD<CR>", 'delete'},
-    k = {":BW<CR>", 'wipe'},
+    n = {':BufNavNext<CR>', 'next'},
+    p = {':BufNavPrev<CR>', 'previous'},
+    l = {':b#<CR>', 'last'},
+    k = {":BufDel<CR>", 'kill'},
   },
   h = {
     name = '+help',
