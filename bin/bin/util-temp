@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+
+TMP = 'tmp'.freeze
+
+initial_directory = Dir.pwd
+temp_directory = File.join(Dir.home, '.local', 'share', TMP)
+
+Dir.mkdir(temp_directory, 0755) unless Dir.exist?(temp_directory)
+
+Dir.chdir(temp_directory)
+
+system('nvim')
+
+puts "\nFinished working with #{temp_directory}"
+Dir.chdir(initial_directory)
