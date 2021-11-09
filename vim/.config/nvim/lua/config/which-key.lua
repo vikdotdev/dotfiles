@@ -26,7 +26,6 @@ local visual_keymap = {
 }
 
 local normal_keymap = {
-  ['!'] = 'which_key_ignore', -- temporary, until bufkill is getting fixed
   ['<leader>'] = {"<Cmd>lua require('util').telescope_git_files()<CR>", 'file find'},
   q = {
     name = '+quit/session',
@@ -93,7 +92,6 @@ local normal_keymap = {
     x = {'<Cmd>TSContextToggle<CR>', 'context'},
     C = {":CompletionToggle<CR>", 'completion'},
     i = {":lua print('NOT IMPLEMENTED')<CR>", 'indent guides'},
-    i = {":lua print('NOT IMPLEMENTED')<CR>", 'indent guides'},
     c = {":ColorizerToggle<CR>", 'colorizer'},
     R = {":lua require('util').toggle_readonly()<CR>", 'readonly'},
     w = {":set wrap!<CR>", 'word wrap'},
@@ -145,6 +143,7 @@ local normal_keymap = {
     name = '+maintenance',
     r = {'<Cmd>luafile %<CR>', 'reload lua buffer'},
     s = {'<Cmd>PackerSync<CR>', 'sync plugins'},
+    c = {'<Cmd>PackerCompile<CR>', 'compile'}
   },
   i = {
     name = '+iron/repl',
