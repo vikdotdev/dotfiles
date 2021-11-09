@@ -5,6 +5,9 @@ pcall(require, "luarocks.loader")
 -- Standard awesome library
 local gears = require("gears")
 local awful = require("awful")
+local util = require("lib.util")
+
+-- localmodule('startup.lua')
 require("awful.autofocus")
 
 -- Widget and layout library
@@ -231,15 +234,36 @@ root.buttons(gears.table.join(
 ))
 -- }}}
 
-
 -- {{{ Key bindings
-
 -- todo add playerctl to install script/essential packages
 globalkeys = gears.table.join(
     -- Audio keys
     awful.key({}, "XF86AudioRaiseVolume", function() os.execute("util-volume +5%") end),
     awful.key({}, "XF86AudioLowerVolume", function() os.execute("util-volume -5%") end),
-    awful.key({}, "XF86AudioMute", function() os.execute("pactl set-sink-mute @DEFAULT_SINK@ toggle") end),
+    awful.key({}, "XF86AudioMute", function()
+      awful.spawn.easy_async("pactl get-sink-mute @DEFAULT_SINK@", function(out, err)
+        local prefix = ''
+        if util.trim(string.gsub(out, [[Mute: (.+)]], "%1")) == 'no' then prefix = 'un' end
+
+        if util.trim(err) == '' or err == nil then
+          _notification_muted = naughty.notify({
+            replaces_id = (_notification_muted and _notification_muted.id or nil),
+            preset = naughty.config.presets.normal,
+            position = 'top_middle',
+            title = "Sound " .. prefix .. "muted",
+            text = nil,
+            timeout = 2
+          })
+        else
+          naughty.notify({
+            preset = naughty.config.presets.critical,
+            title = 'Error',
+            text = tostring(err)
+          })
+        end
+      end)
+      os.execute("pactl set-sink-mute @DEFAULT_SINK@ toggle")
+    end),
     awful.key({}, "XF86AudioPlay", function () awful.util.spawn("playerctl play-pause") end),
     awful.key({}, "XF86AudioNext", function () awful.util.spawn("playerctl next") end),
     awful.key({}, "XF86AudioPrev", function () awful.util.spawn("playerctl previous") end),
