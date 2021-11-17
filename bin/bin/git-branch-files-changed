@@ -1,0 +1,52 @@
+#!/usr/bin/env ruby
+
+require 'ostruct'
+require 'optparse'
+
+config = OpenStruct.new(remote: 'origin', githash: 'HEAD', silent: false,
+                        branch: `git branch --show-current`.chomp)
+parser = OptionParser.new do |opts|
+  opts.banner = <<~BANNER
+    Display changed files between current branch HEAD and a default branch.
+  BANNER
+
+  opts.on('-rREMOTE', '--remote=REMOTE', 'Default: origin') do |remote|
+    config.remote = remote
+  end
+
+  opts.on('-bBRANCH', '--branch=BRANCH', 'Git branch. Defaults to current branch') do |branch|
+    config.branch = branch
+  end
+
+  opts.on('-hHASH', '--hash=HASH', <<~HELP) do |hash|
+    Git commit hash or any other identifier that represents a commit hash.
+    E.g. HEAD^^, @^ etc.
+  HELP
+
+    config.githash = hash
+  end
+
+  opts.on('-s', '--silent', 'Silent the output except the resulting paths') do
+    config.silent = true
+  end
+
+  opts.on_tail('--help', 'Print help') do
+    puts opts
+    exit
+  end
+end
+
+parser.parse!
+
+default_branch = `git remote show #{config.remote}`.match(/HEAD branch: (.+)/)[1]
+
+command = "git diff --name-only $(git merge-base #{default_branch} #{config.branch}) #{config.githash}"
+
+puts "Running #{command}" unless config.silent
+paths = `#{command}`
+
+if paths.empty? && !config.silent
+  puts 'No files changed'
+else
+  print paths
+end
