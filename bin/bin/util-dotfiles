@@ -4,7 +4,7 @@ DIRS=$(ls -l "$EXT_XDG_DOTFILES_DIR" | grep "^d" | rev | cut -d' ' -f 1 | rev)
 
 [[ ! -d "$EXT_XDG_DOTFILES_DIR" ]] && echo "$EXT_XDG_DOTFILES_DIR doesn't exist." && exit 1
 if [ -x "$(command -v stow)" ]; then
-  stow --no-folding --verbose=1 --dir="$EXT_XDG_DOTFILES_DIR" --target="$HOME" $@ $DIRS
+  stow -R --no-folding --verbose=1 --dir="$EXT_XDG_DOTFILES_DIR" --target="$HOME" $@ $DIRS
   echo "Done."
 else
   echo "stow not found. Aborting"
