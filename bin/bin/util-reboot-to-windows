@@ -1,0 +1,11 @@
+#!/bin/bash
+
+GRUB_CONFIG=/boot/grub2/grub.cfg
+WINDOWS_MENU_ENTRY="$(sudo grep -i windows $GRUB_CONFIG | cut -d"\"" -f2)"
+
+if [ ! -z "$WINDOWS_MENU_ENTRY" ]; then
+  echo "No windows entry found in $GRUB_CONFIG"
+  exit 1
+fi
+
+sudo grub2-reboot "$WINDOWS_MENU_ENTRY" && sudo reboot
