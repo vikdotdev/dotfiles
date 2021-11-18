@@ -1,0 +1,82 @@
+#!/usr/bin/env ruby
+
+require 'net/http'
+require 'base64'
+require 'json'
+require 'pry'
+
+class Authorization
+  AUTH_URL = URI('https://accounts.spotify.com/api/token')
+
+  def token
+    response = Net::HTTP.start(AUTH_URL.host, AUTH_URL.port, use_ssl: true) do |http|
+      request = Net::HTTP::Post.new(AUTH_URL, Authorization: encoded_basic_auth)
+      request.set_form_data(grant_type: 'client_credentials')
+
+      http.request(request)
+    end
+
+    exit(false) unless response.kind_of? Net::HTTPSuccess
+    puts response.body
+    puts JSON.parse(response.body)
+    # handle_parsing
+  end
+
+  private
+
+  def client_id
+    # TODO mechanism to fetch that from fs
+  end
+
+  def client_secret
+    # TODO mechanism to fetch that from fs
+  end
+
+  def encoded_basic_auth
+    "Basic #{Base64.strict_encode64("#{client_id}:#{client_secret}")}"
+  end
+end
+
+class Lyrics
+  URL = URI('https://api.spotify.com/v1/search?limit=1&type=track&q=it%20was%20a%20good%20day')
+
+  def track
+    response = Net::HTTP.start(URL.host, URL.port, use_ssl: true) do |http|
+      request = Net::HTTP::Get.new(URL, Authorization: auth_token)
+
+      http.request(request)
+    end
+
+    JSON.parse(response.body).dig('tracks', 'items', 0, 'id')
+  end
+
+  def lyrics(track_id)
+    url = URI("https://spclient.wg.spotify.com/color-lyrics/v1/track/#{track_id}")
+
+    response = Net::HTTP.start(url.host, url.port, use_ssl: true) do |http|
+      request = Net::HTTP::Get.new(url, Authorization: auth_token,
+          'accept': 'application/json',
+          'accept-language': 'en',
+          'app-platform': 'WebPlayer',
+          'sec-ch-ua-mobile': '?0'
+      )
+
+      http.request(request)
+    end
+
+    puts response
+    binding.pry
+    JSON.parse(response.body).dig('tracks', 'items', 0, 'id')
+  end
+
+  private
+
+  def auth_token
+    'Bearer ...'
+  end
+end
+
+lyrics = Lyrics.new
+# puts lyrics.track
+puts lyrics.lyrics "2qOm7ukLyHUXWyR4ZWLwxA"
+
