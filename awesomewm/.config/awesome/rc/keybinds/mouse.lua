@@ -23,12 +23,3 @@ clientbuttons = gears.table.join(
     awful.mouse.client.resize(c)
   end)
 )
-
-awful.rules.rules = {
-  -- All clients will match this rule.
-  { rule = {},
-    properties = {
-      buttons = clientbuttons,
-    }
-  }
-}

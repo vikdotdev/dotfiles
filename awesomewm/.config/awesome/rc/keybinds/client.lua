@@ -45,11 +45,3 @@ clientkeys = gears.table.join(
   --     end ,
   --     {description = "(un)maximize horizontally", group = "client"})
 )
-
-awful.rules.rules = {
-  -- All clients will match this rule.
-  { rule = { },
-    properties = { keys = clientkeys }
-  }
-}
-

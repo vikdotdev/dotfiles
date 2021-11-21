@@ -58,8 +58,9 @@ awful.rules.rules = {
       border_width = 2,
       border_color = beautiful.border_normal,
       focus = awful.client.focus.filter,
+      keys = clientkeys,
+      buttons = clientbuttons,
       raise = true,
-      -- keys = clientkeys,
       screen = awful.screen.preferred,
       placement = awful.placement.no_overlap+awful.placement.no_offscreen
     }
