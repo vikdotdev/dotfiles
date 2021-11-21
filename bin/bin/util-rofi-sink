@@ -1,18 +1,34 @@
-#!/bin/bash
+#!/usr/bin/env ruby
 
-MONITOR_LABEL=Monitor
-MONITOR_VALUE=hdmi-stereo-extra
-HEADPHONES_LABEL=Headphones
-HEADPHONES_VALUE=analog-stereo
+def which(command)
+  present = system("which #{command} > /dev/null 2>&1")
 
-DEVICE=`printf "$MONITOR_LABEL\n$HEADPHONES_LABEL" | rofi -i -dmenu -p 'Sound output'`
+  return if present
 
-declare -A device_mapping=( ["$MONITOR_LABEL"]="$MONITOR_VALUE" ["$HEADPHONES_LABEL"]="$HEADPHONES_VALUE" )
+  `notify-send "#{command} is not in PATH"`
+  exit(false)
+end
 
-SINK_ID=`pactl list sinks short | grep "${device_mapping["$DEVICE"]}" | cut -f 1`
+which('pactl')
+which('rofi')
+which('easyeffects')
 
-notify-send "Selecting $DEVICE as default audio sink."
+sinks = `pactl list sinks`.split(/Sink #(\d+)/)[1..-1].each_cons(2).map do |id, info|
+  name, description = info.scan(/Name: (.+)|Description: (.+)/).flatten.compact
 
-pactl set-default-sink "$SINK_ID"
+  { id: id, name: name, description: description }
+end
 
-[ -x "$(command -v pulseeffects)" ] && pulseeffects -r
+rofi_input = sinks.map { |sink| sink[:description] }.join("\n")
+selected_label = `echo #{rofi_input} | rofi -i -dmenu -p 'Sound output'`.chomp
+
+if selected_label.empty?
+  `notify-send "Keeping previous sink"`
+  exit(false)
+end
+
+selected_id = sinks.find { |sink| sink[:description] == selected_label }[:id]
+
+`notify-send "Selecting <b>#{selected_label}</b> as default audio sink."`
+`pactl set-default-sink #{selected_id}`
+`easyeffects -r`
