@@ -12,6 +12,7 @@ globalkeys = gears.table.join(
   awful.key({}, "XF86AudioRaiseVolume", function() os.execute("util-volume +5%") end),
   awful.key({}, "XF86AudioLowerVolume", function() os.execute("util-volume -5%") end),
   awful.key({}, "XF86AudioMute", function()
+    os.execute("pactl set-sink-mute @DEFAULT_SINK@ toggle")
     awful.spawn.easy_async("pactl get-sink-mute @DEFAULT_SINK@", function(out, err)
       local prefix = ''
       if std.trim(string.gsub(out, [[Mute: (.+)]], "%1")) == 'no' then prefix = 'un' end
@@ -21,8 +22,7 @@ globalkeys = gears.table.join(
           replaces_id = (_notification_muted and _notification_muted.id or nil),
           preset = naughty.config.presets.normal,
           position = 'top_middle',
-          title = "Sound " .. prefix .. "muted",
-          text = nil,
+          text = "<b>Sound " .. prefix .. "muted</b>",
           timeout = 2
         })
       else
@@ -33,7 +33,6 @@ globalkeys = gears.table.join(
         })
       end
     end)
-    os.execute("pactl set-sink-mute @DEFAULT_SINK@ toggle")
   end),
   awful.key({}, "XF86AudioPlay", function () awful.util.spawn("playerctl play-pause") end),
   awful.key({}, "XF86AudioNext", function () awful.util.spawn("playerctl next") end),
