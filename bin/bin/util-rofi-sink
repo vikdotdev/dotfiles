@@ -13,14 +13,14 @@ which('pactl')
 which('rofi')
 which('easyeffects')
 
-sinks = `pactl list sinks`.split(/Sink #(\d+)/)[1..-1].each_cons(2).map do |id, info|
+sinks = `pactl list sinks`.split(/Sink #(\d+)/)[1..-1].each_slice(2).map do |id, info|
   name, description = info.scan(/Name: (.+)|Description: (.+)/).flatten.compact
 
   { id: id, name: name, description: description }
 end
 
 rofi_input = sinks.map { |sink| sink[:description] }.join("\n")
-selected_label = `echo #{rofi_input} | rofi -i -dmenu -p 'Sound output'`.chomp
+selected_label = `echo "#{rofi_input}" | rofi -i -dmenu -p 'Sound output'`.chomp
 
 if selected_label.empty?
   `notify-send "Keeping previous sink"`
