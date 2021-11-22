@@ -3,6 +3,23 @@ local awful = require("awful")
 local wibox = require("wibox")
 local naughty = require('naughty')
 local std = require("../lib.std")
+local awmodoro = require("../../../lib/pomodoro")
+
+local pomodoro = awmodoro.new({
+	minutes 			= 1,
+	do_notify 			= true,
+	active_bg_color 	= '#313131',
+	paused_bg_color 	= '#7746D7',
+	fg_color			= {type = "linear", from = {0,0}, to = {100, 0}, stops = {{0, "#AECF96"},{0.5, "#88A175"},{1, "#FF5656"}}},
+	width 				= 200,
+	height 				= 3,
+
+	begin_callback = function()
+	end,
+
+	finish_callback = function()
+	end
+})
 
 local taglist_buttons = gears.table.join(
   awful.button({ }, 1, function(t) t:view_only() end),
@@ -117,6 +134,7 @@ awful.screen.connect_for_each_screen(function(s)
       internet_connection_container,
       layout = wibox.layout.fixed.horizontal,
       awful.widget.keyboardlayout(),
+      pomodoro,
       wibox.widget.systray(),
       wibox.widget.textclock(),
       s.mylayoutbox,
