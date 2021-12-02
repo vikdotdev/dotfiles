@@ -1,3 +1,7 @@
+local awful = require("awful")
+local gears = require("gears")
+local naughty = require('naughty')
+
 local M = {}
 
 function M.pry(value, raw)

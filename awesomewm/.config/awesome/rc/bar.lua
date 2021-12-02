@@ -1,6 +1,7 @@
 local gears = require("gears")
 local awful = require("awful")
 local wibox = require("wibox")
+local std = require("../lib.std")
 
 local taglist_buttons = gears.table.join(
   awful.button({ }, 1, function(t) t:view_only() end),
@@ -37,6 +38,25 @@ local tasklist_buttons = gears.table.join(
     awful.client.focus.byidx(-1)
   end)
 )
+
+
+local internet_connection_container = wibox.container.background()
+internet_connection_container:set_fg("#000000")
+
+local internet = awful.widget.watch([[sh -c "ping -c 5 8.8.8.8 | tail -n 2 | head -n 1"]], 5, function(widget, stdout)
+  local value = tonumber(std.trim(stdout:match([[(%d)%% packet loss]])))
+  local text = ' ' .. value .. '% LOST '
+
+  if value > 0 then
+    internet_connection_container:set_bg("#ff543d")
+  else
+    internet_connection_container:set_bg("#80fa73")
+  end
+
+  widget:set_text(text)
+end)
+
+internet_connection_container:set_widget(internet)
 
 awful.screen.connect_for_each_screen(function(s)
   -- Each screen has its own tag table.
@@ -80,6 +100,7 @@ awful.screen.connect_for_each_screen(function(s)
     },
     s.mytasklist, -- Middle widget
     { -- Right widgets
+      internet_connection_container,
       layout = wibox.layout.fixed.horizontal,
       awful.widget.keyboardlayout(),
       wibox.widget.systray(),
