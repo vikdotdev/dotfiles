@@ -44,18 +44,24 @@ local tasklist_buttons = gears.table.join(
 local internet_connection_container = wibox.container.background()
 internet_connection_container:set_fg("#000000")
 
-local internet = awful.widget.watch([[sh -c "ping -c 5 8.8.8.8 | tail -n 2 | head -n 1"]], 5, function(widget, stdout)
-  local value = tonumber(std.trim(stdout:match([[(%d)%% packet loss]])))
+local internet = awful.widget.watch([[bash -c "ping -i 0.5 -w 10 -c 10 8.8.8.8 | tail -n 2 | head -n 1"]], 5, function(widget, stdout)
+  local raw_value = stdout:match([[(%d+)%% packet loss]])
+  if raw_value == nil then raw_value = '100' end
+
+  local value = tonumber(std.trim(raw_value))
   local text = ' ' .. value .. '% lost '
 
   if value > 0 then
     internet_connection_container:set_bg("#ff543d")
 
+    local notification_text = 'Internet unstable'
+    if value == 100 then notification_text = 'No internet connection' end
+
     _INTERNET_NOTIFICATION = naughty.notify({
       replaces_id = (_INTERNET_NOTIFICATION and _INTERNET_NOTIFICATION.id or nil),
       position = 'top_middle',
-      text     = 'Internet unstable',
-      timeout  = 6,
+      text     = notification_text,
+      timeout  = 5,
     })
   else
     internet_connection_container:set_bg("#80fa73")
