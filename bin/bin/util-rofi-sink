@@ -31,4 +31,3 @@ selected_id = sinks.find { |sink| sink[:description] == selected_label }[:id]
 
 `notify-send "Selecting <b>#{selected_label}</b> as default audio sink."`
 `pactl set-default-sink #{selected_id}`
-`easyeffects -r`
