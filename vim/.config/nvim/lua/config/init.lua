@@ -38,6 +38,7 @@ require('config/treesitter')
 require('config/autopairs')
 require('config/bufdel')
 require('config/bufnav')
+require('config/theme')
 
 vim.cmd('au TextYankPost * lua vim.highlight.on_yank {on_visual = false}')
 vim.cmd('syntax enable')
