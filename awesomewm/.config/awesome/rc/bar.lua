@@ -45,10 +45,10 @@ local internet_connection_container = wibox.container.background()
 internet_connection_container:set_fg("#000000")
 
 local internet = awful.widget.watch([[bash -c "ping -i 0.5 -w 10 -c 10 8.8.8.8 | tail -n 2 | head -n 1"]], 5, function(widget, stdout)
-  local raw_value = stdout:match([[(%d+)%% packet loss]])
+  local raw_value = stdout:match([[(%d+%.?%d*)%% packet loss]])
   if raw_value == nil then raw_value = '100' end
 
-  local value = tonumber(std.trim(raw_value))
+  local value = math.floor(tonumber(std.trim(raw_value)))
   local text = ' ' .. value .. '% lost '
 
   if value > 0 then
