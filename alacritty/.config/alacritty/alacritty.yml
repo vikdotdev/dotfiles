@@ -10,7 +10,7 @@ font:
 
 colors:
   primary:
-    background: '#282a36'
+    background: '#292d3e'
     foreground: '#bbc2cf'
     bright_foreground: '#eeeeee'
 

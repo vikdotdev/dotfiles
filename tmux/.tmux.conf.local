@@ -206,6 +206,9 @@ set -g mode-keys vi
 set -g status-position top
 set -s escape-time 1
 
+set -g focus-events on
+set-hook -g pane-focus-in 'selectp -P bg=black; run "sleep 0.3"; selectp -P bg=default'
+
 unbind C-a
 unbind C-b
 set-option -g prefix C-f
