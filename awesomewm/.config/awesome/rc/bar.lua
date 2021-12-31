@@ -2,7 +2,9 @@ local gears = require("gears")
 local awful = require("awful")
 local wibox = require("wibox")
 local naughty = require('naughty')
-local std = require("../lib.std")
+local std = require("../lib/std")
+local tattler = require("../widgets/tattler")
+
 
 local taglist_buttons = gears.table.join(
   awful.button({ }, 1, function(t) t:view_only() end),
@@ -120,6 +122,7 @@ awful.screen.connect_for_each_screen(function(s)
       wibox.widget.systray(),
       wibox.widget.textclock(),
       s.mylayoutbox,
+      tattler.new({ enabled_initially = false })
     },
   }
 end)

@@ -1,4 +1,5 @@
 local gears = require("gears")
+local naughty = require("naughty")
 local awful = require("awful")
 
 clientkeys = gears.table.join(

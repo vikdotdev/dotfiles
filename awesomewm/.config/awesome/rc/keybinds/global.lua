@@ -3,6 +3,7 @@ local awful = require("awful")
 local naughty = require('naughty')
 local hotkeys_popup = require("awful.hotkeys_popup")
 local std = require("../../lib.std")
+local util = require("../../lib.util")
 
 require("awful.hotkeys_popup.keys")
 
@@ -40,7 +41,7 @@ globalkeys = gears.table.join(
 
   awful.key({}, "XF86MonBrightnessUp", function() os.execute("util-backlight -i 5") end),
   awful.key({}, "XF86MonBrightnessDown", function() os.execute("util-backlight -d 5") end),
-
+  awful.key({ modkey, "Control" }, "t", function() util.toggle_titlebars() end),
   awful.key({ modkey }, "s", function () awful.spawn.with_shell("util-rofi-sink") end,
     {description="select audio sink", group="scripts"}),
   awful.key({ modkey }, "space", awful.widget.keyboardlayout().next_layout,
