@@ -4,11 +4,16 @@ local wibox = require("wibox")
 local setmetatable = setmetatable
 local tattler = { mt = {} }
 local data = setmetatable({}, { __mode = "k" })
-local widget_state = {}
 
 function tattler.toggle()
-  for _, c in ipairs(client.get()) do awful.titlebar.toggle(c) end
-  widget_state.enabled = not widget_state.enabled
+  data.set_enabled(not data.get_enabled())
+  for _, c in ipairs(client.get()) do
+    if data.get_enabled() then
+      awful.titlebar.show(c)
+    else
+      awful.titlebar.hide(c)
+    end
+  end
   tattler.update()
 end
 
@@ -19,7 +24,7 @@ end
 function tattler.connect(text)
   client.connect_signal("tattler::update", function()
     local value = nil
-    if widget_state.enabled then
+    if data.get_enabled() then
       value = 'Titlebars enabled'
     else
       value = 'Titlebars disabled'
@@ -37,8 +42,8 @@ end
 function tattler.new(args)
 	args = args or {}
 
-	local enabled_initially = args.enabled_initially or false
-  widget_state.enabled = enabled_initially
+  data.get_enabled = args.get_enabled
+  data.set_enabled = args.set_enabled
 	local buttons = args.buttons or tattler.default_buttons()
   local text = wibox.widget { buttons = buttons, widget = wibox.widget.textbox }
   local _tattler = wibox.widget.background()
@@ -47,9 +52,11 @@ function tattler.new(args)
   tattler.connect(text)
   tattler.update()
 
-	data[_tattler] = { enabled = enabled_initially }
+	data[_tattler] = {}
 
 	_tattler.toggle = tattler.toggle
+	_tattler.get_enabled = data.get_enabled
+	_tattler.set_enabled = data.set_enabled
 
 	return _tattler
 end

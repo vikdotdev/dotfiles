@@ -42,6 +42,12 @@ client.connect_signal("manage", function (c)
     -- i.e. put it at the end of others instead of setting it master.
     -- if not awesome.startup then awful.client.setslave(c) end
 
+    if TATTLER_CONFIG.enabled then
+      awful.titlebar.show(c)
+    else
+      awful.titlebar.hide(c)
+    end
+
     if awesome.startup
       and not c.size_hints.user_position
       and not c.size_hints.program_position then
@@ -99,7 +105,7 @@ awful.rules.rules = {
 
   -- Add titlebars to normal clients and dialogs
   { rule_any = {type = { "normal", "dialog" }
-  }, properties = { titlebars_enabled = false }
+  }, properties = { titlebars_enabled = TATTLER_CONFIG.enabled }
   },
 
   -- Set Firefox to always map on the tag named "2" on screen 1.

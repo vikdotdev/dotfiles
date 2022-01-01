@@ -5,7 +5,6 @@ local naughty = require('naughty')
 local std = require("../lib/std")
 local tattler = require("../widgets/tattler")
 
-
 local taglist_buttons = gears.table.join(
   awful.button({ }, 1, function(t) t:view_only() end),
   awful.button({ modkey }, 1, function(t)
@@ -122,7 +121,14 @@ awful.screen.connect_for_each_screen(function(s)
       wibox.widget.systray(),
       wibox.widget.textclock(),
       s.mylayoutbox,
-      tattler.new({ enabled_initially = false })
+      tattler.new({
+        get_enabled = function()
+          return TATTLER_CONFIG.enabled
+        end,
+        set_enabled = function(value)
+          TATTLER_CONFIG.enabled = value
+        end
+      })
     },
   }
 end)
