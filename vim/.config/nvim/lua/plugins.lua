@@ -29,4 +29,8 @@ return require('packer').startup(function(use)
   use({'kyazdani42/nvim-tree.lua'})
   use({'norcalli/snippets.nvim'})
   use({'kmonad/kmonad-vim'})
+
+  if packer_bootstrap then
+    require('packer').sync()
+  end
 end)
