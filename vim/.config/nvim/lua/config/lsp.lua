@@ -1,9 +1,6 @@
-local util = require('lspconfig.util')
-
 require('lspconfig').solargraph.setup({
   autoformat = true, -- EXPERIMENTAL
   on_attach = require('completion').on_attach,
-  root_dir = util.root_pattern("Gemfile", ".git", "lib"),
   settings = {
     solargraph = {
       diagnostics = true
