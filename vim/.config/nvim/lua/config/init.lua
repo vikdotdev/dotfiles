@@ -66,13 +66,3 @@ vim.cmd([[imap <tab> <Plug>(completion_smart_tab)]])
 vim.cmd([[imap <silent> <C-Space> <Plug>(completion_trigger)]])
 vim.cmd([[au FileType html let b:AutoPairs = AutoPairsDefine({'<!--' : '-->'}, ['{'])]])
 vim.cmd([[au FileType eruby let b:AutoPairs = AutoPairsDefine({'<%' : '%>'})]])
-
-require('util').create_augroups({
-  CursorLine = {
-    "VimEnter * setlocal cursorline",
-    "WinEnter * setlocal cursorline",
-    "BufWinEnter * setlocal cursorline",
-    "WinLeave * setlocal nocursorline"
-  }
-})
-

@@ -11,7 +11,7 @@ return require('packer').startup(function(use)
   use({'JoosepAlviste/nvim-ts-context-commentstring'})
   -- use({'editorconfig/editorconfig-vim'})
   use({'ojroques/nvim-bufdel'})
-  -- use({'vikdotdev/bufnav.nvim'})
+  use({'vikdotdev/bufnav.nvim'})
   use({'drewtempelmeyer/palenight.vim'})
   use({'glepnir/galaxyline.nvim', branch = 'main' })
   use({'nvim-treesitter/nvim-treesitter',
