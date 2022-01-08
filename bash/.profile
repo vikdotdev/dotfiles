@@ -19,3 +19,5 @@ export EXT_XDG_REPOS_DIR="$HOME/repos"
 export EXT_XDG_DOTFILES_DIR="$HOME/repos/dotfiles"
 export EXT_XDG_NOTES_DIR="$HOME/repos/docs"
 export EXT_XDG_WALLPAPER_DIR="$(xdg-user-dir PICTURES)/wallpapers/"
+
+source ~/.nvm/nvm.sh
