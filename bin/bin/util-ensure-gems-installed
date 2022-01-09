@@ -6,4 +6,4 @@ end
 
 puts 'Ensuring necessary gems are installed...'
 
-%w[bundler solargraph pry-byebug solargraph tmuxinator].each { |gem| ensure_installed(gem) }
+%w[bundler solargraph pry-doc pry-byebug tmuxinator].each { |gem| ensure_installed(gem) }
