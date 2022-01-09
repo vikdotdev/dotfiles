@@ -2,10 +2,10 @@ draw_bold_text_with_bright_colors: true
 
 font:
   normal:
-    family: 'Iosevka'
+    family: 'Iosevka Curly'
     style: Regular
   bold:
-    family: 'Iosevka'
+    family: 'Iosevka Curly'
     style: Bold
 
 colors:
