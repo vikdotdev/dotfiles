@@ -77,6 +77,9 @@ export PS1='\[\e[33m\]\u\[\e[m\]\[\e[36m\]@\[\e[m\]\[\e[35m\]\h\[\e[m\]: \[\e[32
 
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 
+# Workaround to toggle rvm to switch ruby on a new terminal session
+cd .
+
 # Disable a propmt to install a command if not found
 unset command_not_found_handle
 
