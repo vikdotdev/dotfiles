@@ -10,20 +10,10 @@ end)
 
 -- does not work on initial load?
 client.connect_signal("focus", function(c)
-  c.opacity=0.95
+  c.opacity=1
 end)
 client.connect_signal("unfocus", function(c)
-  c.opacity=0.85
-end)
-
--- broken this when using a mouse and changing workspaces
-client.connect_signal("focus", function(c)
-  if mouse.object_under_pointer() ~= c then
-    local geometry = c:geometry()
-    local x = geometry.x + geometry.width/2
-    local y = geometry.y + geometry.height/2
-    mouse.coords({x = x, y = y}, true)
-  end
+  c.opacity=0.95
 end)
 
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
@@ -108,18 +98,19 @@ awful.rules.rules = {
   }, properties = { titlebars_enabled = TATTLER_CONFIG.enabled }
   },
 
-  -- Set Firefox to always map on the tag named "2" on screen 1.
   { rule = { class = "Firefox" },
     properties = { screen = 1, tag = "8 www" } },
   { rule = { class = "Deluge-gtk" },
-    properties = { screen = 1, tag = "2 torrent" } },
+    properties = { screen = 1, tag = "2 download" } },
   { rule = { class = "TelegramDesktop" },
     properties = { screen = 1, tag = "9 chat" } },
   { rule = { class = "Thunderbird" },
     properties = { screen = 1, tag = "6 mail" } },
-  { rule = { class = "Microsoft Teams - Preview" },
+  { rule = { class = "teams-for-linux" },
     properties = { screen = 1, tag = "9 chat" } },
   { rule = { class = "Skype" },
     properties = { screen = 1, tag = "9 chat" } },
+  { rule = { class = "Oracle VM VirtualBox" },
+    properties = { screen = 1, tag = "4 vms" } },
 }
 -- }}}

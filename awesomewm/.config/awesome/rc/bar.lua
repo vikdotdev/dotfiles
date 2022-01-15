@@ -75,7 +75,7 @@ internet_connection_container:set_widget(internet)
 
 awful.screen.connect_for_each_screen(function(s)
   -- Each screen has its own tag table.
-  awful.tag({ "1 other", "2 torrent", "3 files", "4", "5 music", "6 mail", "7 code", "8 www", "9 chat" }, s, awful.layout.layouts[1])
+  awful.tag({ "1 other", "2 download", "3 files", "4 vms", "5 music", "6 mail", "7 code", "8 www", "9 chat" }, s, awful.layout.layouts[1])
 
   -- Create a promptbox for each screen
   s.mypromptbox = awful.widget.prompt()
