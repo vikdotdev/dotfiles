@@ -1,5 +1,5 @@
--- require('bufnav.config').setup({
---   cycle_buffers = {
---     enabled = false
---   }
--- })
+require('bufnav.config').setup({
+  cycle_buffers = {
+    enabled = false
+  }
+})
