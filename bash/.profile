@@ -21,3 +21,7 @@ export EXT_XDG_NOTES_DIR="$HOME/repos/docs"
 export EXT_XDG_WALLPAPER_DIR="$(xdg-user-dir PICTURES)/wallpapers/"
 
 source ~/.nvm/nvm.sh
+
+if [ -x "$(command -v setxkbmap)" ]; then
+  setxkbmap -layout us,ua
+fi
