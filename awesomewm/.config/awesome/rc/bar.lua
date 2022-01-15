@@ -2,7 +2,8 @@ local gears = require("gears")
 local awful = require("awful")
 local wibox = require("wibox")
 local naughty = require('naughty')
-local std = require("../lib/std")
+local std = require("lib/std")
+local util = require("lib/util")
 local tattler = require("../widgets/tattler")
 
 local taglist_buttons = gears.table.join(
@@ -41,6 +42,46 @@ local tasklist_buttons = gears.table.join(
   end)
 )
 
+local kmonad_button = nil
+if util.is_laptop() then
+  kmonad_button = wibox.widget {
+    {
+      {
+        buttons = gears.table.join(
+          awful.button({}, 1, function ()
+            local commands = {
+              "systemctl restart --user kmonad",
+              "systemctl restart --user xset"
+            }
+
+            for _, command in ipairs(commands) do awful.spawn.with_shell(command) end
+
+            naughty.notify { text = 'Restaring KMonad' }
+          end),
+
+          awful.button({}, 3, function ()
+            awful.spawn.with_shell('systemctl stop --user kmonad')
+
+            naughty.notify { text = 'Stopping KMonad' }
+          end)
+        ),
+        widget = awful.widget.watch([[systemctl show --user kmonad --property='ActiveState']], 1, function(widget, stdout)
+          local status = 'unknown'
+          for _, v in string.gmatch(stdout, "(%w+)=(%w+)") do
+            status = v
+          end
+          widget:set_text('KMonad: ' .. status)
+        end),
+      },
+      left   = 20,
+      right  = 20,
+      widget = wibox.container.margin,
+    },
+    bg                 = '#00ffee',
+    fg                 = '#000000',
+    widget = wibox.widget.background,
+  }
+end
 
 local internet_connection_container = wibox.container.background()
 internet_connection_container:set_fg("#000000")
@@ -116,6 +157,7 @@ awful.screen.connect_for_each_screen(function(s)
     s.mytasklist, -- Middle widget
     { -- Right widgets
       internet_connection_container,
+      kmonad_button,
       layout = wibox.layout.fixed.horizontal,
       awful.widget.keyboardlayout(),
       wibox.widget.systray(),
