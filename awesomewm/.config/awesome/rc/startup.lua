@@ -20,7 +20,6 @@ if util.is_desktop() then
 end
 
 if util.is_laptop() then
-  naughty.notify { text = 'laptop' }
   commands = gears.table.join(
     commands,
     {

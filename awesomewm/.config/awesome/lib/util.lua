@@ -15,7 +15,6 @@ function M.set_wallpaper(s)
 end
 
 function M.is_desktop()
-
   return M.hostname() == std.trim(os.getenv("HOSTNAME_DESKTOP"))
 end
 
