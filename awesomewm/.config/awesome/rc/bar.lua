@@ -91,9 +91,11 @@ local internet = awful.widget.watch([[bash -c "ping -i 0.5 -w 10 -c 10 8.8.8.8 |
   if raw_value == nil then raw_value = '100' end
 
   local value = math.floor(tonumber(std.trim(raw_value)))
-  local text = ' ' .. value .. '% lost '
+  local text = value .. '% packet loss'
 
-  if value > 0 then
+  if value > 20 and value < 40 then
+    internet_connection_container:set_bg("#f5f500")
+  elseif value >= 40 then
     internet_connection_container:set_bg("#ff543d")
 
     local notification_text = 'Internet unstable'
@@ -112,7 +114,14 @@ local internet = awful.widget.watch([[bash -c "ping -i 0.5 -w 10 -c 10 8.8.8.8 |
   widget:set_text(text)
 end)
 
-internet_connection_container:set_widget(internet)
+internet_connection_container:set_widget(
+  wibox.widget {
+    internet,
+    left   = 12,
+    right  = 12,
+    widget = wibox.container.margin
+  }
+)
 
 awful.screen.connect_for_each_screen(function(s)
   -- Each screen has its own tag table.
