@@ -56,7 +56,6 @@ local normal_keymap = {
     s = {'<Cmd>w!<CR>', 'save'},
     l = {'<Cmd>NvimTreeFindFile<CR>', 'locate'},
     r = {'<Cmd>Telescope oldfiles<CR>', 'recent'},
-    f = {"<Cmd>Telescope file_browser<CR>", 'files'},
     t = {'<Cmd>NvimTreeToggle<CR>', 'file tree'},
     c = {"<Cmd>lua require('telescope.builtin').find_files({ find_command = {'rg', '--hidden', '--files'}})<CR>", 'from cwd'},
     D = {'<Cmd>call delete(expand("%")) | bdelete!<CR>', 'delete'},
