@@ -110,6 +110,8 @@ awful.rules.rules = {
     properties = { screen = 1, tag = "9 chat" } },
   { rule = { class = "Skype" },
     properties = { screen = 1, tag = "9 chat" } },
+  { rule = { class = "Discord" },
+    properties = { screen = 1, tag = "9 chat" } },
   { rule = { class = "Oracle VM VirtualBox" },
     properties = { screen = 1, tag = "4 vms" } },
 }
