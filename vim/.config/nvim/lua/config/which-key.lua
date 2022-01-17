@@ -11,10 +11,6 @@ wk.setup({
 })
 
 local visual_keymap = {
-  i = {
-    name = '+iron/repl',
-    s = {':lua require("iron").core.visual_send()<CR>', 'send range'}
-  },
   p = {
     name = '+prettify',
     j = {':!jq<CR>', 'json'},
@@ -144,16 +140,6 @@ local normal_keymap = {
     r = {'<Cmd>luafile %<CR>', 'reload lua buffer'},
     s = {'<Cmd>PackerSync<CR>', 'sync plugins'},
     c = {'<Cmd>PackerCompile<CR>', 'compile'}
-  },
-  i = {
-    name = '+iron/repl',
-    r = {'<Cmd>lua require("iron").core.repeat_cmd()<CR>', 'repeat last command'},
-    f = {'<Cmd>lua require("iron").core.focus_on(vim.bo.filetype)<CR>', 'focus'},
-    w = {'<Cmd>IronWatchCurrentFile<CR>', 'watch file'},
-    u = {'<Cmd>IronUnwatchCurrentFile<CR>', 'unwatch file'},
-    s = {'<Cmd>lua require("iron").core.send_line()<CR>', 'send line'},
-    h = {'<Cmd>IronReplHere<CR>', 'launch here'},
-    l = {'<Cmd>lua require("iron").core.repl_for(vim.bo.filetype)<CR>', 'launch'},
   },
   l = {
     name = '+lsp',
