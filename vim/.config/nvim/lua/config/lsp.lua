@@ -1,6 +1,7 @@
+local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+
 require('lspconfig').solargraph.setup({
-  autoformat = true, -- EXPERIMENTAL
-  on_attach = require('completion').on_attach,
+  capabilities = capabilities,
   settings = {
     solargraph = {
       diagnostics = true
@@ -14,7 +15,6 @@ local sumneko_root_path = vim.fn.expand('$HOME/.local/bin/sumneko_lua')
 local sumneko_binary = vim.fn.expand(sumneko_root_path .. '/bin/lua-language-server')
 
 require('lspconfig').sumneko_lua.setup({
-  on_attach = require('completion').on_attach,
   cmd = {sumneko_binary, "-E", sumneko_root_path .. "/main.lua"};
   settings = {
     Lua = {
@@ -44,6 +44,7 @@ require('lspconfig').sumneko_lua.setup({
 })
 
 require('lspconfig').jsonls.setup {
+  capabilities = capabilities,
   commands = {
     Format = {
       function()
@@ -53,9 +54,13 @@ require('lspconfig').jsonls.setup {
   }
 }
 
-require('lspconfig').denols.setup({})
+require('lspconfig').denols.setup({
+  capabilities = capabilities
+})
 
-require('lspconfig').jsonls.setup({})
+require('lspconfig').jsonls.setup({
+  capabilities = capabilities
+})
 
 vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   vim.lsp.diagnostic.on_publish_diagnostics, {
@@ -64,34 +69,42 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
 )
 
 
-local ruby_capabilities = vim.lsp.protocol.make_client_capabilities()
+-- local ruby_capabilities = vim.lsp.protocol.make_client_capabilities()
+--
+-- vim.lsp.protocol.make_client_capabilities().callHierarchy.dynamicRegistration = true
+-- vim.lsp.protocol.make_client_capabilities().textDocument.codeAction = { dynamicRegistration = true; }
 
-vim.lsp.protocol.make_client_capabilities().callHierarchy.dynamicRegistration = true
-vim.lsp.protocol.make_client_capabilities().textDocument.codeAction = { dynamicRegistration = true; }
 
+require('lspconfig').bashls.setup({
+  capabilities = capabilities
+})
 
-require('lspconfig').bashls.setup({})
-
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = true
+-- local capabilities = vim.lsp.protocol.make_client_capabilities()
+-- capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 require('lspconfig').cssls.setup({
   capabilities = capabilities,
 })
 
 
-local html_capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = true
+-- local html_capabilities = vim.lsp.protocol.make_client_capabilities()
+-- capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 require'lspconfig'.html.setup {
-  capabilities = html_capabilities,
+  capabilities = capabilities
 }
 
-require'lspconfig'.yamlls.setup{}
+require'lspconfig'.yamlls.setup({
+  capabilities = capabilities
+})
 
-require'lspconfig'.diagnosticls.setup{}
+require'lspconfig'.diagnosticls.setup({
+  capabilities = capabilities
+})
 
-require'lspconfig'.dockerls.setup{}
+require'lspconfig'.dockerls.setup({
+  capabilities = capabilities
+})
 
 -- require'lspconfig'.sqlls.setup{
 --   cmd = {"sql-language-server", "up", "--method", "stdio"};
