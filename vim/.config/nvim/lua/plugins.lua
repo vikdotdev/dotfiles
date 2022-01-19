@@ -16,7 +16,8 @@ return require('packer').startup(function(use)
   use({'ojroques/nvim-bufdel'})
   use({'vikdotdev/bufnav.nvim'})
   use({'drewtempelmeyer/palenight.vim'})
-  use({'glepnir/galaxyline.nvim', branch = 'main' })
+  use({'rebelot/heirline.nvim'})
+
   use({'nvim-treesitter/nvim-treesitter',
     ensure_installed = 'maintained',
     run = {':TSUpdate'},
