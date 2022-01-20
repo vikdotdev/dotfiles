@@ -13,11 +13,14 @@ if defined?(PryByebug)
 end
 
 if defined?(PryRails)
-  Pry.commands.alias_command 'r', 'reload!'
+  def r
+    reload!
+  end
 end
 
 Pry.commands.alias_command 'e', 'exit'
 Pry.commands.alias_command 'clear', 'clear-screen'
+Pry.commands.alias_command 'wai', 'whereami'
 
 Pry::Commands.command /^$/, "Repeat last command with RETURN" do
   pry_instance.run_command Pry.history.to_a.last
