@@ -83,6 +83,44 @@ if util.is_laptop() then
   }
 end
 
+local battery_container = nil
+if util.is_laptop() then
+  battery_container = wibox.container.background()
+  battery_container:set_fg("#000000")
+
+  local battery = awful.widget.watch([[bash -c "util-battery"]], 60, function(widget, stdout)
+    local raw_value = stdout:match([[(%d+)%%]])
+    if raw_value == nil then raw_value = '0' end
+
+    local value = math.floor(tonumber(std.trim(raw_value)))
+    local text = 'Battery ' .. value .. '%'
+
+    if value > 70 then
+      battery_container:set_bg("#80fa73")
+    elseif value < 70 and value >= 35 then
+      battery_container:set_bg("#f5f500")
+    elseif value < 35 and value >= 20 then
+      battery_container:set_bg("#d18834")
+    elseif value == 0 then
+      battery_container:set_bg("#ff543d")
+      text = 'Battery N/A'
+    else
+      battery_container:set_bg("#ff543d")
+    end
+
+    widget:set_text(text)
+  end)
+
+  battery_container:set_widget(
+    wibox.widget {
+      battery,
+      left   = 12,
+      right  = 12,
+      widget = wibox.container.margin
+    }
+  )
+end
+
 local internet_connection_container = wibox.container.background()
 internet_connection_container:set_fg("#000000")
 
@@ -166,6 +204,7 @@ awful.screen.connect_for_each_screen(function(s)
     s.mytasklist, -- Middle widget
     { -- Right widgets
       internet_connection_container,
+      battery_container,
       kmonad_button,
       layout = wibox.layout.fixed.horizontal,
       awful.widget.keyboardlayout(),
