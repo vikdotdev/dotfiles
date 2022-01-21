@@ -1,0 +1,30 @@
+#!/usr/bin/env ruby
+
+output = `acpi -V`.split("\n").map(&:strip)
+
+batteries = output.select do |line|
+  line.match?(/Battery \d{1}/)
+end
+
+structured = batteries.each_slice(2).map do |status, data|
+  if status.scan(/Battery (\d{1})/).flatten.first != data.scan(/Battery (\d{1})/).flatten.first
+    raise 'Garbled acpi output.'
+  end
+
+  {
+    charge: status.scan(/[Full|Charging|Discharging], (\d+)%/).flatten&.first,
+    capacity: data.scan(/design capacity (\d+) mAh/).flatten&.first
+  }
+end
+
+max_capacity = structured.inject(0) do |memo, current|
+  memo += current[:capacity].to_f
+  memo
+end
+
+current_capacity = structured.inject(0) do |memo, current|
+  memo += current[:capacity].to_f * current[:charge].to_f / 100
+  memo
+end
+
+puts "#{(current_capacity / max_capacity * 100).to_i}%"
