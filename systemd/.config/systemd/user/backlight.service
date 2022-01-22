@@ -1,0 +1,12 @@
+[Unit]
+Description=Backlight
+
+[Service]
+Type=simple
+StandardOutput=journal
+ExecStart=%h/.rvm/wrappers/default/ruby %h/bin/sys-backlight
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

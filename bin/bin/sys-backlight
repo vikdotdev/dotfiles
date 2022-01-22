@@ -1,0 +1,41 @@
+#!/usr/bin/env ruby
+# xwd -root -silent | convert xwd:- -colorspace Gray -resize 1x1 -format "%[EXIF:BrightnessValue]" info txt:-
+
+require 'mini_magick'
+
+TMP_LOCATION = Dir.home
+TMP_FILE = File.join(TMP_LOCATION, 'current.xwd')
+
+def dependencies_fulfilled?
+  # verify that xwd and convert binary is in path
+end
+
+def screenshot!
+  `xwd -root -silent > #{TMP_FILE}`
+  raise 'Failed to make a screenshot' unless File.exist?(TMP_FILE)
+
+  TMP_FILE
+end
+
+def brightness(file)
+  image = MiniMagick::Image.open(file)
+  image.colorspace 'Gray'
+  image.resize '1x1'
+  mean = image.data.dig('imageStatistics', 'all', 'mean')
+
+  (mean / 255.0 * 100).to_i
+ensure
+  File.delete(TMP_FILE)
+end
+
+def serial_send(brightness, options = {})
+  `notify-send #{brightness}`
+  # ...
+end
+
+loop do
+  file = screenshot!
+  value = brightness(file)
+  serial_send(value)
+  sleep 5
+end
