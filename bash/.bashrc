@@ -7,6 +7,8 @@ stty -ixon
 shopt -s autocd
 shopt -s dotglob
 
+set -o ignoreeof # Disabled CTRL-d
+
 # get current branch in git repo
 function parse_git_branch() {
 	BRANCH=`git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
