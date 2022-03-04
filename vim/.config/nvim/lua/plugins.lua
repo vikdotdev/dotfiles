@@ -10,13 +10,11 @@ return require('packer').startup(function(use)
   use({'hrsh7th/nvim-cmp'})
   use({'folke/which-key.nvim'})
   use({'norcalli/nvim-colorizer.lua'})
-  use({'steelsojka/pears.nvim'})
   use({'numToStr/Comment.nvim', config = function() require('Comment').setup() end })
   use({'JoosepAlviste/nvim-ts-context-commentstring'})
   use({'ojroques/nvim-bufdel'})
   use({'vikdotdev/bufnav.nvim'})
   use({'drewtempelmeyer/palenight.vim'})
-  use({'glepnir/galaxyline.nvim', branch = 'main' })
   use({'nvim-treesitter/nvim-treesitter',
     ensure_installed = 'maintained',
     run = {':TSUpdate'},
