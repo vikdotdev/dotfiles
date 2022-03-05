@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 def ensure_installed(gem, installed)
-  return if installed.grep(/^#{gem} \(.*\)/)
+  return if installed.grep(/^#{gem} \(.*\)/).any?
 
   command = "gem install #{gem}"
   puts "Running '#{command}'"
@@ -9,5 +9,7 @@ def ensure_installed(gem, installed)
 end
 
 installed = `gem list`.lines.map(&:chomp)
+
+puts 'Ensuring essential gems are installed.'
 
 %w[bundler solargraph pry-doc pry-byebug tmuxinator].each { |gem| ensure_installed(gem, installed) }
