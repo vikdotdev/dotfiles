@@ -13,7 +13,7 @@ export PATH="$PATH:$HOME/.rvm/bin"
 
 # Custom variables
 export HOSTNAME_DESKTOP="umbra"
-export HOSTNAME_LAPTOP="pad"
+export HOSTNAME_LAPTOP="reddwarf"
 
 export EXT_XDG_REPOS_DIR="$HOME/repos"
 export EXT_XDG_DOTFILES_DIR="$HOME/repos/dotfiles"
