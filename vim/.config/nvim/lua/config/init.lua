@@ -59,6 +59,9 @@ vim.cmd([[autocmd BufWritePre * %s/\s\+$//e]])
 vim.cmd([[set completeopt=menu,menuone,noselect]])
 vim.cmd([[hi Search guibg=azure guifg=black]])
 
+vim.cmd([[hi Pmenu guibg=black guifg=azure]])
+vim.cmd([[hi PmenuSel guibg=black guifg=azure]])
+
 vim.cmd([[hi GitSignsAddLn guibg=lightgreen guifg=black]])
 vim.cmd([[hi GitSignsChangeLn guibg=orange guifg=black]])
 vim.cmd([[hi GitSignsDeleteLn guibg=tomato guifg=black]])
