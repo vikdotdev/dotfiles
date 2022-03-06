@@ -1,7 +1,7 @@
 [user]
 	email = vikdotdev@gmail.com
 	name = Viktor Habchak
-	signingkey = 525FF9AECD3C79C6
+	signingkey = 7392D21113383CBB
 [credential]
 	helper = /usr/libexec/git-core/git-credential-libsecret
 [alias]
