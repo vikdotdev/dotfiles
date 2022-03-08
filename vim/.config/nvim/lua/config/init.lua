@@ -10,7 +10,7 @@ vim.o.expandtab = true
 vim.o.hidden = true
 vim.o.ignorecase = true
 vim.o.smartcase = true
-vim.o.scrolloff = 10
+-- vim.o.scrolloff = 10
 vim.o.shiftround = true
 vim.o.splitbelow = true
 vim.o.splitright = true
@@ -59,7 +59,7 @@ vim.cmd([[autocmd BufWritePre * %s/\s\+$//e]])
 vim.cmd([[set completeopt=menu,menuone,noselect]])
 vim.cmd([[hi Search guibg=azure guifg=black]])
 
-vim.cmd([[hi Pmenu guibg=black guifg=azure]])
+vim.cmd([[hi Pmenu guibg=#292d3e guifg=azure]])
 vim.cmd([[hi PmenuSel guibg=black guifg=azure]])
 
 vim.cmd([[hi GitSignsAddLn guibg=lightgreen guifg=black]])
