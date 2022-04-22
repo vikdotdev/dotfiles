@@ -21,14 +21,12 @@ require('telescope').setup({
     -- sorting_strategy = "descending",
     -- layout_strategy = "ivy",
     layout_config = {
-      -- horizontal = {
-      --   mirror = false,
-      -- },
-      -- vertical = {
-      --   mirror = false,
-      -- },
-      -- preview_cutoff = 120,
-      -- width = 1.0,
+      horizontal = {
+        width = 0.99,
+        height = 0.9
+      },
+      preview_cutoff = 80,
+      preview_width = 0.4
     },
     -- file_sorter =  require'telescope.sorters'.get_fzy_sorter,
     -- file_ignore_patterns = {".git/*"},

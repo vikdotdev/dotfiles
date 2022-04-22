@@ -106,6 +106,8 @@ require'lspconfig'.dockerls.setup({
   capabilities = capabilities
 })
 
+require'lspconfig'.tailwindcss.setup({})
+
 -- require'lspconfig'.sqlls.setup{
 --   cmd = {"sql-language-server", "up", "--method", "stdio"};
 -- }
