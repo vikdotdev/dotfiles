@@ -20,6 +20,7 @@
   cp = cherry-pick
   di = diff
   root = rev-parse --show-toplevel
+  logo = log --oneline
   authors = log --pretty=format:'%an <%ae>'
 [core]
 	autocrlf = input
