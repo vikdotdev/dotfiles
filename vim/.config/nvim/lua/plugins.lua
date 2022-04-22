@@ -1,6 +1,11 @@
 return require('packer').startup(function(use)
   use({'wbthomason/packer.nvim'})
-  use({'nvim-telescope/telescope.nvim', requires = {'nvim-lua/plenary.nvim'}})
+  use({
+    'nvim-telescope/telescope.nvim',
+    requires = {'nvim-lua/plenary.nvim'},
+    -- requires nvim ^0.7
+    commit = 'd88094fbfd84b297178252230f6faf0e7d2f7650'
+  })
   use({'neovim/nvim-lspconfig'})
   use({'nvim-lua/completion-nvim'})
   use({'hrsh7th/cmp-nvim-lsp'})
@@ -10,7 +15,12 @@ return require('packer').startup(function(use)
   use({'hrsh7th/nvim-cmp'})
   use({'folke/which-key.nvim'})
   use({'norcalli/nvim-colorizer.lua'})
-  use({'numToStr/Comment.nvim', config = function() require('Comment').setup() end })
+  use({
+    'numToStr/Comment.nvim',
+    config = function() require('Comment').setup() end,
+    -- requires nvim ^0.7
+    tag = 'v0.6'
+  })
   use({'JoosepAlviste/nvim-ts-context-commentstring'})
   use({'ojroques/nvim-bufdel'})
   use({'vikdotdev/bufnav.nvim'})
