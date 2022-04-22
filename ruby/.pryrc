@@ -20,7 +20,6 @@ end
 
 Pry.commands.alias_command 'e', 'exit'
 Pry.commands.alias_command 'clear', 'clear-screen'
-Pry.commands.alias_command 'wai', 'whereami'
 
 Pry::Commands.command /^$/, "Repeat last command with RETURN" do
   pry_instance.run_command Pry.history.to_a.last
@@ -30,3 +29,8 @@ Pry.commands.block_command('color-toggle', "Toggle colors.") do
   Pry.config.color = !Pry.config.color
 end
 
+Pry::Commands.command /^$/, "repeat last command" do
+  _pry_.input = StringIO.new(Pry.history.to_a.last)
+end
+
+Pry.commands.alias_command 'skip-breakpoints', 'exit-program'
