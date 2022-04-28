@@ -64,6 +64,7 @@ local normal_keymap = {
   },
   s = {
     name = '+search',
+    s = {"<Cmd>lua require('telescope.builtin').grep_string()<CR>", 'string under cursor'},
     c = {'<Cmd>Telescope commands<CR>', 'commands'},
     h = {'<Cmd>Telescope command_history<CR>', 'history'},
     b = {'<Cmd>Telescope current_buffer_fuzzy_find<CR>', 'current buffer'},
