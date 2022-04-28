@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+require 'tty-prompt'
+
 # Leading space is important here to avoid pry regex check
 ENV['PAGER'] = ' less --raw-control-chars --mouse --wheel-lines=3 -F -X'
 
@@ -21,16 +23,26 @@ end
 Pry.commands.alias_command 'e', 'exit'
 Pry.commands.alias_command 'clear', 'clear-screen'
 
-Pry::Commands.command /^$/, "Repeat last command with RETURN" do
-  pry_instance.run_command Pry.history.to_a.last
-end
-
 Pry.commands.block_command('color-toggle', "Toggle colors.") do
   Pry.config.color = !Pry.config.color
 end
 
 Pry::Commands.command /^$/, "repeat last command" do
-  _pry_.input = StringIO.new(Pry.history.to_a.last)
+  last_command = Pry.history.to_a.last
+  prompt = TTY::Prompt.new
+  run = prompt.yes?("Run last command ? - '#{last_command}'")
+  if run
+    puts
+    pry_instance.input = StringIO.new(last_command)
+  end
 end
 
 Pry.commands.alias_command 'skip-breakpoints', 'exit-program'
+
+Pry::Commands.command /hg/, "find command from history" do
+  prompt = TTY::Prompt.new
+  selected = prompt.select('>', Pry.history.to_a, filter: true, per_page: TTY::Screen.height - 2)
+  pry_instance.input = StringIO.new(selected) unless selected.empty?
+rescue Interrupt
+  puts
+end

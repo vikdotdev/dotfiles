@@ -12,4 +12,4 @@ installed = `gem list`.lines.map(&:chomp)
 
 puts 'Ensuring essential gems are installed.'
 
-%w[bundler solargraph pry-doc pry-byebug tmuxinator].each { |gem| ensure_installed(gem, installed) }
+%w[bundler solargraph pry-doc pry-byebug tmuxinator tty-prompt].each { |gem| ensure_installed(gem, installed) }
