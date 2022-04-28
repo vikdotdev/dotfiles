@@ -7,7 +7,6 @@ return require('packer').startup(function(use)
     commit = 'd88094fbfd84b297178252230f6faf0e7d2f7650'
   })
   use({'neovim/nvim-lspconfig'})
-  use({'nvim-lua/completion-nvim'})
   use({'hrsh7th/cmp-nvim-lsp'})
   use({'hrsh7th/cmp-buffer'})
   use({'hrsh7th/cmp-path'})
@@ -28,7 +27,10 @@ return require('packer').startup(function(use)
   use({'nvim-treesitter/nvim-treesitter',
     ensure_installed = 'maintained',
     run = {':TSUpdate'},
-    branch = 'master'})
+    branch = 'master',
+    -- requires nvim ^0.7
+    commit = '8a1acc00d2a768985a79358d1a6caa9f08a0eeea'
+  })
   use({'romgrk/nvim-treesitter-context'})
   use({'mhinz/vim-startify'})
   use({'tpope/vim-surround'})
