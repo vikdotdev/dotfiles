@@ -18,6 +18,12 @@ local visual_keymap = {
   l = {
     name = '+lsp',
     f = {':lua vim.lsp.buf.range_formatting()<CR>', 'format range'}
+  },
+  n = {
+    name = '+notes',
+    m = {'<Cmd>ZkMatch<CR>', 'match search selection'},
+    t = {'<Cmd>ZkNewFromTitleSelection<CR>', 'title from selection'},
+    c = {'<Cmd>ZkNewFromContentSelection<CR>', 'content from selection'}
   }
 }
 
@@ -163,13 +169,21 @@ local normal_keymap = {
       r = {'<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', 'remove folder'},
       i = {'<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', 'inspect'},
     }
+  },
+  n = {
+    name = '+notes',
+    t = {'<Cmd>ZkTags<CR>', 'search by tags'},
+    l = {'<Cmd>ZkLinks<CR>', 'current buffer links'},
+    b = {'<Cmd>ZkBacklinks<CR>', 'current buffer backlinks'},
+    c = {'<Cmd>ZkCd<CR>', 'cd into notes dir'},
+    n = {
+      name = '+new',
+      f = {'<Cmd>ZkNew { dir = "fleeting" }<CR>', 'new fleeting note'},
+      l = {'<Cmd>ZkNew { dir = "literature" }<CR>', 'new literature note'},
+      p = {'<Cmd>ZkNew { dir = "permanent" }<CR>', 'new permanent note'},
+    },
+    s = {'<Cmd>ZkNotes { sort = "modified" }<CR>', 'search notes'},
   }
-  -- p = {
-  --   name = '+project',
-  -- },
-  -- n = {
-  --   name = '+notes',
-  -- },
 }
 
 wk.register(normal_keymap, { prefix = "<leader>" })
