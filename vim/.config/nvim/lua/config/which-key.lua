@@ -182,7 +182,7 @@ local normal_keymap = {
       l = {'<Cmd>ZkNew { dir = "literature" }<CR>', 'new literature note'},
       p = {'<Cmd>ZkNew { dir = "permanent" }<CR>', 'new permanent note'},
     },
-    s = {'<Cmd>ZkNotes { sort = "modified" }<CR>', 'search notes'},
+    s = {'<Cmd>ZkNotes { sort = { "modified" } }<CR>', 'search notes'},
   }
 }
 
