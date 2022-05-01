@@ -34,13 +34,17 @@ return require('packer').startup(function(use)
   use({'romgrk/nvim-treesitter-context'})
   use({'mhinz/vim-startify'})
   use({'tpope/vim-surround'})
-  use({'mbbill/undotree', config = [[vim.g.undotree_SetFocusWhenToggle = 1]]})
   use({'lewis6991/gitsigns.nvim',
     requires = { 'nvim-lua/plenary.nvim' },
     config = function() require('gitsigns').setup() end
   })
-  use({'kyazdani42/nvim-tree.lua'})
+  use({
+    'kyazdani42/nvim-tree.lua',
+    commit = 'fd2332a33f0fc7c8545cd1c358ad032876318a43'
+  })
   use({'L3MON4D3/LuaSnip'})
   use({'kmonad/kmonad-vim'})
+  use({'deris/vim-shot-f'})
+  use({'mickael-menu/zk-nvim'})
 end)
 

@@ -37,6 +37,7 @@ require('config/bufdel')
 require('config/completion')
 require('config/bufnav')
 require('config/theme')
+require('config/zk')
 
 vim.cmd('au TextYankPost * lua vim.highlight.on_yank {on_visual = false}')
 vim.cmd('syntax enable')

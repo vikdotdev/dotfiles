@@ -68,27 +68,13 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   }
 )
 
-
--- local ruby_capabilities = vim.lsp.protocol.make_client_capabilities()
---
--- vim.lsp.protocol.make_client_capabilities().callHierarchy.dynamicRegistration = true
--- vim.lsp.protocol.make_client_capabilities().textDocument.codeAction = { dynamicRegistration = true; }
-
-
 require('lspconfig').bashls.setup({
   capabilities = capabilities
 })
 
--- local capabilities = vim.lsp.protocol.make_client_capabilities()
--- capabilities.textDocument.completion.completionItem.snippetSupport = true
-
 require('lspconfig').cssls.setup({
   capabilities = capabilities,
 })
-
-
--- local html_capabilities = vim.lsp.protocol.make_client_capabilities()
--- capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 require'lspconfig'.html.setup {
   capabilities = capabilities
@@ -107,7 +93,3 @@ require'lspconfig'.dockerls.setup({
 })
 
 require'lspconfig'.tailwindcss.setup({})
-
--- require'lspconfig'.sqlls.setup{
---   cmd = {"sql-language-server", "up", "--method", "stdio"};
--- }
