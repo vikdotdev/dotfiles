@@ -10,6 +10,7 @@ export DENO_INSTALL="$HOME/.deno"
 export PATH="$DENO_INSTALL/bin:$PATH"
 export PATH="$HOME/.npm-global/bin:$PATH"
 export PATH="$PATH:$HOME/.rvm/bin"
+export GOBIN="$HOME/.local/bin"
 
 # Custom variables
 export HOSTNAME_DESKTOP="umbra"
