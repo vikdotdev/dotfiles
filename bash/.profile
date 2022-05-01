@@ -4,6 +4,7 @@
 export EDITOR="nvim"
 export GIT_EDITOR="$EDITOR"
 export LESS='-R --mouse --wheel-lines=3'
+export ZK_NOTEBOOK_DIR="$HOME/notes"
 
 # Path variables
 export DENO_INSTALL="$HOME/.deno"
