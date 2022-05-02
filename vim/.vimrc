@@ -26,4 +26,3 @@ set equalalways
 set shiftwidth=2
 set smartindent
 set clipboard=unnamedplus
-set spellfile=~/.config/nvim/.spellfile.add
