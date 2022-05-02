@@ -6,4 +6,5 @@ attach: true
 windows:
   - init: tt; tt list
   - dotfiles: cd <%= ENV['EXT_XDG_REPOS_DIR'] %>/dotfiles; nvim
+  - notes: cd <%= ENV['ZK_NOTEBOOK_DIR'] %>; nvim
   - workstation: cd <%= ENV['EXT_XDG_REPOS_DIR'] %>/workstation-playbook; nvim
