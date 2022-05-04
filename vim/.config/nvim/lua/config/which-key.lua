@@ -18,12 +18,6 @@ local visual_keymap = {
   l = {
     name = '+lsp',
     f = {':lua vim.lsp.buf.range_formatting()<CR>', 'format range'}
-  },
-  n = {
-    name = '+notes',
-    m = {'<Cmd>ZkMatch<CR>', 'match search selection'},
-    t = {'<Cmd>ZkNewFromTitleSelection<CR>', 'title from selection'},
-    c = {'<Cmd>ZkNewFromContentSelection<CR>', 'content from selection'}
   }
 }
 
@@ -178,9 +172,9 @@ local normal_keymap = {
     c = {'<Cmd>ZkCd<CR>', 'cd into notes dir'},
     n = {
       name = '+new',
-      f = {'<Cmd>ZkNew { dir = "fleeting" }<CR>', 'new fleeting note'},
-      l = {'<Cmd>ZkNew { dir = "literature" }<CR>', 'new literature note'},
-      p = {'<Cmd>ZkNew { dir = "permanent" }<CR>', 'new permanent note'},
+      f = {'<Cmd>ZkNew { template = "fleeting.md" }<CR>', 'new fleeting note'},
+      l = {'<Cmd>ZkNew { template = "literature.md" }<CR>', 'new literature note'},
+      e = {'<Cmd>ZkNew { template = "evergreen.md" }<CR>', 'new evergreen note'},
     },
     s = {'<Cmd>ZkNotes { sort = { "modified" } }<CR>', 'search notes'},
   }
