@@ -1,29 +1,40 @@
-#!/bin/bash
+#!/usr/bin/env ruby
 
-read -p "Push to a origin/$(git branch --show-current)? " -n 1 -r
-echo
+require 'bundler/inline'
 
-if [[ $REPLY =~ ^[Yy]$ ]]
-then
-  git push -u origin $(git branch --show-current)
-fi
+gemfile do
+  source 'https://rubygems.org'
 
-REPLY='n'
+  gem 'tty-prompt'
+end
 
-read -p "Create pull request? " -n 1 -r
-echo
+class FailedToPush < StandardError; end
+class FailedToCreatePullRequest < StandardError; end
 
-if [[ $REPLY =~ ^[Yy]$ ]]
-then
-  gh pr create --fill
-fi
+prompt = TTY::Prompt.new
 
-REPLY='n'
+begin
+  begin
+    branch = `git branch --show-current`.chomp
+    pushed = system("git push -u origin #{branch}") if prompt.yes?("Push to origin/#{branch}?")
+    raise FailedToPush unless pushed
+  rescue FailedToPush
+    puts 'Failed to push.'
+    retry
+  end
 
-read -p "Open pull request in browser? " -n 1 -r
-echo
+  create_pr = prompt.yes?('Create pull request?')
 
-if [[ $REPLY =~ ^[Yy]$ ]]
-then
-  gh pr view --web
-fi
+  begin
+    pr_created = system('gh pr create --fill') if create_pr
+    raise FailedToCreatePullRequest if !pr_created && create_pr
+  rescue FailedToCreatePullRequest
+    puts 'Failed creating pull request'
+    retry
+  end
+
+  system('gh pr view --web') if pr_created && prompt.yes?('Open pull request in browser?')
+rescue Interrupt
+  puts
+  exit 130
+end
