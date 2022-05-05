@@ -65,7 +65,7 @@ vim.cmd([[hi PmenuSel guibg=black guifg=azure]])
 vim.cmd([[hi GitSignsAddLn guibg=lightgreen guifg=black]])
 vim.cmd([[hi GitSignsChangeLn guibg=orange guifg=black]])
 vim.cmd([[hi GitSignsDeleteLn guibg=tomato guifg=black]])
-vim.cmd([[hi StatusLine guibg=#ae81ff guifg=black]])
+-- vim.cmd([[hi StatusLine guibg=#ae81ff guifg=black]])
 vim.cmd([[hi StatusLineNC guibg=#323437 guifg=azure]])
 
 

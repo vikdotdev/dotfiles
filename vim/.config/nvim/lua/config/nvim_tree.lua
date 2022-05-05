@@ -1,5 +1,11 @@
 local tree = require'nvim-tree.config'.nvim_tree_callback
 
+vim.g.nvim_tree_show_icons = {
+  git = 1,
+  folders = 0,
+  files = 0,
+}
+
 require('nvim-tree').setup({
   actions = {
     open_file = {
@@ -25,6 +31,19 @@ require('nvim-tree').setup({
   -- updates the root directory of the tree on `DirChanged` (when your run `:cd` usually)
   update_cwd          = false,
   -- show lsp diagnostics in the signcolumn
+  renderer = {
+    indent_markers = {
+      enable = false,
+      icons = {
+        corner = "└ ",
+        edge = "│ ",
+        none = "  ",
+      },
+    },
+    icons = {
+      webdev_colors = false,
+    },
+  },
   diagnostics = {
     enable = true,
     icons = {
@@ -93,4 +112,3 @@ require('nvim-tree').setup({
     }
   }
 })
-

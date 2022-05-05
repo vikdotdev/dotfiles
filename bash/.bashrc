@@ -70,6 +70,21 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   y="xclip -selection clipboard" \
   yank="xclip -selection clipboard"
 
+
+# function nvim {
+#   util-nvim-socket-manager --run "$@"
+# }
+#
+function theme-dark {
+  util-nvim-theme-switcher --dark
+  util-alacritty-build --dark
+}
+
+function theme-light {
+  util-nvim-theme-switcher --light
+  util-alacritty-build --light
+}
+
 HISTSIZE=
 HISTFILESIZE=
 export HISTCONTROL=ignoreboth:erasedups
