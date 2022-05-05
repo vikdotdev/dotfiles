@@ -172,9 +172,9 @@ local normal_keymap = {
     c = {'<Cmd>ZkCd<CR>', 'cd into notes dir'},
     n = {
       name = '+new',
-      f = {'<Cmd>ZkNew { template = "fleeting.md" }<CR>', 'new fleeting note'},
-      l = {'<Cmd>ZkNew { template = "literature.md" }<CR>', 'new literature note'},
-      e = {'<Cmd>ZkNew { template = "evergreen.md" }<CR>', 'new evergreen note'},
+      f = {'<Cmd>ZkNew { dir = "store", template = "fleeting.md" }<CR>', 'new fleeting note'},
+      l = {'<Cmd>ZkNew { dir = "store", template = "literature.md" }<CR>', 'new literature note'},
+      e = {'<Cmd>ZkNew { dir = "store", template = "evergreen.md" }<CR>', 'new evergreen note'},
     },
     s = {'<Cmd>ZkNotes { sort = { "modified" } }<CR>', 'search notes'},
   }

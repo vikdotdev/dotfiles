@@ -12,8 +12,8 @@ cmp.setup({
     ['<S-Tab>'] = function(fallback)
       if cmp.visible() then cmp.select_prev_item() else fallback() end
     end,
-    ['<C-k>'] = cmp.mapping(cmp.mapping.scroll_docs(-3), { 'i', 'c' }),
-    ['<C-j>'] = cmp.mapping(cmp.mapping.scroll_docs(3), { 'i', 'c' }),
+    ['<C-u>'] = cmp.mapping(cmp.mapping.scroll_docs(-3), { 'i', 'c' }),
+    ['<C-d>'] = cmp.mapping(cmp.mapping.scroll_docs(3), { 'i', 'c' }),
     ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
     ['<C-e>'] = cmp.mapping({
       i = cmp.mapping.abort(),
