@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+require 'yaml'
+require 'ostruct'
+require 'optparse'
+
+config = OpenStruct.new(theme: nil)
+
+parser = OptionParser.new do |opts|
+  opts.banner = 'Set alacritty theme'
+
+  opts.on('--dark', 'Set dark theme') do
+    config.theme = 'dark'
+  end
+
+  opts.on('--light', 'Set light theme') do
+    config.theme = 'light'
+  end
+
+  opts.on_tail('--help', 'Print help') do
+    puts opts
+    exit
+  end
+end
+
+parser.parse!
+
+puts parser.parse('--help') && exit(1) if config.theme.nil?
+
+config_path = File.join(ENV['HOME'], '.config', 'alacritty')
+target_config_path = File.join(config_path, 'alacritty.yml')
+schemes = YAML.load_file(File.join(config_path, 'colorschemes.yml'))
+shared = YAML.load_file(File.join(config_path, 'shared.yml'))
+
+File.open(target_config_path, 'w+') do |file|
+  file.write shared.merge(schemes[config.theme]).to_yaml
+end
