@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 require 'ostruct'
 require 'optparse'
-
 def sessions
   cmd = 'tmux list-sessions -F "#{session_name}"'
 
@@ -23,6 +22,7 @@ def vim?(pane_tty)
 end
 
 
+
 def switch_theme(theme)
   lua_cmd = ":lua require('github-theme').setup({ theme_style = '#{theme}' })"
   sessions.each do |session|
@@ -31,6 +31,9 @@ def switch_theme(theme)
         next unless vim?(pane_tty)
 
         system("tmux send-keys -t #{session}:#{window}.#{pane} \"#{lua_cmd}\" Enter")
+        File.open(File.join(Dir.home, '.config', 'nvim', 'theme'), 'w+') do |file|
+          file.write(theme)
+        end
       end
     end
   end

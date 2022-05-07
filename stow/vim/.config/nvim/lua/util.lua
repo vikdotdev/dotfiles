@@ -159,6 +159,16 @@ function Util.toggle_spell()
   end
 end
 
+function Util.get_theme()
+  local f = io.open(os.getenv("HOME").."/.config/nvim/theme", "r")
+
+  local theme = f:read("*a")
+  f:close()
+
+  return vim.trim(theme)
+end
+
+
 --- Get a ts compatible range of the current visual selection.
 --
 -- The range of ts nodes start with 0 and the ending range is exclusive.

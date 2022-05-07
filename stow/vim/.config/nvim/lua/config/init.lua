@@ -57,15 +57,4 @@ vim.cmd([[nnoremap Q <nop>]])
 vim.cmd([[autocmd BufWritePre * %s/\s\+$//e]])
 -- vim.cmd([[nnoremap ya :silent! ggyG<C-o><CR>]])
 vim.cmd([[set completeopt=menu,menuone,noselect]])
-vim.cmd([[hi Search guibg=azure guifg=black]])
-
-vim.cmd([[hi Pmenu guibg=#323437 guifg=azure]])
-vim.cmd([[hi PmenuSel guibg=black guifg=azure]])
-
-vim.cmd([[hi GitSignsAddLn guibg=lightgreen guifg=black]])
-vim.cmd([[hi GitSignsChangeLn guibg=orange guifg=black]])
-vim.cmd([[hi GitSignsDeleteLn guibg=tomato guifg=black]])
--- vim.cmd([[hi StatusLine guibg=#ae81ff guifg=black]])
-vim.cmd([[hi StatusLineNC guibg=#323437 guifg=azure]])
-
 

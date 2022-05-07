@@ -1,0 +1,11 @@
+#!/bin/bash
+
+[[ ! -d "$EXT_XDG_DOTFILES_DIR" ]] && echo "\$EXT_XDG_DOTFILES_DIR doesn't exist." && exit 1
+if [ -x "$(command -v stow)" ]; then
+  DIRS=$(ls -l "$EXT_XDG_DOTFILES_DIR/stow" | grep "^d" | rev | cut -d' ' -f 1 | rev)
+  stow -R --verbose=1 --dir="$EXT_XDG_DOTFILES_DIR/stow" --target="$HOME" $@ $DIRS
+  # stow -D --verbose=1 --target="$HOME" $@ $DIRS
+  echo "Done."
+else
+  echo "stow not found. Aborting"
+fi
