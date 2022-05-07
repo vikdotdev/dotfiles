@@ -23,8 +23,8 @@ end
 Pry.commands.alias_command 'e', 'exit'
 Pry.commands.alias_command 'clear', 'clear-screen'
 
-Pry.commands.block_command('color-toggle', "Toggle colors.") do
-  Pry.config.color = !Pry.config.color
+Pry.commands.block_command('toggle-color', "toggle colors") do
+  pry_instance.config.color = !pry_instance.config.color
 end
 
 Pry::Commands.command /^$/, "repeat last command" do
@@ -45,4 +45,8 @@ Pry::Commands.command /hg/, "find command from history" do
   pry_instance.input = StringIO.new(selected) unless selected.empty?
 rescue Interrupt
   puts
+end
+
+Pry::Commands.command 'toggle-pager', "toggle pager" do
+  pry_instance.config.pager = !pry_instance.config.pager
 end
