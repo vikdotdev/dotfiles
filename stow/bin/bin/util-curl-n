@@ -1,0 +1,3 @@
+#!/bin/bash
+
+curl -L -s -o /dev/null -w "%{http_code}\n" $1?[1-$2]

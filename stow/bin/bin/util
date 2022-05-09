@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+
+require 'bundler/inline'
+
+gemfile do
+  source 'https://rubygems.org'
+
+  gem 'tty-prompt'
+end
+
+PREFIX = 'util-'
+
+binaries = Dir["#{ENV['BIN_DIR']}/*"].map do |path|
+  basename = File.basename(path)
+  next unless basename.start_with?(PREFIX)
+
+  basename.delete_prefix(PREFIX)
+end.compact.sort
+
+begin
+  prompt = TTY::Prompt.new
+  puts binaries.inspect
+  script = prompt.select('util script to run:', binaries, filter: true, per_page: 20)
+rescue Interrupt
+  puts
+  exit 130
+end
+
+system("#{PREFIX}#{script}")

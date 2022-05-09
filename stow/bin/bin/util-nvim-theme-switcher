@@ -1,0 +1,64 @@
+#!/usr/bin/env ruby
+require 'ostruct'
+require 'optparse'
+def sessions
+  cmd = 'tmux list-sessions -F "#{session_name}"'
+
+  `#{cmd}`.each_line.map(&:chomp)
+end
+
+def windows(session)
+  `tmux list-windows -t #{session}`.each_line.map { |line| line.gsub!(/\A(\d+): .*/, '\1').chomp }
+end
+
+def panes(session, window)
+  cmd = 'tmux list-panes -F "#{pane_tty}:#{pane_index}"'.concat(" -t #{session}:#{window}")
+
+  `#{cmd}`.each_line.map { |line| line.chomp.split(':') }
+end
+
+def vim?(pane_tty)
+  system("ps -o state= -o comm= -t #{pane_tty} | grep -iqE '^[^TXZ] nvim'")
+end
+
+
+
+def switch_theme(theme)
+  lua_cmd = ":lua require('github-theme').setup({ theme_style = '#{theme}' })"
+  sessions.each do |session|
+    windows(session).each do |window|
+      panes(session, window).each do |pane_tty, pane|
+        next unless vim?(pane_tty)
+
+        system("tmux send-keys -t #{session}:#{window}.#{pane} \"#{lua_cmd}\" Enter")
+        File.open(File.join(Dir.home, '.config', 'nvim', 'theme'), 'w+') do |file|
+          file.write(theme)
+        end
+      end
+    end
+  end
+end
+
+config = OpenStruct.new(theme: nil)
+parser = OptionParser.new do |opts|
+  opts.banner = 'Set alacritty theme'
+
+  opts.on('--dark', 'Set dark theme') do
+    config.theme = 'dark'
+  end
+
+  opts.on('--light', 'Set light theme') do
+    config.theme = 'light'
+  end
+
+  opts.on_tail('--help', 'Print help') do
+    puts opts
+    exit
+  end
+end
+
+parser.parse!
+switch_theme(config.theme)
+
+puts parser.parse('--help') && exit(1) if config.theme.nil?
+

@@ -1,0 +1,64 @@
+#!/usr/bin/env ruby
+
+require 'yaml'
+require 'ostruct'
+require 'optparse'
+require 'fileutils'
+require 'erb'
+
+class Theme
+  attr_reader :type
+
+  def initialize(type = :dark)
+    @type = type
+    raise 'Invalid theme type' unless %i[dark light].include? type
+  end
+
+  def dark?
+    type.to_sym == :dark
+  end
+
+  def dark!
+    @type = :dark
+  end
+
+  def light?
+    type.to_sym == :light
+  end
+
+  def light!
+    @type = :light
+  end
+end
+
+theme = Theme.new
+
+parser = OptionParser.new do |opts|
+  opts.banner = 'Set alacritty theme'
+
+  opts.on('--dark', 'Set dark theme') do
+    theme.dark!
+  end
+
+  opts.on('--light', 'Set light theme') do
+    theme.light!
+  end
+
+  opts.on_tail('--help', 'Print help') do
+    puts opts
+    exit
+  end
+end
+
+parser.parse!
+
+template = File.read(File.join(ENV['EXT_XDG_DOTFILES_DIR'], 'builder', 'tmux', '.tmux.conf.local.erb'))
+config_dir = File.join(Dir.home)
+FileUtils.mkdir_p(config_dir)
+config_path = File.join(config_dir, '.tmux.conf.local')
+FileUtils.touch(config_path)
+File.open(config_path, 'w+') do |file|
+  file.write ERB.new(template).result_with_hash({ theme: theme })
+end
+
+`tmux source-file #{config_path.delete_suffix('.local')}`

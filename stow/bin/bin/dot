@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+
+require 'bundler/inline'
+
+gemfile do
+  source 'https://rubygems.org'
+
+  gem 'thor', require: false
+end
+
+# include as modules
+  util-nvim-theme-switcher --dark
+  util-alacritty-build --dark
+  util-gitconfig-build --dark
+
+  util-nvim-theme-switcher --light
+  util-alacritty-build --light
+  util-gitconfig-build --light
+
+
+# dotdotdot
+# manage dotfiles sync and theming and machine types
+#
+
