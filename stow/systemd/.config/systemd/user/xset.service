@@ -1,8 +1,0 @@
-[Unit]
-Description=Set caret repeat rate
-After=kmonad.service
-
-[Service]
-Type=oneshot
-RemainAfterExit=yes
-ExecStart=/usr/bin/xset r rate 250 44
