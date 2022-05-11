@@ -4,4 +4,4 @@ files(recursive: true).each do |file|
   ensure_write_file(destination, contents)
 end
 
-vim_switch_theme(@theme.type) if @theme.changed?
+vim_switch_theme(@theme.type)

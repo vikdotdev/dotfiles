@@ -1,0 +1,44 @@
+#!/usr/bin/env ruby
+
+require 'bundler/inline'
+
+gemfile do
+  source 'https://rubygems.org'
+
+  gem 'thor'
+  gem 'pry'
+  gem 'require_all'
+end
+
+require_rel '../lib/commands'
+
+module Dotfiles
+  class CLI < Thor
+    desc 'build', 'build dotfiles preserving theme'
+    option :theme, aliases: '-t', desc: 'Theme [dark, light]'
+    def build
+      theme = options[:theme]
+
+      Build.new(theme: theme).run
+    end
+
+    desc 'dark', 'shortcut for build -t dark'
+    def dark
+      invoke(:build, [], theme: 'dark')
+    end
+
+    desc 'light', 'shortcut for build -t light'
+    def light
+      invoke(:build, [], theme: 'light')
+    end
+
+    desc 'doctor', 'Not implemented.'
+    def doctor
+      puts 'Not implemented'
+    end
+
+    default_task :build
+  end
+end
+
+Dotfiles::CLI.start

@@ -1,10 +1,12 @@
 class Theme
   WHITELIST = %i[dark light]
+  DEFAULT = :dark
 
   attr_reader :type
 
-  def initialize(type = :dark)
-    @type = type.to_sym
+  def initialize(type = nil)
+    # TODO read current theme instead
+    @type = type&.to_sym || DEFAULT
     raise 'Invalid theme type' unless WHITELIST.include? @type
   end
 
@@ -14,12 +16,5 @@ class Theme
 
   def light?
     type.to_sym == :light
-  end
-
-  def changed?
-    true
-    # read file and compare to type
-    # Is this needed?
-    # maybe check if generated templates changed overall or not? global method
   end
 end
