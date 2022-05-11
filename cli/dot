@@ -15,11 +15,12 @@ require_rel '../lib/commands'
 module Dotfiles
   class CLI < Thor
     desc 'build', 'build dotfiles'
-    method_option :theme, aliases: '-t', desc: 'Theme dark/light'
-    method_option :profile, aliases: '-p', desc: 'Machine profile'
-    def build(args)
-      puts args.inspect
-      Build.new(theme: :dark).run
+    option :theme, aliases: '-t', desc: 'Theme dark/light'
+    def build
+      theme = options[:theme]
+
+      Build.new(theme: theme).run
+      # NeovimThemeSwitcher.switch(theme)
     end
 
     # def dark

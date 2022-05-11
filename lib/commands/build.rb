@@ -1,8 +1,11 @@
 require_rel '../'
+require_rel '../helpers'
 
 module Dotfiles
   class Build
-    include Helpers
+    include BuilderHelper
+    include TmuxHelper
+    include VimHelper
 
     def initialize(opts = {})
       @theme = Theme.new(opts[:theme])

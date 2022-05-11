@@ -1,7 +1,7 @@
 require 'fileutils'
 require 'erb'
 
-module Helpers
+module BuilderHelper
   def render_template(template)
     template_path = File.join(@templates_path, "#{template}.erb")
     ERB.new(File.read(template_path)).result(binding)

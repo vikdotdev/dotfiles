@@ -3,3 +3,5 @@ files(recursive: true).each do |file|
   contents = read_file(file)
   ensure_write_file(destination, contents)
 end
+
+vim_switch_theme(@theme.type) if @theme.changed?
