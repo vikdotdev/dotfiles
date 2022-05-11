@@ -6,7 +6,6 @@ local util = require("lib.util")
 local commands = {
   'util-wallpaper',
   'killall compton || compton --vsync opengl --backend glx --paint-on-overlay',
-  'systemctl start --user xset.service',
   'xset s 180 5',
   'xset r rate 250 44'
 }

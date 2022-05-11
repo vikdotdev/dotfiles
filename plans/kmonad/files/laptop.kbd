@@ -1,7 +1,6 @@
 (defcfg
   input  (device-file "/dev/input/by-path/platform-i8042-serio-0-event-kbd")
-  output (uinput-sink "KMonad output"
-    "/usr/bin/sleep 1 && /usr/bin/setxkbmap -option compose:ralt")
+  output (uinput-sink "KMonad output" "/usr/bin/sleep 1 && /usr/bin/setxkbmap -layout us,ua -option compose:ralt")
   cmp-seq ralt
   cmp-seq-delay 5
   fallthrough true
