@@ -160,7 +160,7 @@ function Util.toggle_spell()
 end
 
 function Util.get_theme()
-  local f = io.open(os.getenv("HOME").."/.config/nvim/theme", "r")
+  local f = io.open(os.getenv("HOME").."/.config/dot/theme", "r")
 
   local theme = f:read("*a")
   f:close()

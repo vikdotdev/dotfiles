@@ -12,12 +12,12 @@ module VimHelper
           next unless tmux_pane_vim?(pane_tty)
 
           tmux_send_keys(lua_cmd, session: session, window: window, pane: pane)
-
-          File.open(File.join(Dir.home, '.config', 'nvim', 'theme'), 'w+') do |file|
-            file.write(theme)
-          end
         end
       end
+    end
+
+    File.open(File.join(Dir.home, '.config', 'dot', 'theme'), 'w+') do |file|
+      file.write(theme)
     end
   end
 end
