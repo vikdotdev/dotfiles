@@ -50,8 +50,7 @@ if util.is_laptop() then
         buttons = gears.table.join(
           awful.button({}, 1, function ()
             local commands = {
-              "systemctl restart --user kmonad",
-              "systemctl restart --user xset"
+              "systemctl restart --user kmonad"
             }
 
             for _, command in ipairs(commands) do awful.spawn.with_shell(command) end

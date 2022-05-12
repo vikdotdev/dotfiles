@@ -5,9 +5,7 @@ local util = require("lib.util")
 
 local commands = {
   'util-wallpaper',
-  'killall compton || compton --vsync opengl --backend glx --paint-on-overlay',
-  'xset s 180 5',
-  'xset r rate 250 44'
+  'sys-compton-restart',
 }
 
 if util.is_desktop() then
@@ -15,6 +13,7 @@ if util.is_desktop() then
   commands = gears.table.join(
     commands,
     {
+      -- TODO: move to awesome startup script
       'xrandr --output DP-4 --mode 3440x1440 --rate 144.00'
     }
   )
@@ -24,6 +23,7 @@ if util.is_laptop() then
   commands = gears.table.join(
     commands,
     {
+      -- TODO: use xort reset script
       'xinput set-prop "$(xinput list --name-only | grep -i touchpad)" "libinput Tapping Enabled" 1'
     }
   )

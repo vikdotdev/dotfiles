@@ -1,3 +1,0 @@
-#!/bin/bash
-
-util-nvim-socket-manager --run "$@"
