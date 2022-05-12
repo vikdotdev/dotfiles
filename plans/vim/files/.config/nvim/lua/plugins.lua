@@ -14,6 +14,7 @@ return require('packer').startup(function(use)
   use({'ojroques/nvim-bufdel'})
   use({'vikdotdev/bufnav.nvim'})
   use({'projekt0n/github-nvim-theme'})
+  -- use 'folke/tokyonight.nvim'
   use({'nvim-treesitter/nvim-treesitter',
     ensure_installed = 'maintained',
     run = {':TSUpdate'},

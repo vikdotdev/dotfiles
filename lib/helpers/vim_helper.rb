@@ -4,7 +4,7 @@ module VimHelper
   extend TmuxHelper
 
   def vim_switch_theme(theme)
-    lua_cmd = ":lua require('github-theme').setup({ theme_style = '#{theme}' })"
+    lua_cmd = ":lua require('util').set_theme('#{theme}')"
 
     tmux_sessions.each do |session|
       tmux_windows(session).each do |window|

@@ -168,6 +168,35 @@ function Util.get_theme()
   return vim.trim(theme)
 end
 
+function Util.set_theme(variant)
+  local theme = variant or Util.get_theme()
+  require('github-theme').setup({
+    dark_float = true,
+    hide_inactive_statusline = false,
+    sidebars = {'packer', 'telescope'},
+    theme_style = theme,
+    transparent = true,
+    comment_style = "NONE",
+    keyword_style = "NONE",
+    overrides = function(c)
+      if theme == 'light' then
+        return {
+          Search = {fg = 'black', bg = '#fbffb5'},
+          StatusLine = {fg = c.bg, bg = c.blue },
+          StatusLineNC = {fg = c.fg, bg = c.bright_black},
+        }
+      end
+
+      return {
+        Search = {fg = 'black', bg = '#fbffb5'},
+        Function = { fg = c.yellow },
+        Constant = { fg = c.green },
+        StatusLine = {fg = c.bg, bg = c.blue },
+        StatusLineNC = {fg = c.white, bg = c.black},
+      }
+    end
+  })
+end
 
 --- Get a ts compatible range of the current visual selection.
 --
