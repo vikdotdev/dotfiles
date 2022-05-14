@@ -7,6 +7,7 @@ Type=simple
 StandardOutput=journal
 ExecStart=/usr/bin/redshift
 Restart=always
+Environment=DISPLAY=:0
 
 [Install]
 WantedBy=default.target
