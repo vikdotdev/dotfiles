@@ -15,11 +15,13 @@ function M.set_wallpaper(s)
 end
 
 function M.is_desktop()
-  return M.hostname() == std.trim(os.getenv("HOSTNAME_DESKTOP"))
+  return false
+  -- return M.hostname() == std.trim(os.getenv("HOSTNAME_DESKTOP"))
 end
 
 function M.is_laptop()
-  return M.hostname() == std.trim(os.getenv("HOSTNAME_LAPTOP"))
+  return true
+  -- return M.hostname() == std.trim(os.getenv("HOSTNAME_LAPTOP"))
 end
 
 function M.hostname()
