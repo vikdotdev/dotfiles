@@ -1,0 +1,5 @@
+- name: Perform the following post-install steps
+  debug:
+    msg: |
+      Reboot the system in order for all the changes to take place.
+      After reboot, run 'dot postinstall' and follow the instructions.

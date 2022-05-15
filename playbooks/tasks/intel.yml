@@ -1,0 +1,18 @@
+- name: Register /etc/X11/xorg.conf.d/20-intel.conf
+  become: yes
+  stat:
+    path: /etc/X11/xorg.conf.d/20-intel.conf
+  register: x11_intel_config
+
+- name: Fill /etc/X11/xorg.conf.d/20-intel.conf
+  become: yes
+  copy:
+    dest: /etc/X11/xorg.conf.d/20-intel.conf
+    content: |
+      Section "Device"
+          Identifier  "Intel Graphics"
+          Driver      "intel"
+          Option      "Backlight" "/sys/class/backlight/intel_backlight"
+          Option      "TearFree" "true"
+      EndSection
+  when: not x11_intel_config.stat.exists

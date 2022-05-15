@@ -1,0 +1,36 @@
+- name: Install MariaDB and dependencies
+  become: yes
+  dnf:
+    name:
+    - mariadb
+    - mariadb-server
+    - mariadb-devel
+    - python3-PyMySQL
+
+- name: Start MariaDB service
+  become: yes
+  ansible.builtin.systemd:
+    name: mariadb
+    enabled: yes
+    state: started
+
+- name: Create MariaDB user for root
+  become: yes
+  community.mysql.mysql_user:
+    name: root
+    password: password
+    login_user: root
+    login_password: password
+    check_implicit_admin: yes
+    login_unix_socket: /var/lib/mysql/mysql.sock
+    priv: '*.*:ALL,GRANT'
+
+- name: Create MariaDB user for user
+  become: yes
+  community.mysql.mysql_user:
+    name: "{{ target_user }}"
+    password: password
+    login_user: root
+    login_unix_socket: /var/lib/mysql/mysql.sock
+    login_password: password
+    priv: '*.*:ALL,GRANT'

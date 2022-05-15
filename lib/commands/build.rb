@@ -10,6 +10,7 @@ module Dotfiles
     def initialize(opts = {})
       @theme = Theme.new(opts[:theme])
       @profile = Profile.new
+      @config = YAML.load_file(File.join(__dir__, '..', '..', 'config.yml'))
     end
 
     def run
