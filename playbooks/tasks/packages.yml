@@ -26,6 +26,7 @@
     - '@Multimedia'
     - '@base-x'
     - vim
+    - firefox
     - wget
     - unzip
     - xclip
@@ -38,6 +39,7 @@
     - redshift
     - urlview
     - xbacklight
+    - xset
     - playerctl
     - ncdu
     - tldr

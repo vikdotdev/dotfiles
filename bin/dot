@@ -43,17 +43,19 @@ module Dotfiles
       Ansible::Install.new(host, user).run
     end
 
-    desc 'postinstall', 'NOT IMPLEMENTED. Perform post-install steps.'
+    desc 'postinstall', 'Perform post-install steps.'
     def postinstall
-      puts 'NOT IMPLEMENTED. Running ansible post-install'
-      # TODO
-      # prompt to login to github and to git
-      # Clone notes repo: https://github.com/vikdotdev/notes to ~/notes
+      system('gh auth login')
+      system('git clone https://github.com/vikdotdev/notes "$HOME/notes"')
     end
 
     desc 'doctor', 'NOT IMPLEMENTED.'
     def doctor
       puts 'NOT IMPLEMENTED'
+    end
+
+    def exit_on_failure?
+      true
     end
 
     default_task :build
