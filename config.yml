@@ -7,4 +7,4 @@ home_path:
   gobin: .local/bin
   gopath: .local/share/go
   repos: repos
-  dotfiles: dotfiles
+  dotfiles: repos/dotfiles

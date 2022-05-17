@@ -54,7 +54,7 @@ module Dotfiles
       puts 'NOT IMPLEMENTED'
     end
 
-    def exit_on_failure?
+    def self.exit_on_failure?
       true
     end
 
