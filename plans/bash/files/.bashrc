@@ -56,7 +56,6 @@ function parse_git_dirty {
 	fi
 }
 
-alias luamake=/home/vik/repos/lua-language-server/3rd/luamake/luamake
 alias ls="ls -hN --color=auto --group-directories-first" \
   e="exit" \
   ll="ls -l" \
@@ -69,20 +68,6 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   open="xdg-open" \
   y="xclip -selection clipboard" \
   yank="xclip -selection clipboard"
-
-function theme-dark {
-  util-nvim-theme-switcher --dark
-  util-alacritty-build --dark
-  util-gitconfig-build --dark
-  util-tmux-build --dark
-}
-
-function theme-light {
-  util-nvim-theme-switcher --light
-  util-alacritty-build --light
-  util-gitconfig-build --light
-  util-tmux-build --light
-}
 
 HISTSIZE=
 HISTFILESIZE=

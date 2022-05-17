@@ -8,6 +8,7 @@ gemfile do
   gem 'thor'
   gem 'pry'
   gem 'require_all'
+  gem 'tty-prompt'
 end
 
 require_rel '../lib/commands'
@@ -32,9 +33,27 @@ module Dotfiles
       invoke(:build, [], theme: 'light')
     end
 
-    desc 'doctor', 'Not implemented.'
+    desc 'install HOST', 'Install system packages for HOST. Defaults to localhost.'
+    option :user, aliases: '-u', desc: 'target username'
+    def install(host = :localhost)
+      user = options[:user] || ENV['USER']
+
+      puts "Running ansible install against #{user}@#{host}"
+
+      Ansible::Install.new(host, user).run
+    end
+
+    desc 'postinstall', 'NOT IMPLEMENTED. Perform post-install steps.'
+    def postinstall
+      puts 'NOT IMPLEMENTED. Running ansible post-install'
+      # TODO
+      # prompt to login to github and to git
+      # Clone notes repo: https://github.com/vikdotdev/notes to ~/notes
+    end
+
+    desc 'doctor', 'NOT IMPLEMENTED.'
     def doctor
-      puts 'Not implemented'
+      puts 'NOT IMPLEMENTED'
     end
 
     default_task :build

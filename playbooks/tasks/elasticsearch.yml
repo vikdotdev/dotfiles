@@ -1,0 +1,13 @@
+- name: Register Elasticsearch Version Manager binary
+  become: yes
+  stat:
+    path: /usr/local/bin/evm
+  register: evm
+
+- name: Download Elasticsearch Version Manager
+  become: yes
+  get_url:
+    url:  https://raw.githubusercontent.com/duydo/evm/master/evm
+    dest: /usr/local/bin/evm
+    mode: '+x'
+  when: not evm.stat.exists

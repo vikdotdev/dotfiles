@@ -1,12 +1,12 @@
 require 'yaml'
 
 class Profile
-  attr_reader :number
+  attr_reader :number, :config
 
   def initialize
-    profile_config = YAML.load_file(File.join(__dir__, '..', 'config', 'profiles.yml'))
+    @config = YAML.load_file(File.join(__dir__, '..', 'config.yml'))['profile']
 
-    @number = profile_config[hostname] || 1
+    @number = @config[hostname] || 1
   end
 
   def first?
@@ -16,8 +16,6 @@ class Profile
   def second?
     @number == 2
   end
-
-  private
 
   def hostname
     ENV['HOSTNAME']

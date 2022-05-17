@@ -1,0 +1,10 @@
+profile:
+  umbra: 1
+  reddwarf: 2
+
+home_path:
+  npm: .npm-packages
+  gobin: .local/bin
+  gopath: .local/share/go
+  repos: repos
+  dotfiles: dotfiles

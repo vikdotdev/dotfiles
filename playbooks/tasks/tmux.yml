@@ -1,0 +1,16 @@
+- name: Install tmux
+  become: yes
+  dnf:
+    name: tmux
+
+- name: Install oh-my-tmux
+  ansible.builtin.git:
+    repo: https://github.com/gpakosz/.tmux.git
+    depth: 50
+    dest: "/home/{{ target_user }}/.tmux"
+
+- name: Make a tmux link
+  file:
+    src: "/home/{{ target_user }}/.tmux/.tmux.conf"
+    dest: "/home/{{ target_user }}/.tmux.conf"
+    state: link

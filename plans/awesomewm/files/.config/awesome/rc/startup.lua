@@ -14,7 +14,7 @@ if util.is_desktop() then
     commands,
     {
       -- TODO: move to awesome startup script
-      'xrandr --output DP-4 --mode 3440x1440 --rate 144.00'
+      'xrandr --output DP-4 --mode 3440x1440 --rate 100.00'
     }
   )
 end
@@ -23,7 +23,7 @@ if util.is_laptop() then
   commands = gears.table.join(
     commands,
     {
-      -- TODO: use xort reset script
+      -- TODO: use xort reset script or a startup script
       'xinput set-prop "$(xinput list --name-only | grep -i touchpad)" "libinput Tapping Enabled" 1'
     }
   )
