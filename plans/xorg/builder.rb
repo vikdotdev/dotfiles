@@ -8,4 +8,4 @@ ensure_write_file(home_file('.config/systemd/user/xsecurelock.service'),
                   read_file('xsecurelock.service'))
 ensure_service_running('xsecurelock.service')
 
-system "xrdb ~/.Xresources"
+system('xrdb ~/.Xresources 2> /dev/null')
