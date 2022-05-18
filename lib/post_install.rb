@@ -14,9 +14,12 @@ class PostInstall
 
     vim_install_plugins
 
+    puts
     puts <<~EOS
+      ======================================================
       Done! Final steps:
-      - Once in neovim, run ":TSInstall all" or <Leader>mi.
+        Once in neovim, run ":TSInstall all" or <Leader>mi.
+      ======================================================
     EOS
   rescue Interrupt
   end

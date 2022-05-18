@@ -25,7 +25,7 @@ module VimHelper
     puts 'Initializing neovim plugins'
     cmd = "nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'"
 
-    system(cmd, out: :close)
+    system(cmd, out: File::NULL)
   end
 end
 
