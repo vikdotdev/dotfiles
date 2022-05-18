@@ -30,6 +30,6 @@ module TmuxHelper
   end
 
   def tmux_reload(tmux_conf_path)
-    `tmux source-file #{tmux_conf_path}` if File.exists?(tmux_conf_path)
+    `tmux source-file #{tmux_conf_path} 2> /dev/null` if File.exists?(tmux_conf_path)
   end
 end
