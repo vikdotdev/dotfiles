@@ -1,4 +1,0 @@
-#!/bin/bash
-
-killall compton
-compton --vsync opengl --backend glx --paint-on-overlay

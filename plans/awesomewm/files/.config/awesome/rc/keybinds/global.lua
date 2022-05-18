@@ -8,7 +8,6 @@ local util = require("../../lib.util")
 require("awful.hotkeys_popup.keys")
 
 -- {{{ Key bindings
--- TODO add playerctl to install script/essential packages
 globalkeys = gears.table.join(
   awful.key({}, "XF86AudioRaiseVolume", function() os.execute("util-volume +5%") end),
   awful.key({}, "XF86AudioLowerVolume", function() os.execute("util-volume -5%") end),

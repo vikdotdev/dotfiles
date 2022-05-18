@@ -1,0 +1,20 @@
+$HOME/bin/sys-init-xorg-settings
+$HOME/bin/sys-wallpaper
+
+[ -x "$(command -v setxkbmap)" ] && setxkbmap -layout us,ua
+
+<% if @profile.first? %>
+  xrandr --output $(xrandr -q | grep " connected" | awk '{ print $1 }') \
+         --mode 3440x1440 \
+         --rate 100.00
+<% end %>
+
+<% if @profile.second? %>
+  xinput set-prop "$(xinput list --name-only | grep -i touchpad)" "libinput Tapping Enabled" 1
+<% end %>
+
+killall compton
+# TODO buggy with xsecurelock on 1?
+compton --vsync opengl --backend glx --paint-on-overlay &
+
+exec awesome
