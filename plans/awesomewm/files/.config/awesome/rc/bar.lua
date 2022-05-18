@@ -43,7 +43,7 @@ local tasklist_buttons = gears.table.join(
 )
 
 local kmonad_button = nil
-if util.is_laptop() then
+if util.is_dot_profile(2) then
   kmonad_button = wibox.widget {
     {
       {
@@ -83,7 +83,7 @@ if util.is_laptop() then
 end
 
 local battery_container = nil
-if util.is_laptop() then
+if util.is_dot_profile(2) then
   battery_container = wibox.container.background()
   battery_container:set_fg("#000000")
 

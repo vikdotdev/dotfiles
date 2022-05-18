@@ -18,6 +18,4 @@ export PATH="$EXT_XDG_DOTFILES_DIR/bin:$PATH"
 export PATH="$PATH:$HOME/.rvm/bin"
 export GOBIN="$HOME/<%= @config.dig('home_path', 'gobin') %>"
 export GOPATH="$HOME/<%= @config.dig('home_path', 'gopath') %>"
-
-export HOSTNAME_DESKTOP="umbra"
-export HOSTNAME_LAPTOP="reddwarf"
+export DOT_PROFILE="<%= @profile.number %>"
