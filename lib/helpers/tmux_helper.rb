@@ -2,7 +2,7 @@ module TmuxHelper
   def tmux_sessions
     cmd = 'tmux list-sessions -F "#{session_name}"'
 
-    `#{cmd}`.each_line.map(&:chomp)
+    `#{cmd} 2> /dev/null`.each_line.map(&:chomp)
   end
 
   def tmux_windows(session)
