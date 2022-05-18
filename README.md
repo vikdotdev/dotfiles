@@ -10,7 +10,6 @@ colorizer does not work when theme is changed?
 awesome build config based on profile, not on hostname
 synchronize colors based on config.yml for alacritty, vim, tmux, delta, zathura
 work on packer installing everything on the first boot
-fix theme switcher
 vim cursorrow only when focused tmux pane?
 handle secrets
   checkout ansible vault
