@@ -5,13 +5,19 @@ class PostInstall
 
   def self.run
     system('gh auth login')
-    system('git clone https://github.com/vikdotdev/notes "$HOME/notes"')
+
+    if File.directory?(File.join(Dir.home, 'notes'))
+      puts '"notes" repo exists. Skipping'
+    else
+      system('git clone https://github.com/vikdotdev/notes "$HOME/notes"')
+    end
 
     vim_install_plugins
 
     puts <<~EOS
-      Done!
-      Don't forget to run TSInstall all in neovim (<Leader>mi).
+      Done! Final steps:
+      - Once in neovim, run ":TSInstall all" or <Leader>mi.
     EOS
+  rescue Interrupt
   end
 end
