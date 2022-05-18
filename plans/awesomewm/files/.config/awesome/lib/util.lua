@@ -14,19 +14,8 @@ function M.set_wallpaper(s)
   end
 end
 
-function M.is_desktop()
-  return M.hostname() == std.trim(os.getenv("HOSTNAME_DESKTOP"))
-end
-
-function M.is_laptop()
-  return M.hostname() == std.trim(os.getenv("HOSTNAME_LAPTOP"))
-end
-
-function M.hostname()
-  local f = io.popen("/bin/hostname")
-  local hostname = f:read("*a") or ""
-  f:close()
-  return std.trim(hostname)
+function M.is_dot_profile(number)
+  return tostring(number) == std.trim(os.getenv("DOT_PROFILE") or '1')
 end
 
 return M
