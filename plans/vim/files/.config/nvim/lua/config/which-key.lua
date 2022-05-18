@@ -139,6 +139,7 @@ local normal_keymap = {
     name = '+maintenance',
     r = {'<Cmd>luafile %<CR>', 'reload lua buffer'},
     s = {'<Cmd>PackerSync<CR>', 'sync plugins'},
+    i = {'<Cmd>TSInstall all<CR>', 'install all treesitter parsers'},
     c = {'<Cmd>PackerCompile<CR>', 'compile'}
   },
   l = {

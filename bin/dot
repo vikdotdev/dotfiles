@@ -40,13 +40,12 @@ module Dotfiles
 
       puts "Running ansible install against #{user}@#{host}"
 
-      Ansible::Install.new(host, user).run
+      Install.new(host, user).run
     end
 
     desc 'postinstall', 'Perform post-install steps.'
     def postinstall
-      system('gh auth login')
-      system('git clone https://github.com/vikdotdev/notes "$HOME/notes"')
+      PostInstall.run
     end
 
     desc 'doctor', 'NOT IMPLEMENTED.'

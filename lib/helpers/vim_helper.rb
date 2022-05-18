@@ -20,6 +20,13 @@ module VimHelper
       file.write(theme)
     end
   end
+
+  def vim_install_plugins
+    puts 'Initializing neovim plugins'
+    cmd = "nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'"
+
+    system(cmd, out: :close)
+  end
 end
 
 
