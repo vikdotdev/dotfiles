@@ -13,10 +13,10 @@ github_color_yellow='#ffea7f'
 github_color_blue='#0366d6'
 github_color_magenta='#b392f0'
 github_color_cyan='#39c5cf'
-github_color_black='#24292e'
+github_color_black='#323940'
 github_color_gray='#586069'
 github_color_white='#d1d5da'
-github_color_blink='#2b3642'
+github_color_focused='#24292e'
 <% elsif @theme.light? %>
 github_color_red='#d73a49'
 github_color_green='#28a745'
@@ -26,16 +26,16 @@ github_color_magenta='#5a32a3'
 github_color_cyan='#0598bc'
 github_color_black='#24292e'
 github_color_gray='#6a737d'
-github_color_white='#ffffff'
-github_color_blink='#ebeef0'
+github_color_white='#ebebe4'
+github_color_focused='#f0f2f5'
 <% end %>
 
 # window style
 tmux_conf_theme_window_fg="default"
 tmux_conf_theme_window_bg="default"
 
-tmux_conf_theme_highlight_focused_pane=false
-tmux_conf_theme_focused_pane_bg="$github_color_gray"
+tmux_conf_theme_highlight_focused_pane=true
+tmux_conf_theme_focused_pane_bg="$github_color_focused"
 tmux_conf_theme_pane_border_style=thin
 
 # pane borders colours:
@@ -264,9 +264,6 @@ set -g status-keys vi
 set -g mode-keys vi
 set -g status-position top
 set -s escape-time 1
-
-set -g focus-events on
-set-hook -g pane-focus-in 'selectp -P bg=$github_color_blink; run "sleep 0.3"; selectp -P bg=default'
 
 unbind C-a
 unbind C-b
