@@ -18,7 +18,6 @@ vim.o.wildmode = 'list:longest'
 vim.o.clipboard ='unnamed,unnamedplus'
 vim.o.fileencoding ='utf-8'
 vim.o.ruler = true
-vim.o.cursorline = true
 vim.o.showtabline = 1
 vim.o.mouse = 'a'
 vim.g.updatetime = 600
@@ -46,7 +45,6 @@ vim.cmd('set textwidth=0')
 vim.cmd('set noshowmode')
 vim.cmd('set colorcolumn=90')
 vim.cmd('set cursorline')
--- vim.cmd('set iskeyword-=_')
 vim.cmd('set undofile')
 vim.cmd(':tnoremap <Esc> <C-\\><C-n>')
 vim.cmd("autocmd VimResized * wincmd =")

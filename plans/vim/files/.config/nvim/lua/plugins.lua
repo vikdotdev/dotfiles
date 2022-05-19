@@ -29,5 +29,6 @@ return require('packer').startup(function(use)
   use({'kmonad/kmonad-vim'})
   use({'deris/vim-shot-f'})
   use({'mickael-menu/zk-nvim'})
+  use({'inkarkat/vim-CursorLineCurrentWindow'})
 end)
 
