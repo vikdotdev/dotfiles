@@ -13,8 +13,4 @@ $HOME/bin/sys-wallpaper
   xinput set-prop "$(xinput list --name-only | grep -i touchpad)" "libinput Tapping Enabled" 1
 <% end %>
 
-killall compton
-# TODO buggy with xsecurelock on 1?
-compton --vsync opengl --backend glx --paint-on-overlay &
-
 exec awesome

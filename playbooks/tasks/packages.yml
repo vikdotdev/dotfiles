@@ -35,7 +35,6 @@
     - sensible-utils
     - xdotool
     - screenkey
-    - compton
     - redshift
     - urlview
     - xbacklight
