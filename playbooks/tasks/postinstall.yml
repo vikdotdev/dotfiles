@@ -1,5 +1,9 @@
+- name: Run "dot build"
+  shell: "/home/{{ target_user }}/{{ home_path.dotfiles }}/bin/dot build"
+
 - name: Perform the following post-install steps
   debug:
     msg: |
-      Reboot the system in order for all the changes to take place.
-      After reboot, run 'dot postinstall' and follow the instructions.
+      Reboot the system in order for all the changes to take place. After
+      reboot, start X with 'startx', run 'dot postinstall', and follow the
+      instructions.
