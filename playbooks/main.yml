@@ -12,7 +12,7 @@
     - include_tasks: tasks/fonts.yml
     - name: Install intel configurations
       include_tasks: tasks/intel.yml
-      when: "profile_2"
+      when: "profile_2 == 'true'"
     - include_tasks: tasks/postgresql.yml
     - include_tasks: tasks/mysql.yml
     - include_tasks: tasks/elasticsearch.yml

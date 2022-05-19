@@ -80,7 +80,7 @@
   dnf:
     name:
     - akmod-nvidia
-  when: "profile_1"
+  when: "profile_1 == 'true'"
 
 - name: Install zoom rpm
   become: yes
