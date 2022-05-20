@@ -4,8 +4,6 @@ configure_repeat_rate
 configure_keyboard_layout
 $HOME/bin/sys-wallpaper
 
-[ -x "$(command -v setxkbmap)" ] && setxkbmap -layout us,ua
-
 <% if @profile.first? %>
   xrandr --output $(xrandr -q | grep " connected" | awk '{ print $1 }') \
          --mode 3440x1440 \
