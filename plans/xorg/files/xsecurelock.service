@@ -4,7 +4,7 @@ Description=Launch xsecurelock
 [Service]
 Type=simple
 StandardOutput=journal
-ExecStart=/usr/bin/xss-lock -n /usr/lib/xsecurelock/dimmer -l -- xsecurelock
+ExecStart=%h/bin/sys-xlock start
 Restart=always
 
 [Install]
