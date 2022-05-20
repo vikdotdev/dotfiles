@@ -1,4 +1,7 @@
-$HOME/bin/sys-init-xorg-settings
+source $HOME/bin/sys-config-x
+configure-suspend
+configure-repeat-rate
+configure-keyboard-layout
 $HOME/bin/sys-wallpaper
 
 [ -x "$(command -v setxkbmap)" ] && setxkbmap -layout us,ua

@@ -1,7 +1,7 @@
 # Installation
 Current setup relies on Fedora custom install.
 ```bash
-curl -o- https://raw.githubusercontent.com/vikdotdev/dotfiles/setup-script/bin/dot-setup | sh
+curl -o- https://raw.githubusercontent.com/vikdotdev/dotfiles/master/bin/dot-setup | sh
 ```
 
 # Issues & Ideas

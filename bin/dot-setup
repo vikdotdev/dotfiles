@@ -7,7 +7,7 @@ ansible-galaxy collection install community.general
 ansible-galaxy collection install community.mysql
 
 export GEM_HOME=$HOME/.gem/ruby
-[[ ! -e $HOME/.gem/ruby/bin ]] && mkdir -p "$HOME/bin" && mkdir -p "$HOME/.gem/ruby" && ln -s $HOME/bin $HOME/.gem/ruby/
+[[ ! -e $HOME/.gem/ruby/bin ]] && mkdir -p "$HOME/bin" "$HOME/.gem/ruby" && ln -s $HOME/bin $HOME/.gem/ruby/
 
 mkdir -p ~/repos
 pushd ~/repos
