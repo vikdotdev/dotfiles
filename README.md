@@ -5,7 +5,6 @@ curl -o- https://raw.githubusercontent.com/vikdotdev/dotfiles/master/bin/dot-set
 ```
 
 # Issues & Ideas
-- add instructions for node global packages
 - synchronize colors based on config.yml for alacritty, vim, tmux, delta, zathura
 - handle secrets
   - checkout ansible vault or

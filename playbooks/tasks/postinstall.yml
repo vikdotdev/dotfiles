@@ -1,6 +1,9 @@
 - name: Run "dot build"
   shell: "/home/{{ target_user }}/{{ home_path.dotfiles }}/bin/dot build"
 
+- name: Install ruby gems
+  shell: "/home/{{ target_user }}/bin/sys-ensure-gems-installed"
+
 - name: Perform the following post-install steps
   debug:
     msg: |

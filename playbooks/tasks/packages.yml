@@ -74,6 +74,8 @@
     - git-credential-libsecret
     - git-delta
     - gh
+    - ruby
+    - ruby-devel
 
 - name: Install NVidia drivers
   become: yes

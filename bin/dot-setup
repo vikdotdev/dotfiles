@@ -2,7 +2,7 @@
 
 sudo systemctl enable --now wpa_supplicant.service
 sudo systemctl restart NetworkManager.service
-sudo dnf install ansible git ruby -y
+sudo dnf install ansible git ruby ruby-devel -y
 ansible-galaxy collection install community.general
 ansible-galaxy collection install community.mysql
 
