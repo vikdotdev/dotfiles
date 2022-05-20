@@ -18,5 +18,7 @@ export PATH="$EXT_XDG_DOTFILES_DIR/bin:$PATH"
 export PATH="$PATH:$HOME/.rvm/bin"
 export GOBIN="$HOME/<%= @config.dig('home_path', 'gobin') %>"
 export GOPATH="$HOME/<%= @config.dig('home_path', 'gopath') %>"
-[[ ! -e $HOME/.gem/ruby/bin ]] && mkdir -p "$HOME/bin" "$HOME/.gem/ruby" && ln -s $HOME/bin $HOME/.gem/ruby/
+[[ ! -e $HOME/.gem/ruby/bin ]] &&
+  mkdir -p "$HOME/bin" "$HOME/.gem/ruby" &&
+  ln -s $HOME/bin $HOME/.gem/ruby/
 export DOT_PROFILE="<%= @profile.number %>"
