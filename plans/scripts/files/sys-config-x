@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Stolen and adjusted from
 # https://github.com/vincentbernat/awesome-configuration/blob/master/bin/xss-lock
@@ -6,15 +6,15 @@
 timeout=300
 notify=$((timeout/15))
 
-configure-suspend() {
+configure_suspend() {
   xset s $((timeout - notify)) $notify
   xset dpms $((timeout * 2)) $((timeout * 22 / 10)) $((timeout * 24 / 10))
 }
 
-configure-repeat-rate() {
+configure_repeat_rate() {
   xset r rate 250 44
 }
 
-configure-keyboard-layout() {
+configure_keyboard_layout() {
   setxkbmap -layout us,ua -option compose:ralt
 }

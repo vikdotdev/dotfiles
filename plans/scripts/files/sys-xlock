@@ -8,7 +8,7 @@ me="$(readlink -f "$0")"
 case "$1" in
     start)
         source $HOME/bin/sys-config-x
-        configure-suspend
+        configure_suspend
         exec xss-lock --notifier="$me notify" --transfer-sleep-lock "$me" lock
         ;;
     dim|notify)
@@ -29,7 +29,7 @@ case "$1" in
         echo "lock: lock screen"
         # Something may have mendled with screensaver settings
         source $HOME/bin/sys-config-x
-        configure-suspend
+        configure_suspend
         # First, pause any music player
         playerctl -a pause
         # Then, lock screen
