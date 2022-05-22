@@ -1,11 +1,13 @@
 [Unit]
 Description=Launch xsecurelock
+After=default.target
 
 [Service]
 Type=simple
 StandardOutput=journal
 ExecStart=%h/bin/sys-xlock start
 Restart=always
+RestartSec=5
 
 [Install]
 WantedBy=default.target
