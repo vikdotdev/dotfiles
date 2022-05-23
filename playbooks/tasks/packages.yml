@@ -53,6 +53,7 @@
     - feh
     - pulseaudio-utils
     - xinput
+    - imwheel
     - xrandr
     - xdg-user-dirs
     - ImageMagick
@@ -119,6 +120,10 @@
   stat:
     path: "/home/{{ target_user }}/{{ home_path.npm }}"
   register: npm_dir
+
+- name: Tell npm where to store user packages
+  shell: npm config set prefix "$HOME/{{ home_path.npm }}"
+  when: not npm_dir.stat.exists
 
 - name: Install general node packages
   community.general.npm:
