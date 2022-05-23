@@ -39,6 +39,8 @@
     - urlview
     - xbacklight
     - xset
+    - xprop
+    - xsel
     - playerctl
     - ncdu
     - tldr
@@ -113,11 +115,15 @@
 - name: Install ruby gems
   shell: "/home/{{ target_user }}/{{ home_path.dotfiles }}/{{ dotfiles_path.scripts }}/sys-ensure-gems-installed"
 
+- name: Register .npm-packages directory
+  stat:
+    path: "/home/{{ target_user }}/{{ home_path.npm }}"
+  register: npm_dir
+
 - name: Install general node packages
   community.general.npm:
-    name: "{{ item }}"
+    name: yarn
     global: yes
   loop:
-    - yarn
   environment:
     NPM_PACKAGES: "/home/{{ target_user }}/{{ home_path.npm }}"
