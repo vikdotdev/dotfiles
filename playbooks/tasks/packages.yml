@@ -79,6 +79,7 @@
     - gh
     - ruby
     - ruby-devel
+    - nodejs
 
 - name: Install NVidia drivers
   become: yes
