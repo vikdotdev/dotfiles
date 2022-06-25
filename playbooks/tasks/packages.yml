@@ -80,6 +80,7 @@
     - ruby
     - ruby-devel
     - nodejs
+    - jpegoptim
 
 - name: Install NVidia drivers
   become: yes
