@@ -1,17 +1,3 @@
-source $HOME/bin/sys-config-x
-configure_suspend
-configure_repeat_rate
-configure_keyboard_layout
-$HOME/bin/sys-wallpaper
+# Currently .xinitrc is not in use by gdm
 
-<% if @profile.first? %>
-  xrandr --output $(xrandr -q | grep " connected" | awk '{ print $1 }') \
-         --mode 3440x1440 \
-         --rate 100.00
-<% end %>
-
-<% if @profile.second? %>
-  xinput set-prop "$(xinput list --name-only | grep -i touchpad)" "libinput Tapping Enabled" 1
-<% end %>
-
-exec awesome
+$HOME/bin/util-autostart

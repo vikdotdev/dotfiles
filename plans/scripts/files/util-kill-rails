@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+kill -9 $(cat $(git root)/tmp/pids/server.pid)
