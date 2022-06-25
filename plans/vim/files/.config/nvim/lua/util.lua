@@ -181,14 +181,16 @@ function Util.set_theme(variant)
     overrides = function(c)
       if theme == 'light' then
         return {
-          Search = {fg = 'black', bg = '#fbffb5'},
+          Pmenu = {fg = c.black, bg = c.bg},
+          Search = {fg = c.black, bg = c.yellow},
           StatusLine = {fg = c.bg, bg = c.blue },
           StatusLineNC = {fg = c.fg, bg = c.bright_black},
         }
       end
 
       return {
-        Search = {fg = 'black', bg = '#fbffb5'},
+        Pmenu = {fg = c.white, bg = c.bg},
+        Search = {fg = c.black, bg = c.yellow},
         Function = { fg = c.yellow },
         Constant = { fg = c.green },
         StatusLine = {fg = c.bg, bg = c.blue },
