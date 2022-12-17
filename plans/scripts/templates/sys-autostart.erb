@@ -6,6 +6,7 @@ configure_repeat_rate
 configure_keyboard_layout
 $HOME/bin/sys-wallpaper
 
+killall -9 compton
 compton --vsync opengl --backend glx --paint-on-overlay &
 
 <% if @profile.first? %>

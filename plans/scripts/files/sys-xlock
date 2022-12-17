@@ -23,6 +23,9 @@ case "$1" in
         done
         sleep infinity &
         wait
+        for out in ${outputs[@]}; do
+            xrandr --output $out --brightness 1.0
+        done
         echo "notify: end"
         ;;
     lock)
