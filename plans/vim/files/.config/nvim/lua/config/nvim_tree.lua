@@ -8,6 +8,7 @@ vim.g.nvim_tree_show_icons = {
 
 require('nvim-tree').setup({
   actions = {
+    use_system_clipboard = true,
     open_file = {
       resize_window = true
     }
@@ -73,13 +74,11 @@ require('nvim-tree').setup({
   },
 
   view = {
+    adaptive_size = true,
     -- side of the tree, can be one of 'left' | 'right' | 'top' | 'bottom'
     side = 'left',
     mappings = {
-      -- custom only false will merge the list with the default mappings
-      -- if true, it will only use your list to set the mappings
       custom_only = false,
-      -- list of mappings to set on the tree manually
       list = {
         { key = {"<CR>", "o"},     cb = tree("edit") },
         { key = {"="},             cb = tree("cd") },

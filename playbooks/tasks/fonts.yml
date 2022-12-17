@@ -1,17 +1,17 @@
 - name: Create .fonts directory
   file:
-    name: "/home/{{ target_user }}/.fonts"
+    name: "/home/{{ target_user }}/.local/share/fonts"
     state: directory
 
 - name: Register iosevka fonts
   find:
-    paths: "/home/{{ target_user }}/.fonts"
-    patterns: 'iosevka-*'
+    paths: "/home/{{ target_user }}/.local/share/fonts"
+    patterns: 'Iosevka*'
   register: iosevka_fonts
 
 - name: Install Iosevka fonts
   ansible.builtin.unarchive:
-    src: https://github.com/be5invis/Iosevka/releases/download/v11.2.6/ttf-iosevka-curly-11.2.6.zip
-    dest: "/home/{{ target_user }}/.fonts"
+    src: https://github.com/ryanoasis/nerd-fonts/releases/download/v2.2.2/Iosevka.zip
+    dest: "/home/{{ target_user }}/.local/share/fonts"
     remote_src: yes
   when: iosevka_fonts.matched == 0
