@@ -1,27 +1,21 @@
 require('nvim-treesitter.configs').setup({
-  -- ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
-  -- ignore_install = { "javascript" }, -- List of parsers to ignore installing
   highlight = {
-    enable = true,              -- false will disable the whole extension
-    -- disable = { "c", "rust" },  -- list of language that will be disabled
+    enable = true,
   },
-  -- matchup = {
-  --   enable = true
-  -- },
   incremental_selection = {
     enable = true,
     keymaps = {
-      init_selection = "gnn",
-      node_incremental = "grn",
-      scope_incremental = "grc",
-      node_decremental = "grm",
+      init_selection = '<CR>',
+      scope_incremental = '<CR>',
+      node_incremental = '<TAB>',
+      node_decremental = '<S-TAB>',
     },
   },
   indent = {
     enable = true
   },
   folding = {
-    -- enable = true
+    enable = true
   },
   context_commentstring = {
     enable = true
