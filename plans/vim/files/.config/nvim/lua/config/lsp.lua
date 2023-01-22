@@ -95,3 +95,13 @@ require'lspconfig'.dockerls.setup({
 require'lspconfig'.tailwindcss.setup({})
 require'lspconfig'.emmet_ls.setup({})
 
+-- TODO add to setup
+-- curl -fLO https://github.com/elixir-lsp/elixir-ls/releases/latest/download/elixir-ls.zip
+-- unzip elixir-ls.zip -d ~/.local/bin/elixir-ls
+-- chmod +x ~/.local/bin/elixir-ls/language_server.sh
+local elixir_ls_path = vim.fn.expand('$HOME/.local/bin/elixir-ls')
+local elixir_ls_binary_path = vim.fn.expand(elixir_ls_path .. '/language_server.sh')
+
+require'lspconfig'.elixirls.setup({
+  cmd = { elixir_ls_binary_path };
+})

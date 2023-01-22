@@ -1,0 +1,43 @@
+# read from folder of erbs
+# frozen_string_literal: true
+
+# name this bundle-inline.erb
+require "bundler/inline"
+
+gemfile(true) do
+  source "https://rubygems.org"
+
+  git_source(:github) { |repo| "https://github.com/#{repo}.git" }
+
+  # Activate the gem you are reporting the issue against.
+  gem "activerecord", "6.1.0"
+  gem "sqlite3"
+end
+
+require "active_record"
+require "minitest/autorun"
+require "logger"
+
+# This connection will do for database-independent bug reports.
+ActiveRecord::Base.establish_connection(adapter: "sqlite3", database: ":memory:")
+ActiveRecord::Base.logger = Logger.new(STDOUT)
+
+ActiveRecord::Schema.define do
+  create_table :posts, force: true do |t|
+    t.string :name
+  end
+end
+
+class Post < ActiveRecord::Base
+  validates :name, length: { maximum: 2 }
+end
+
+class BugTest < Minitest::Test
+  def test_validation
+    post = Post.new(name: "abc123")
+
+    assert_equal false, post.valid?
+    puts post.errors.method(:full_messages).source_location
+    assert_equal ["Name is too long (maximum is 2 characters)"], post.errors.full_messages
+  end
+end
