@@ -18,6 +18,8 @@ export PATH="$HOME/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$EXT_XDG_DOTFILES_DIR/bin:$PATH"
 export PATH="$PATH:$HOME/.rvm/bin"
+export PATH=$PATH:$EXT_XDG_REPOS_DIR/dasht/bin
+export MANPATH=$EXT_XDG_REPOS_DIR/dasht/man:$MANPATH
 export GOBIN="$HOME/<%= @config.dig('home_path', 'gobin') %>"
 export GOPATH="$HOME/<%= @config.dig('home_path', 'gopath') %>"
 [[ ! -e $HOME/.gem/ruby/bin ]] &&
