@@ -1,0 +1,140 @@
+#!/usr/bin/env ruby
+
+require 'fileutils'
+require 'pathname'
+require 'base64'
+require 'zlib'
+require 'digest'
+require 'net/http'
+require 'uri'
+require 'pry'
+require 'bundler/inline'
+# wlpass command and filename
+# start watcher
+# autoreload on change
+# have option to open in file viewer (strategy) (hanami?)
+
+gemfile do
+  source 'https://rubygems.org'
+
+  gem 'tty-prompt'
+  gem 'os'
+end
+
+class KrokiURL
+  attr_reader :input, :port, :engine, :format
+
+  def initialize(input, port:, engine:, format:)
+    @input = input
+    @port = port
+    @engine = engine
+    @format = format
+  end
+
+  def to_s
+    <<~URL.split.join
+      http://localhost:#{port}/#{engine}/#{format}/#{compress(input).then(&method(:encode))}
+    URL
+  end
+
+  private
+
+  def compress(text)
+    Zlib::Deflate.deflate(text, Zlib::BEST_COMPRESSION)
+  end
+
+  def encode(text)
+    Base64.urlsafe_encode64(text)
+  end
+end
+
+class KrokiContainer
+  attr_reader :port, :name
+
+  def initialize(port:, name:)
+    @port = port
+    @name = name
+  end
+
+  def start
+    # TODO hide stdout
+    @pid = Process.spawn("podman run -p #{port}:8000 #{name}")
+  end
+
+  def stop
+    Process.kill('HUP', @pid)
+  end
+
+  def wait(url)
+    if down?(url)
+      sleep 1
+      wait(url)
+    end
+  end
+
+  private
+
+  def down?(url)
+    !Net::HTTP.get_response(URI(url)).kind_of? Net::HTTPSuccess
+  rescue
+    true
+  end
+end
+
+class KrokiImage
+  attr_reader :url, :storage
+  # attr_accessor :persisted_path
+
+  def initialize(url:, storage:)
+    FileUtils.mkdir_p storage
+
+    @url = url
+    @storage = storage
+    @persisted_path = nil
+  end
+
+  def persist
+    grab.then { |image| store(filename(image), image) }
+  end
+
+  def open
+    Process.spawn("#{OS.open_file_command} #{storage / filename(grab)}")
+  end
+
+  private
+
+  def grab
+    @grab ||= Net::HTTP.get(URI(url.to_s))
+  end
+
+  def store(filename, image)
+    File.open(storage / filename, "w+") { |f| f.write(image) }
+  end
+
+  # maybe pass id instead to have consistent path to keep image viewer opened and just refresh
+  def filename(image)
+    Pathname.new("#{url.engine}-#{Digest::MD5.hexdigest(image)}.#{url.format}")
+  end
+end
+
+EXTERNAL_PORT = 5588
+CONTAINER_NAME = 'yuzutech/kroki'
+STORAGE_LOCATION = Pathname.new("#{Dir.home}/.local/share/kroki-images")
+
+begin
+  container = KrokiContainer.new(port: EXTERNAL_PORT, name: CONTAINER_NAME)
+  container.start
+
+  # add cli commands to pass those
+  url = KrokiURL.new(gets, port: EXTERNAL_PORT, engine: 'graphviz', format: 'svg')
+
+  container.wait(url.to_s)
+
+  image = KrokiImage.new(url: url, storage: STORAGE_LOCATION)
+  image.persist
+  # make it configurable
+  # maybe add file watcher functionality
+  image.open
+ensure
+  container.stop
+end
