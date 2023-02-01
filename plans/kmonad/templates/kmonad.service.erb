@@ -1,0 +1,14 @@
+[Unit]
+Description=Launch KMonad
+
+[Service]
+Type=simple
+StandardOutput=journal
+<% if @profile.second? %>
+ExecStart=/bin/bash -c "%h/.local/bin/kmonad %h/.config/kmonad/thinkpad-t460.kbd"
+<% elsif @profile.third? %>
+ExecStart=/bin/bash -c "%h/.local/bin/kmonad %h/.config/kmonad/thinkpad-p15v.kbd"
+<% end %>
+
+[Install]
+WantedBy=default.target
