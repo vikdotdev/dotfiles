@@ -43,14 +43,15 @@ local tasklist_buttons = gears.table.join(
 )
 
 local kmonad_button = nil
-if util.is_dot_profile(2) then
+if util.is_dot_profile(2) or util.is_dot_profile(3) then
   kmonad_button = wibox.widget {
     {
       {
         buttons = gears.table.join(
           awful.button({}, 1, function ()
             local commands = {
-              "systemctl restart --user kmonad"
+              "systemctl restart --user kmonad",
+              "source sys-config-x && configure_x_all"
             }
 
             for _, command in ipairs(commands) do awful.spawn.with_shell(command) end

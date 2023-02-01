@@ -1,0 +1,10 @@
+- name: Install KMonad deps
+  become: yes
+  dnf:
+    name:
+    - haskell-stack
+  when:
+    - not "profile_1 == 'true'"
+
+- name: Include KMonad
+  include_tasks: "tasks/shared/kmonad.yml"

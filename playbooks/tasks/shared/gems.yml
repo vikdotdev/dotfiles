@@ -1,0 +1,3 @@
+- name: Install ruby gems
+  shell: "/home/{{ target_user }}/{{ home_path.dotfiles }}/{{ dotfiles_path.scripts }}/sys-ensure-gems-installed"
+

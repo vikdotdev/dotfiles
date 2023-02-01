@@ -1,0 +1,40 @@
+- name: Install MySQL and dependencies
+  become: yes
+  apt:
+    name:
+    - mysql-server
+    - python3-pymysql
+
+- name: Start MySQL service
+  become: yes
+  ansible.builtin.systemd:
+    name: mysql
+    enabled: yes
+    state: started
+
+- name: Write a .my.cnf
+  become: yes
+  copy:
+    content: |
+      [client]
+      user=root
+      password=password
+    dest: /root/.my.cnf
+
+- name: Create MySQL user for root
+  become: yes
+  community.mysql.mysql_user:
+    name: root
+    password: password
+    login_unix_socket: /run/mysqld/mysqld.sock
+    priv: '*.*:ALL,GRANT'
+    state: present
+
+- name: Create MySQL user for user
+  become: yes
+  community.mysql.mysql_user:
+    name: "{{ target_user }}"
+    password: password
+    login_unix_socket: /run/mysqld/mysqld.sock
+    priv: '*.*:ALL,GRANT'
+    state: present

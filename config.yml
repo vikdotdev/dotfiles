@@ -1,6 +1,7 @@
 profile:
   umbra: 1
   reddwarf: 2
+  NEWHOST: 3
 
 dotfiles_path:
   scripts: plans/scripts/files

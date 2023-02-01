@@ -1,0 +1,11 @@
+- name: Install neovim build dependencies
+  become: yes
+  apt:
+    name:
+    - nodejs
+
+- name: Install neovim
+  become: yes
+  apt:
+    deb: https://github.com/neovim/neovim/releases/download/v0.8.3/nvim-linux64.deb
+    state: present

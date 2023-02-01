@@ -1,11 +1,6 @@
-- name: Install KMonad deps
-  become: yes
-  dnf:
-    name:
-    - stack
-  when:
-    - not "profile_1 == 'true'"
-
+#
+# Requires stack to be available
+#
 - name: Register KMonad repo
   stat:
     path: "/home/{{ target_user }}/{{ home_path.repos }}/kmonad"

@@ -1,0 +1,17 @@
+- name: Create bin directory if it does not exist
+  ansible.builtin.file:
+    path: "/home/{{ target_user }}/bin"
+    state: directory
+    mode: '0755'
+
+- name: Register zk binary
+  stat:
+    path: "/home/{{ target_user }}/bin/zk"
+  register: zk_binary
+
+- name: Install zk
+  ansible.builtin.unarchive:
+    src: https://github.com/mickael-menu/zk/releases/download/v0.12.0/zk-v0.12.0-linux-amd64.tar.gz
+    dest: "/home/{{ target_user }}/bin/zk"
+    remote_src: yes
+  when: not zk_binary.stat.exists

@@ -3,7 +3,7 @@
   dnf:
     name:
     - go
-    - libicu-devel
+    #- libicu-devel
 
 - name: Register zk repo
   stat:
@@ -13,7 +13,9 @@
 - name: Clone zk
   ansible.builtin.git:
     repo: https://github.com/mickael-menu/zk
+    depth: 50
     dest: "/home/{{ target_user }}/{{ home_path.repos }}/zk"
+    version: v0.10.1
   when: not zk_repo.stat.exists
 
 - name: Register zk executable

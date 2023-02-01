@@ -1,0 +1,58 @@
+(defalias
+  ;; Tab on tap, Meta on hold.
+  mta (tap-hold-next-release 150 tab lmet)
+
+  ;; Single quote on tap, Ctrl on hold
+  qta (tap-hold-next-release 150 ' rctl)
+
+  ;; Escape on tap, Ctrl on hold
+  ces (tap-hold-next-release 150 esc lctl)
+
+  ;; [ tap, Shift on hold
+  lsb (tap-hold-next-release 170 lbrc lsft)
+
+  ;; ] tap, Shift on hold
+  rsb (tap-hold-next-release 170 rbrc rsft)
+
+  ;; Prepares Ctrl and Shirt for the next keypress e.g. C-S-t to restore last
+  ;; browser tab etc.
+  cst (tap-macro (around-next lsft) (around-next lctl))
+
+  ;; Scrolling down and up in nav mode
+  scd (tap-macro down down down down :delay 100)
+  scu (tap-macro up up up up :delay 100)
+
+  ;; Space on tap, enable side layer of hold
+  sid (tap-hold-next-release 300 spc (layer-toggle side))
+
+  ;; Enable number layer on hold, type a number on next tap
+  nma (tap-macro (layer-add number)
+        (cmd-button <%= @number_layer_enabled_cmd %>))
+
+  ;; Enable number layer on tap
+  nmm (tap-hold-next-release 200 (layer-next number) (layer-toggle number))
+
+  ;; Remove number layer on tap, act as Ctrl on hold
+  nmr (tap-hold-next-release 300
+        (tap-macro (layer-rem number)
+          (cmd-button <%= @number_layer_disabled_cmd %>))
+        lctl)
+
+  ;; Enables nav layer
+  nva (tap-macro (layer-add nav)
+        (cmd-button <%= @number_layer_enabled_cmd %>))
+
+  ;; Disables nav layer, acts as Ctrl on hold
+  nvr (tap-hold-next-release 300
+        (tap-macro (layer-rem nav)
+          (cmd-button <%= @number_layer_disabled_cmd %>))
+        lctl)
+
+  ;; Navigate browser tabs forward and backward
+  hfo (around lalt right)
+  hba (around lalt left)
+
+  ;; Navigate browser current tab forward and backward in history
+  tba (around lctl (around lsft tab))
+  tfo (around lctl tab)
+)

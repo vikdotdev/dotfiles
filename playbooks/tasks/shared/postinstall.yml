@@ -5,5 +5,5 @@
   debug:
     msg: |
       Reboot the system in order for all the changes to take place. After
-      reboot, start X with 'startx', run 'dot postinstall', and follow the
-      instructions.
+      reboot, select "Awesome" as a window manager and run "dot postinstall",
+      and follow the instructions.

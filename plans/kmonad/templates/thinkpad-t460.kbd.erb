@@ -1,40 +1,13 @@
 (defcfg
   input  (device-file "/dev/input/by-path/platform-i8042-serio-0-event-kbd")
-  output (uinput-sink "KMonad output" "/usr/bin/sleep 1 && $HOME/bin/sys-reset-xorg-settings")
+  output (uinput-sink "KMonad output" "/usr/bin/sleep 1 && source $HOME/bin/sys-config-x && configure_x_all")
   cmp-seq ralt
   cmp-seq-delay 5
   fallthrough true
   allow-cmd true
 )
 
-(defalias
-  mta (tap-hold-next-release 150 tab lmet)
-  qta (tap-hold-next-release 150 ' rctl)
-  ces (tap-hold-next-release 150 esc lctl)
-  lsb (tap-hold-next-release 170 lbrc lsft)
-  cst (tap-macro (around-next lsft) (around-next lctl))
-  scd (tap-macro down down down down down :delay 100)
-  scu (tap-macro up up up up up :delay 100)
-  rsb (tap-hold-next-release 170 rbrc rsft)
-  sid (tap-hold-next-release 300 spc (layer-toggle side))
-  nma (tap-macro (layer-add number)
-        (cmd-button "$HOME/bin/util-awesome-notify -t Kmonad -b \"Number layer - ON\""))
-  nmm (tap-hold-next-release 200 (layer-next number) (layer-toggle number))
-  nmr (tap-hold-next-release 300
-        (tap-macro (layer-rem number)
-          (cmd-button "$HOME/bin/util-awesome-notify -t Kmonad -b \"Number layer - OFF\""))
-        lctl)
-  nva (tap-macro (layer-add nav)
-        (cmd-button "$HOME/bin/util-awesome-notify -t Kmonad -b \"Nav layer - ON\""))
-  nvr (tap-hold-next-release 300
-        (tap-macro (layer-rem nav)
-          (cmd-button "$HOME/bin/util-awesome-notify -t Kmonad -b \"Nav layer - OFF\""))
-        lctl)
-  hfo (around lalt right)
-  hba (around lalt left)
-  tba (around lctl (around lsft tab))
-  tfo (around lctl tab)
-)
+<%= @kmonad_alias %>
 
 (defsrc
   esc  mute vold volu                               end  ins  del

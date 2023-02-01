@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+# TODO add more info and link
+[ ! -x "$(command -v rvm) && $(command -v ruby)" ] && echo 'rvm and ruby are not on PATH' && exit 1
+
+sudo apt-get install ansible git
+ansible-galaxy collection install community.general
+ansible-galaxy collection install community.mysql
+
+mkdir -p ~/repos
+pushd ~/repos
+[ ! -d dotfiles ] && git clone https://github.com/vikdotdev/dotfiles
+./dotfiles/bin/dot install
+popd

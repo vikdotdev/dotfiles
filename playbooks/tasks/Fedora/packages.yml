@@ -50,6 +50,7 @@
     - fd-find
     - aspell
     - aspell-en
+    - aspell-pl
     - feh
     - pulseaudio-utils
     - xinput
@@ -66,10 +67,6 @@
     - easyeffects
     - pavucontrol
     - lxappearance
-    # - greybird-dark-theme
-    # - peek
-    # - deluge
-    # - seahorse
     - zathura
     - zathura-pdf-poppler
     - gimp
@@ -96,41 +93,11 @@
      disable_gpg_check: yes
      state: present
 
-- name: Add the flathub flatpak repository remote to the user installation
-  community.general.flatpak_remote:
-    method: user
-    name: flathub
-    state: present
-    flatpakrepo_url: https://flathub.org/repo/flathub.flatpakrepo
+- name: Include flatpaks
+  include_tasks: "tasks/shared/flatpak.yml"
 
-- name: Install flatpaks
-  community.general.flatpak:
-    method: user
-    name: "{{ item }}"
-  loop:
-    - com.microsoft.Teams
-    - com.spotify.Client
-    - com.skype.Client
-    - org.telegram.desktop
-    - com.discordapp.Discord
-    - org.signal.Signal
+- name: Include gems
+  include_tasks: "tasks/shared/gems.yml"
 
-- name: Install ruby gems
-  shell: "/home/{{ target_user }}/{{ home_path.dotfiles }}/{{ dotfiles_path.scripts }}/sys-ensure-gems-installed"
-
-- name: Register .npm-packages directory
-  stat:
-    path: "/home/{{ target_user }}/{{ home_path.npm }}"
-  register: npm_dir
-
-- name: Tell npm where to store user packages
-  shell: npm config set prefix "$HOME/{{ home_path.npm }}"
-  when: not npm_dir.stat.exists
-
-- name: Install general node packages
-  community.general.npm:
-    name: yarn
-    global: yes
-  loop:
-  environment:
-    NPM_PACKAGES: "/home/{{ target_user }}/{{ home_path.npm }}"
+- name: Include node
+  include_tasks: "tasks/shared/node.yml"

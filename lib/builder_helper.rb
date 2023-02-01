@@ -18,7 +18,7 @@ module BuilderHelper
   end
 
   def templates
-    Dir.entries(@templates_path).drop(2).map { |template| template.delete_suffix('.erb') }
+    Dir.entries(@templates_path).sort.drop(2).map { |template| template.delete_suffix('.erb') }
   end
 
   def read_file(filename)
