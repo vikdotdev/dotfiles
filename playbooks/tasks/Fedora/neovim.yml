@@ -1,0 +1,21 @@
+- name: Install neovim build dependencies
+  become: yes
+  dnf:
+    name:
+    - ninja-build
+    - libtool
+    - autoconf
+    - automake
+    - cmake
+    - gcc
+    - gcc-c++
+    - make
+    - pkgconfig
+    - unzip
+    - patch
+    - gettext
+    - curl
+    - nodejs
+
+- name: Include neovim
+  include_tasks: tasks/shared/neovim.yml

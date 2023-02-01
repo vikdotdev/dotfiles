@@ -1,0 +1,91 @@
+# install repositories
+
+- name: Add repo for Github command line utility
+  become: yes
+  apt_repository:
+    name: gh-cli
+    description: Github CLI
+    baseurl: https://cli.github.com/packages stable main
+    state: present
+
+- name: Update system
+  become: yes
+  apt:
+    name: '*'
+    state: latest
+
+- name: Install core packages
+  become: yes
+  dnf:
+    name:
+    - vim
+    - firefox
+    - wget
+    - unzip
+    - xclip
+    - curl
+    - clang
+    - sensible-utils
+    - xdotool
+    - screenkey
+    - redshift
+    - urlview
+    - xbacklight
+    - x11-utils
+    - x11-xserver-utils
+    - xprop
+    - xsel
+    - playerctl
+    - ncdu
+    - tldr
+    - awesome
+    - rofi # TODO not available in default repos
+    - ripgrep
+    - fd-find
+    - aspell
+    - aspell-en
+    - aspell-pl
+    - feh
+    - pulseaudio-utils
+    - xinput
+    - imwheel
+    - xdg-user-dirs
+    - imagemagick
+    - renameutils
+    - xss-lock
+    - xsecurelock
+    - acpi
+    - bat
+    - alacritty # TODO not in default repo?
+    - easyeffects # TODO not in default repo?
+    - pavucontrol
+    - lxappearance
+    - zathura
+    - zathura-pdf-poppler
+    - gimp
+    - git
+    - git-credential-libsecret # TODO not in default repo?
+    - git-delta # TODO not in default repo?
+    - gh
+    - ruby
+    - ruby-dev
+    - nodejs
+    - jpegoptim
+
+# TODO install nvidia driver for appropriate profile
+
+- name: Install zoom deb
+  become: yes
+  apt:
+     name: https://zoom.us/client/5.13.5.431/zoom_amd64.deb
+     disable_gpg_check: yes
+     state: present
+
+- name: Include flatpaks
+  include_tasks: "tasks/shared/flatpak.yml"
+
+- name: Include gems
+  include_tasks: "tasks/shared/gems.yml"
+
+- name: Include node
+  include_tasks: "tasks/shared/node.yml"

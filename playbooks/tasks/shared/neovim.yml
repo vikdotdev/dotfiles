@@ -1,22 +1,19 @@
-- name: Install neovim build dependencies
-  become: yes
-  dnf:
-    name:
-    - ninja-build
-    - libtool
-    - autoconf
-    - automake
-    - cmake
-    - gcc
-    - gcc-c++
-    - make
-    - pkgconfig
-    - unzip
-    - patch
-    - gettext
-    - curl
-    - nodejs
-
+# Requires build dependencies
+# - ninja-build
+# - libtool
+# - autoconf
+# - automake
+# - cmake
+# - gcc
+# - gcc-c++
+# - make
+# - pkgconfig
+# - unzip
+# - patch
+# - gettext
+# - curl
+# - nodejs
+#
 - name: Register nvim binary
   stat:
     path: /usr/local/bin/nvim

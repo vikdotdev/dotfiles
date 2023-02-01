@@ -1,6 +1,7 @@
 profile:
   umbra: 1
   reddwarf: 2
+  NEWHOST: 3 # can I change this?
 
 dotfiles_path:
   scripts: plans/scripts/files

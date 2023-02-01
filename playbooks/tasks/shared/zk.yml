@@ -1,10 +1,5 @@
-- name: Install zk deps
-  become: yes
-  dnf:
-    name:
-    - go
-    - libicu-devel
-
+# This requires "go" dependency to be installed
+#
 - name: Register zk repo
   stat:
     path: "/home/{{ target_user }}/{{ home_path.repos }}/zk"

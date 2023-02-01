@@ -1,0 +1,9 @@
+- name: Install zk deps
+  become: yes
+  apt:
+    name:
+    - golang
+    - libicu-dev
+
+- name: Include zk
+  include_tasks: "tasks/shared/zk.yml"

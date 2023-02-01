@@ -1,0 +1,9 @@
+- name: Install zk deps
+  become: yes
+  dnf:
+    name:
+    - go
+    - libicu-devel
+
+- name: Include zk
+  include_tasks: "tasks/shared/zk.yml"

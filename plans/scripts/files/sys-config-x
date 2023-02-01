@@ -16,5 +16,12 @@ configure_repeat_rate() {
 }
 
 configure_keyboard_layout() {
-  setxkbmap -layout us,ua -option compose:ralt
+  setxkbmap -layout pl,ua -option compose:ralt
+}
+
+# TODO rename all the others
+configure_x_all() {
+  configure_suspend
+  configure_repeat_rate
+  configure_keyboard_layout
 }
