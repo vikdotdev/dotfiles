@@ -13,8 +13,7 @@
     - name: Install intel configurations
       include_tasks: "tasks/{{ ansible_distribution }}/intel.yml"
       when: "profile_2 == 'true'"
-    # TODO include it later
-    #- include_tasks: "tasks/{{ ansible_distribution }}/postgresql.yml"
+    - include_tasks: "tasks/{{ ansible_distribution }}/postgresql.yml"
     - include_tasks: "tasks/{{ ansible_distribution }}/mysql.yml"
     - include_tasks: "tasks/shared/evm.yml"
     - include_tasks: "tasks/{{ ansible_distribution }}/redis.yml"

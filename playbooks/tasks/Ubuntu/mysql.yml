@@ -12,7 +12,7 @@
     enabled: yes
     state: started
 
-- name: Write a .my.cnf
+- name: Write /root/.my.cnf
   become: yes
   copy:
     content: |
@@ -20,6 +20,14 @@
       user=root
       password=password
     dest: /root/.my.cnf
+
+- name: "Write /home/{{ target_user }}/.my.cnf"
+  copy:
+    content: |
+      [client]
+      user=vik
+      password=password
+    dest: "/home/{{ target_user }}/.my.cnf"
 
 - name: Create MySQL user for root
   become: yes

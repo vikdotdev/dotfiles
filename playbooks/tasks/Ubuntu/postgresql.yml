@@ -1,0 +1,70 @@
+- name: Install PostgreSQL packages
+  become: yes
+  dnf:
+    name:
+    - postgresql
+    - postgresql-contrib
+    # - postgresql-server
+    # - libpq-devel
+    # - python3-psycopg2
+
+- name: Register /var/lib/pgsql/data/pg_hba.conf
+  become: yes
+  stat:
+    path: /var/lib/pgsql/data/pg_hba.conf
+  register: postgres_data
+
+- name: Initialize PostgreSQL
+  become: yes
+  shell: "postgresql-setup --initdb"
+  when: not postgres_data.stat.exists
+
+- name: Start PostgreSQL service
+  become: yes
+  ansible.builtin.systemd:
+    name: postgresql-12
+    enabled: yes
+    state: started
+
+- name: Create PostgreSQL user database
+  become: yes
+  become_user: postgres
+  postgresql_db:
+    state: present
+    name: "{{ target_user }}"
+
+- name: Create PostgreSQL user
+  become: yes
+  become_user: postgres
+  postgresql_user:
+    state: present
+    name: "{{ target_user }}"
+    password: password
+
+- name: Grant user access
+  become: yes
+  become_user: postgres
+  postgresql_privs:
+    type: database
+    database: "{{ target_user  }}"
+    roles: "{{ target_user }}"
+    grant_option: no
+    privs: all
+
+- name: Allow password connection for the db user
+  postgresql_pg_hba:
+    dest: "~/data/pg_hba.conf"
+    contype: host
+    databases: all
+    method: password
+    users: "{{ target_user }}"
+    create: true
+  become: yes
+  become_user: postgres
+
+- name: Restart PostgreSQL service
+  become: yes
+  ansible.builtin.systemd:
+    name: postgresql-12
+    enabled: yes
+    state: restarted
