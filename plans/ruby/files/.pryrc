@@ -73,8 +73,7 @@ Pry.commands.alias_command 'fm', 'find-method'
 Pry.commands.alias_command 'fm', 'find-method'
 Pry.commands.alias_command 'dp', 'disable-pry'
 
-# Repeats last command when pressing a Return key
-Pry::Commands.command /^$/, 'repeat last command' do
+Pry::Commands.command 're', 'repeat last command' do
   last_command = Pry.history.to_a.last
   pry_instance.input = StringIO.new(last_command)
 end
