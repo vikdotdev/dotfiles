@@ -94,4 +94,5 @@ require'lspconfig'.dockerls.setup({
 
 require'lspconfig'.tailwindcss.setup({})
 require'lspconfig'.emmet_ls.setup({})
+require'lspconfig'.rust_analyzer.setup({})
 
