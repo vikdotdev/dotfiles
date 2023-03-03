@@ -14,7 +14,7 @@ require('lspconfig').clangd.setup({})
 local sumneko_root_path = vim.fn.expand('$HOME/.local/bin/sumneko_lua')
 local sumneko_binary = vim.fn.expand(sumneko_root_path .. '/bin/lua-language-server')
 
-require('lspconfig').sumneko_lua.setup({
+require('lspconfig').lua_ls.setup({
   cmd = {sumneko_binary, "-E", sumneko_root_path .. "/main.lua"};
   settings = {
     Lua = {
