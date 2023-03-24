@@ -94,7 +94,7 @@ if util.is_dot_profile(2) then
     local value = math.floor(tonumber(std.trim(raw_value)))
     local text = 'Battery ' .. value .. '%'
 
-    if value > 70 then
+    if value >= 70 then
       battery_container:set_bg("#80fa73")
     elseif value < 70 and value >= 35 then
       battery_container:set_bg("#f5f500")

@@ -72,6 +72,7 @@
     # - seahorse
     - zathura
     - zathura-pdf-poppler
+    - zathura-pdf-mupdf
     - gimp
     - git
     - git-credential-libsecret

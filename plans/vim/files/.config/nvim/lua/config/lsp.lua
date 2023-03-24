@@ -96,3 +96,9 @@ require'lspconfig'.tailwindcss.setup({})
 require'lspconfig'.emmet_ls.setup({})
 require'lspconfig'.rust_analyzer.setup({})
 
+local elixir_ls_binary = vim.fn.expand('$HOME/.local/bin/elixir-ls/language_server.sh')
+
+require'lspconfig'.elixirls.setup({
+  cmd = { elixir_ls_binary }
+})
+
