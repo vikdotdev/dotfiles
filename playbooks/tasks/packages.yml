@@ -11,7 +11,8 @@
   yum_repository:
     name: gh-cli
     description: Github CLI
-    baseurl: https://cli.github.com/packages/rpm/gh-cli.repo
+    baseurl: https://cli.github.com/packages/rpm
+    gpgkey: https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x23F3D4EA75716059
 
 - name: Update system
   become: yes
