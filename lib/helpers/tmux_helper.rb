@@ -15,8 +15,8 @@ module TmuxHelper
     `#{cmd}`.each_line.map { |line| line.chomp.split(':') }
   end
 
-  def tmux_pane_vim?(pane_tty)
-    system("ps -o state= -o comm= -t #{pane_tty} | grep -iqE '^[^TXZ] nvim'")
+  def tmux_pane_matches?(pane_tty, identifier)
+    system("ps -o state= -o comm= -t #{pane_tty} | grep -iqE '^[^TXZ] #{identifier}'")
   end
 
   def tmux_send_keys(command, opts = {})
@@ -30,6 +30,6 @@ module TmuxHelper
   end
 
   def tmux_reload(tmux_conf_path)
-    `tmux source-file #{tmux_conf_path} 2> /dev/null` if File.exists?(tmux_conf_path)
+    `tmux source-file #{tmux_conf_path} 2> /dev/null` if File.exist?(tmux_conf_path)
   end
 end

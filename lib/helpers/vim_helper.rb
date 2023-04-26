@@ -9,7 +9,7 @@ module VimHelper
     tmux_sessions.each do |session|
       tmux_windows(session).each do |window|
         tmux_panes(session, window).each do |pane_tty, pane|
-          next unless tmux_pane_vim?(pane_tty)
+          next unless tmux_pane_matches?(pane_tty, 'nvim')
 
           tmux_send_keys(lua_cmd, session: session, window: window, pane: pane)
         end

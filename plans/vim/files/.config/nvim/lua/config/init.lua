@@ -38,7 +38,9 @@ require('config/bufnav')
 require('config/theme')
 require('config/zk')
 
-vim.cmd('au TextYankPost * lua vim.highlight.on_yank {on_visual = false}')
+require('util').set_theme()
+
+vim.cmd('au TextYankPost * lua vim.highlight.on_yank { higroup = "Visual", on_visual = false}')
 vim.cmd('syntax enable')
 vim.cmd('filetype plugin indent on')
 vim.cmd('set textwidth=0')

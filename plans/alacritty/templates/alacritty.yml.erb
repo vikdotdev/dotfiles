@@ -23,60 +23,60 @@ colors:
     background: '#b2ceee'
 
   primary:
-    background: '#323940'
-    foreground: '#d1d5da'
+    background: "<%= @colors.dark(:primary, :background) %>"
+    foreground: "<%= @colors.dark(:primary, :foreground) %>"
 
   normal:
-    black:   '#586069'
-    red:     '#ea4a5a'
-    green:   '#34d058'
-    yellow:  '#ffea7f'
-    blue:    '#2188ff'
-    magenta: '#b392f0'
-    cyan:    '#39c5cf'
-    white:   '#d1d5da'
+    black:   "<%= @colors.dark(:normal, :black) %>"
+    red:     "<%= @colors.dark(:normal, :red) %>"
+    green:   "<%= @colors.dark(:normal, :green) %>"
+    yellow:  "<%= @colors.dark(:normal, :yellow) %>"
+    blue:    "<%= @colors.dark(:normal, :blue) %>"
+    magenta: "<%= @colors.dark(:normal, :magenta) %>"
+    cyan:    "<%= @colors.dark(:normal, :cyan) %>"
+    white:   "<%= @colors.dark(:normal, :white) %>"
 
   bright:
-    black:   '#959da5'
-    red:     '#f97583'
-    green:   '#85e89d'
-    yellow:  '#ffea7f'
-    blue:    '#79b8ff'
-    magenta: '#b392f0'
-    cyan:    '#56d4dd'
-    white:   '#fafbfc'
-
-indexed_colors:
-  - { index: 16, color: '#d18616' }
-  - { index: 17, color: '#f97583' }
+    black:   "<%= @colors.dark(:bright, :black) %>"
+    red:     "<%= @colors.dark(:bright, :red) %>"
+    green:   "<%= @colors.dark(:bright, :green) %>"
+    yellow:  "<%= @colors.dark(:bright, :yellow) %>"
+    blue:    "<%= @colors.dark(:bright, :blue) %>"
+    magenta: "<%= @colors.dark(:bright, :magenta) %>"
+    cyan:    "<%= @colors.dark(:bright, :cyan) %>"
+    white:   "<%= @colors.dark(:bright, :white) %>"
 
 <% elsif @theme.light? %>
 colors:
+  # cursor:
+  #   text:   '#080808'
+  #   cursor: '#9e9e9e'
+
+  # selection:
+  #   text:       '#080808'
+  #   background: '#b2ceee'
+
   primary:
-    background: '#ebebe4'
-    foreground: '#24292f'
+    background: "<%= @colors.light(:primary, :background) %>"
+    foreground: "<%= @colors.light(:primary, :foreground) %>"
 
   normal:
-    black:   '#24292e'
-    red:     '#d73a49'
-    green:   '#28a745'
-    yellow:  '#dbab09'
-    blue:    '#0366d6'
-    magenta: '#5a32a3'
-    cyan:    '#0598bc'
-    white:   '#6a737d'
+    black:   "<%= @colors.light(:normal, :black) %>"
+    red:     "<%= @colors.light(:normal, :red) %>"
+    green:   "<%= @colors.light(:normal, :green) %>"
+    yellow:  "<%= @colors.light(:normal, :yellow) %>"
+    blue:    "<%= @colors.light(:normal, :blue) %>"
+    magenta: "<%= @colors.light(:normal, :magenta) %>"
+    cyan:    "<%= @colors.light(:normal, :cyan) %>"
+    white:   "<%= @colors.light(:normal, :white) %>"
 
   bright:
-    black:   '#959da5'
-    red:     '#cb2431'
-    green:   '#22863a'
-    yellow:  '#b08800'
-    blue:    '#005cc5'
-    magenta: '#5a32a3'
-    cyan:    '#3192aa'
-    white:   '#d1d5da'
-
-  indexed_colors:
-    - { index: 16, color: '#d18616' }
-    - { index: 17, color: '#cb2431' }
+    black:   "<%= @colors.light(:bright, :black) %>"
+    red:     "<%= @colors.light(:bright, :red) %>"
+    green:   "<%= @colors.light(:bright, :green) %>"
+    yellow:  "<%= @colors.light(:bright, :yellow) %>"
+    blue:    "<%= @colors.light(:bright, :blue) %>"
+    magenta: "<%= @colors.light(:bright, :magenta) %>"
+    cyan:    "<%= @colors.light(:bright, :cyan) %>"
+    white:   "<%= @colors.light(:bright, :white) %>"
 <% end %>

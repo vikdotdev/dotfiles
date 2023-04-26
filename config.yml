@@ -1,6 +1,108 @@
 profile:
   umbra: 1
   reddwarf: 2
+  redgiant: 2
+
+palette:
+  monochrome:
+    gray_1:
+      hex: '#262a33'
+    gray_2:
+      hex: '#303540'
+    gray_3:
+      hex: '#393f4d'
+    gray_4:
+      hex: '#424959'
+    gray_5:
+      hex: '#4b5366'
+    gray_6:
+      hex: '#555e73'
+    gray_7:
+      hex: '#5e6880'
+    gray_8:
+      hex: '#66728c'
+
+  dark:
+    primary:
+      background:
+        hex: '#1e2226'
+      foreground:
+        hex: '#d1d5da'
+    normal:
+      black:
+        hex: '#586069'
+      red:
+        hex: '#f97583'
+      green:
+        hex: '#1ed448'
+      yellow:
+        hex: '#fdc38e'
+      blue:
+        hex: '#2188ff'
+      magenta:
+        hex: '#b392f0'
+      cyan:
+        hex: '#39c5cf'
+      white:
+        hex: '#d1d5da'
+    bright:
+      black:
+        hex: '#959da5'
+      red:
+        hex: '#FF79C6'
+      green:
+        hex: '#85e89d'
+      yellow:
+        hex: '#ffea7f'
+      blue:
+        hex: '#79b8ff'
+      magenta:
+        hex: '#c3b1e6'
+      cyan:
+        hex: '#56d4dd'
+      white:
+        hex: '#fafbfc'
+
+  light:
+    primary:
+      background:
+        hex: '#ebebe4'
+      foreground:
+        hex: '#24292f'
+    normal:
+      black:
+        hex: '#24292e'
+      red:
+        hex: '#d73a49'
+      green:
+        hex: '#28a745'
+      yellow:
+        hex: '#dbab09'
+      blue:
+        hex: '#0366d6'
+      magenta:
+        hex: '#5a32a3'
+      cyan:
+        hex: '#0598bc'
+      white:
+        hex: '#6a737d'
+    bright:
+      black:
+        hex: '#959da5'
+      red:
+        hex: '#cb2431'
+      green:
+        hex: '#22863a'
+      yellow:
+        hex: '#b08800'
+      blue:
+        hex: '#005cc5'
+      magenta:
+        hex: '#5a32a3'
+      cyan:
+        hex: '#3192aa'
+      white:
+        hex: '#d1d5da'
 
 dotfiles_path:
   scripts: plans/scripts/files

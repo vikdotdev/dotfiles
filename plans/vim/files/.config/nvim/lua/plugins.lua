@@ -9,17 +9,18 @@ return require('packer').startup(function(use)
   use({'hrsh7th/cmp-cmdline'})
   use({'folke/which-key.nvim'})
   use({'norcalli/nvim-colorizer.lua'})
-  use({'numToStr/Comment.nvim', config = function() require('Comment').setup() end })
+  use({'numToStr/Comment.nvim', config = function()
+    require('Comment').setup()
+  end })
   use({'JoosepAlviste/nvim-ts-context-commentstring'})
   use({'ojroques/nvim-bufdel'})
   use({'vikdotdev/bufnav.nvim'})
-  use({'projekt0n/github-nvim-theme'})
-  -- use 'folke/tokyonight.nvim'
   use({'nvim-treesitter/nvim-treesitter',
     ensure_installed = 'all',
     run = {':TSUpdate'},
     branch = 'master',
   })
+  use({'nvim-treesitter/playground'})
   use({'romgrk/nvim-treesitter-context'})
   use({'mhinz/vim-startify'})
   use({'tpope/vim-surround'})

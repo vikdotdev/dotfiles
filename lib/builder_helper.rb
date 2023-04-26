@@ -22,7 +22,7 @@ module BuilderHelper
   end
 
   def read_file(filename)
-    File.read(File.join(@files_path, filename))
+    ERB.new(File.read(File.join(@files_path, filename))).result(binding)
   end
 
   def chmod(mode, filepath)
@@ -36,7 +36,7 @@ module BuilderHelper
   end
 
   def home_file(path)
-    File.join(Dir.home, Pathname.new(path))
+    File.join(Dir.home, Pathname.new(path)).delete_suffix('.erb')
   end
 
   def ensure_service_running(name)

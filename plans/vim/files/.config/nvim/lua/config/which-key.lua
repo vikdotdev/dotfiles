@@ -141,6 +141,8 @@ local normal_keymap = {
     r = {'<Cmd>luafile %<CR>', 'reload lua buffer'},
     s = {'<Cmd>PackerSync<CR>', 'sync plugins'},
     i = {'<Cmd>TSInstall all<CR>', 'install all treesitter parsers'},
+    n = {'<Cmd>TSNodeUnderCursor<CR>', 'show node under cursor'},
+    h = {'<Cmd>TSHighlightCapturesUnderCursor<CR>', 'show highlight group under cursor'},
     c = {'<Cmd>PackerCompile<CR>', 'compile'}
   },
   l = {
