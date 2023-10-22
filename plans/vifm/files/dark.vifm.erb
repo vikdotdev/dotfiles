@@ -1,0 +1,21 @@
+" vikdotdev_dark theme
+
+highlight clear
+highlight Win             cterm=none guibg=none guifg=none
+highlight Border          cterm=none gui=none
+highlight TopLine         cterm=none guifg=<%= @colors.mono(6) %> guibg=<%= @colors.mono(2) %>
+highlight TopLineSel      cterm=none guifg=<%= @colors.dark(:normal, :white) %> guibg=<%= @colors.mono(5) %>
+highlight StatusLine      cterm=none guifg=<%= @colors.dark(:primary, :foreground) %> guibg=<%= @colors.mono(5) %>
+highlight Selected        cterm=none guifg=<%= @colors.dark(:primary, :background) %> guibg=<%= @colors.dark(:normal, :magenta) %>
+highlight CurrLine        cterm=none guibg=<%= @colors.mono(2) %>
+highlight LineNr          cterm=none guifg=<%= @colors.mono(3) %> guibg=none
+highlight WildMenu        cterm=none guifg=<%= @colors.dark(:normal, :white) %> guibg=<%= @colors.dark(:primary, :background) %>
+highlight CmdLine         cterm=none guifg=<%= @colors.dark(:primary, :foreground) %> guibg=<%= @colors.dark(:primary, :background) %>
+highlight ErrorMsg        cterm=none guifg=<%= @colors.dark(:normal, :red) %> guibg=none
+highlight Directory       cterm=none guifg=<%= @colors.dark(:bright, :blue) %>
+highlight Link            cterm=none guifg=<%= @colors.dark(:normal, :cyan) %>
+highlight BrokenLink      cterm=none guifg=<%= @colors.dark(:normal, :cyan) %> guibg=<%= @colors.dark(:normal, :red) %>
+highlight Socket          cterm=none guifg=<%= @colors.dark(:normal, :magenta) %>
+highlight Device          cterm=none guifg=<%= @colors.dark(:bright, :red) %>
+highlight Fifo            cterm=none guifg=<%= @colors.dark(:bright, :yellow) %>
+highlight Executable      cterm=none guifg=<%= @colors.dark(:normal, :green) %> guibg=none

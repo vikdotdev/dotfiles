@@ -27,23 +27,36 @@
 [github]
 	user = vikdotdev
 [pager]
-  diff = delta
+  diff = delta --paging always
   log = delta
   reflog = delta
   show = delta
+
+[delta "vikdotdev-dark"]
+  dark = true
+  syntax-theme = Dracula
+
+[delta "vikdotdev-light"]
+	light = true
+  syntax-theme = GitHub
+
 [delta]
   <% if @theme.dark? %>
-	light = false
-	dark = true
-	syntax-theme = Dracula
+	features = vikdotdev-dark
   <% elsif @theme.light? %>
-	light = true
-	dark = false
-	syntax-theme = Github
+	features = vikdotdev-light
   <% end %>
+
   navigate = true
+
+  <% if @profile.first? %>
   side-by-side = true
+  <% else %>
+  side-by-side = false
+  <% end %>
+
 [interactive]
   diffFilter = delta --color-only -s -n
+
 [gpg]
 	program = gpg

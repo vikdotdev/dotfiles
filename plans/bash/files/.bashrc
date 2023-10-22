@@ -67,7 +67,9 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   o="xdg-open" \
   open="xdg-open" \
   y="xclip -selection clipboard" \
-  yank="xclip -selection clipboard"
+  yank="xclip -selection clipboard" \
+  vifm="TERM=xterm-direct vifm" \
+  psql='PAGER="less -S" command psql "$@"'
 
 HISTSIZE=
 HISTFILESIZE=

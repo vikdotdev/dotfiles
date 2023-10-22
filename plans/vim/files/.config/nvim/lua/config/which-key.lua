@@ -99,7 +99,7 @@ local normal_keymap = {
   o = {
     name = '+open',
     s = {'<Cmd>Startify<CR>', 'startify'},
-    t = {'<Cmd>term<CR>', 'terminal here'},
+    t = {'<Cmd>new tab<CR>', 'new tab'},
     q = {'<Cmd>copen<CR>', 'quickfix list'},
   },
   g = {
@@ -116,6 +116,8 @@ local normal_keymap = {
     c = {'<Cmd>Telescope git_commits<CR>', 'commits'},
     C = {'<Cmd>Telescope git_bcommits<CR>', 'buffer commits'},
     g = {'<Cmd>Telescope git_status<CR>', 'status'},
+    o = {'<Cmd>lua require("gitlinker").get_buf_range_url("n", {action_callback = require("gitlinker.actions").open_in_browser})<CR>', 'open remote line url'},
+    r = {'<Cmd>lua require("gitlinker").get_buf_range_url("n", {action_callback = require("gitlinker.actions").copy_to_clipboard})<CR>', 'copy remote line url'}
   },
   b = {
     name = '+buffer',
@@ -141,6 +143,8 @@ local normal_keymap = {
     r = {'<Cmd>luafile %<CR>', 'reload lua buffer'},
     s = {'<Cmd>PackerSync<CR>', 'sync plugins'},
     i = {'<Cmd>TSInstall all<CR>', 'install all treesitter parsers'},
+    n = {'<Cmd>TSNodeUnderCursor<CR>', 'show node under cursor'},
+    h = {'<Cmd>TSHighlightCapturesUnderCursor<CR>', 'show highlight group under cursor'},
     c = {'<Cmd>PackerCompile<CR>', 'compile'}
   },
   l = {
@@ -175,6 +179,7 @@ local normal_keymap = {
     n = {
       name = '+new',
       f = {'<Cmd>ZkNew { dir = "store", template = "fleeting.md" }<CR>', 'new fleeting note'},
+      s = {'<Cmd>ZkNew { dir = "store", template = "summary.md" }<CR>', 'new summary note'},
       l = {'<Cmd>ZkNew { dir = "store", template = "literature.md" }<CR>', 'new literature note'},
       e = {'<Cmd>ZkNew { dir = "store", template = "evergreen.md" }<CR>', 'new evergreen note'},
     },

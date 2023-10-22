@@ -1,4 +1,5 @@
 local Util = {}
+local themes = require('config/theme')
 
 function Util.kill_current_buffer()
   vim.api.nvim_buf_delete(0, {})
@@ -170,43 +171,7 @@ end
 
 function Util.set_theme(variant)
   local theme = variant or Util.get_theme()
-  require('github-theme').setup({
-    options = {
-      transparent = true,
-      darken = {
-        floats = true,
-        sidebars = {
-          list = {'packer', 'telescope'}
-        }
-      },
-      hide_nc_statusline = false,
-      styles = {
-        comments = "NONE",
-        keywords = "NONE",
-      }
-    },
-    overrides = function(c)
-      if theme == 'light' then
-        return {
-          Pmenu = {fg = c.black, bg = c.bg},
-          Search = {fg = c.black, bg = c.yellow},
-          StatusLine = {fg = c.bg, bg = c.blue },
-          StatusLineNC = {fg = c.fg, bg = c.bright_black},
-        }
-      end
-
-      return {
-        Pmenu = {fg = c.white, bg = c.bg},
-        Search = {fg = c.black, bg = c.yellow},
-        Function = { fg = c.yellow },
-        Constant = { fg = c.green },
-        StatusLine = {fg = c.bg, bg = c.blue },
-        StatusLineNC = {fg = c.white, bg = c.black},
-      }
-    end
-  })
-
-  vim.cmd('colorscheme github_' .. theme)
+  themes.apply_theme(theme)
 end
 
 --- Get a ts compatible range of the current visual selection.
