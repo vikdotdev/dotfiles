@@ -102,3 +102,5 @@ require'lspconfig'.elixirls.setup({
   cmd = { elixir_ls_binary }
 })
 
+require'lspconfig'.zls.setup{}
+

@@ -275,10 +275,13 @@ set-option -g default-shell "/bin/bash"
 set-option -g renumber-windows off
 
 bind -r H resize-pane -L 15
-bind -r J resize-pane -D 15
-bind -r K resize-pane -U 15
+bind -r J resize-pane -D 10
+bind -r K resize-pane -U 10
 bind -r L resize-pane -R 15
 bind -r o last-window
+
+# reduce repeat-time to 0 to avoid jumping multiple times during navigation
+set -sg repeat-time 0
 
 set -g base-index 1
 

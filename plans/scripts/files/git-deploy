@@ -24,9 +24,10 @@ begin
   end
 
   create_pr = prompt.yes?('Create pull request?')
+  as_draft = prompt.yes?('As draft?') if create_pr
 
   begin
-    pr_created = system('gh pr create --fill') if create_pr
+    pr_created = system("gh pr create #{'-d' if as_draft} --fill") if create_pr
     raise FailedToCreatePullRequest if !pr_created && create_pr
   rescue FailedToCreatePullRequest
     puts 'Failed creating pull request'
