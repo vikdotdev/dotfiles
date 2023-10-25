@@ -38,8 +38,8 @@ globalkeys = gears.table.join(
   awful.key({}, "XF86AudioNext", function () awful.util.spawn("playerctl next") end),
   awful.key({}, "XF86AudioPrev", function () awful.util.spawn("playerctl previous") end),
 
-  awful.key({}, "XF86MonBrightnessUp", function() os.execute("util-backlight -i 5") end),
-  awful.key({}, "XF86MonBrightnessDown", function() os.execute("util-backlight -d 5") end),
+  awful.key({}, "XF86MonBrightnessUp", function() os.execute("util-backlight -i 1") end),
+  awful.key({}, "XF86MonBrightnessDown", function() os.execute("util-backlight -d 1") end),
   awful.key({ modkey, "Control" }, "t", function() util.toggle_titlebars() end),
   awful.key({ modkey }, "s", function () awful.spawn.with_shell("util-rofi-sink") end,
     {description="select audio sink", group="scripts"}),

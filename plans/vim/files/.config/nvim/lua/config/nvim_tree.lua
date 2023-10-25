@@ -1,5 +1,3 @@
-local tree = require'nvim-tree.config'.nvim_tree_callback
-
 vim.g.nvim_tree_show_icons = {
   git = 1,
   folders = 0,
@@ -15,9 +13,6 @@ require('nvim-tree').setup({
   },
   disable_netrw       = true,
   hijack_netrw        = true,
-  open_on_setup       = false,
-  -- will not open on setup if the filetype is in this list
-  ignore_ft_on_setup  = {},
   -- opens the tree when changing/opening a new tab if the tree wasn't previously opened
   open_on_tab         = false,
   -- hijacks new directory buffers when they are opened.
@@ -77,33 +72,5 @@ require('nvim-tree').setup({
     adaptive_size = true,
     -- side of the tree, can be one of 'left' | 'right' | 'top' | 'bottom'
     side = 'left',
-    mappings = {
-      custom_only = false,
-      list = {
-        { key = {"<CR>", "o"},     cb = tree("edit") },
-        { key = {"="},             cb = tree("cd") },
-        { key = {"-"},             cb = tree("dir_up") },
-        { key = {"<C-v>"},         cb = tree("vsplit") },
-        { key = {"<C-s>"},         cb = tree("split") },
-        { key = {"<C-t>"},         cb = tree("tabnew") },
-        { key = {"K"},             cb = tree("prev_sibling") },
-        { key = {"J"},             cb = tree("next_sibling") },
-        { key = {"<BS>"},          cb = tree("close_node") },
-        { key = {"<Tab>"},         cb = tree("preview") },
-        { key = {"I"},             cb = tree("toggle_ignored") },
-        { key = {"H"},             cb = tree("toggle_dotfiles") },
-        { key = {"<C-r>"},         cb = tree("refresh") },
-        { key = {"a"},             cb = tree("create") },
-        { key = {"d"},             cb = tree("remove") },
-        { key = {"r"},             cb = tree("rename") },
-        { key = {"R"},             cb = tree("full_rename") },
-        { key = {"c"},             cb = tree("cut") },
-        { key = {"y"},             cb = tree("copy") },
-        { key = {"p"},             cb = tree("paste") },
-        { key = {"C-p"},           cb = tree("prev_git_item") },
-        { key = {"C-n"},           cb = tree("next_git_item") },
-        { key = {"q"},             cb = tree("close") },
-      }
-    }
   }
 })

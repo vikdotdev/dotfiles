@@ -152,7 +152,7 @@ local normal_keymap = {
     q = {'<Cmd>LspStop<CR>', 'stop server'},
     Q = {'<Cmd>LspStart<CR>', 'start server'},
     d = {'<Cmd>Telescope lsp_definitions<CR>', 'definition'},
-    F = {'<cmd>lua vim.lsp.buf.formatting()<CR>', 'format buffer'},
+    F = {'<cmd>lua vim.lsp.buf.format { async = true }<CR>', 'format buffer'},
     h = {'<Cmd>lua vim.lsp.buf.hover()<CR>', 'hover'},
     s = {'<Cmd>lua vim.lsp.buf.signature_help()<CR>', 'show signature'},
     p = {'<Cmd>lua vim.diagnostic.goto_prev()<CR>', 'prev diagnostic'},
@@ -160,8 +160,6 @@ local normal_keymap = {
     r = {'<Cmd>Telescope lsp_references<CR>', 'references'},
     R = {'<Cmd>lua vim.lsp.buf.rename()<CR>', 'rename'},
     l = {'<Cmd>lua vim.diagnostic.open_float()<CR>', 'diagnose line'},
-    g = {'<Cmd>Telescope lsp_document_diagnostics<CR>', 'diagnose'},
-    a = {'<Cmd>Telescope lsp_code_actions<CR>', 'action'},
     i = {'<Cmd>LspInfo<CR>', 'info'},
     w = {
       name = '+workspace',
