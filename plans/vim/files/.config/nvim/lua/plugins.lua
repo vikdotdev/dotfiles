@@ -20,7 +20,6 @@ return require('packer').startup(function(use)
     run = {':TSUpdate'},
     branch = 'master',
   })
-  use({'nvim-treesitter/playground'})
   use({'romgrk/nvim-treesitter-context'})
   use({'mhinz/vim-startify'})
   use({'tpope/vim-surround'})

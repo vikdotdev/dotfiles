@@ -13,3 +13,10 @@ require("zk").setup({
     },
   },
 })
+
+vim.cmd[[
+  augroup ConcealMarkdown
+    autocmd!
+    autocmd FileType markdown setlocal conceallevel=2
+  augroup END
+]]

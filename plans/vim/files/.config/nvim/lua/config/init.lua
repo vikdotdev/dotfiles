@@ -56,4 +56,3 @@ vim.cmd([[autocmd! WinEnter * setlocal nowinfixheight]])
 vim.cmd([[nnoremap Q <nop>]])
 vim.cmd([[autocmd BufWritePre * %s/\s\+$//e]])
 vim.cmd([[set completeopt=menu,menuone,noselect]])
-

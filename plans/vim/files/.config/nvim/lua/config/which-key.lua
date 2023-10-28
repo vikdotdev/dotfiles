@@ -142,10 +142,13 @@ local normal_keymap = {
     name = '+maintenance',
     r = {'<Cmd>luafile %<CR>', 'reload lua buffer'},
     s = {'<Cmd>PackerSync<CR>', 'sync plugins'},
-    i = {'<Cmd>TSInstall all<CR>', 'install all treesitter parsers'},
-    n = {'<Cmd>TSNodeUnderCursor<CR>', 'show node under cursor'},
-    h = {'<Cmd>TSHighlightCapturesUnderCursor<CR>', 'show highlight group under cursor'},
-    c = {'<Cmd>PackerCompile<CR>', 'compile'}
+    c = {'<Cmd>PackerCompile<CR>', 'compile'},
+    t = {
+      name = '+treesitter',
+      I = {'<Cmd>TSInstall all<CR>', 'install all treesitter parsers'},
+      i = {'<Cmd>Inspect<CR>', 'show node under cursor'},
+      t = {'<Cmd>InspectTree<CR>', 'show tree'},
+    }
   },
   l = {
     name = '+lsp',
@@ -170,16 +173,17 @@ local normal_keymap = {
   },
   n = {
     name = '+notes',
+    o = {'<Cmd>lua print("NOT IMPLEMENTED")<CR>', 'open attachment'},
     t = {'<Cmd>ZkTags<CR>', 'search by tags'},
     l = {'<Cmd>ZkLinks<CR>', 'current buffer links'},
     b = {'<Cmd>ZkBacklinks<CR>', 'current buffer backlinks'},
     c = {'<Cmd>ZkCd<CR>', 'cd into notes dir'},
     n = {
       name = '+new',
-      f = {'<Cmd>ZkNew { dir = "store", template = "fleeting.md" }<CR>', 'new fleeting note'},
-      s = {'<Cmd>ZkNew { dir = "store", template = "summary.md" }<CR>', 'new summary note'},
-      l = {'<Cmd>ZkNew { dir = "store", template = "literature.md" }<CR>', 'new literature note'},
-      e = {'<Cmd>ZkNew { dir = "store", template = "evergreen.md" }<CR>', 'new evergreen note'},
+      d = {'<Cmd>ZkNew { dir = "store/daily", template = "daily.md", group = "daily" }<CR>', 'new daily note'},
+      l = {'<Cmd>ZkNew { dir = "store/lasting", template = "default.md" }<CR>', 'new lasting note'},
+      s = {'<Cmd>ZkNew { dir = "store/lasting", template = "summary.md" }<CR>', 'new summary note'},
+      e = {'<Cmd>ZkNew { dir = "store/lasting", template = "toc.md" }<CR>', 'new toc note'},
     },
     s = {'<Cmd>ZkNotes { sort = { "modified" } }<CR>', 'search notes'},
   }

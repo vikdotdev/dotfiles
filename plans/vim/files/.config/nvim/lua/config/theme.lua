@@ -179,16 +179,17 @@ local function highlight_groups(config, theme)
     --
     ['@variable'] = { fg = colors.magenta, },
     -- ['@variable.builtin'] = { fg = colors.magenta, },
-    --
-    -- TODO where is this used?
+
     -- ['@text'] = { fg = colors.white, },
-    -- ['@text.strong'] = { fg = colors.yellow, bold = true, }, -- bold
-    -- ['@text.emphasis'] = { fg = colors.yellow, italic = true, }, -- italic
-    -- ['@text.underline'] = { fg = colors.yellow, },
+    ['@text.strong'] = { fg = colors.white, bold = true, }, -- bold
+    ['@text.emphasis'] = { fg = colors.white, italic = true, }, -- italic
+    ['@text.underline'] = { fg = colors.white, underline = true },
+    ['@text.minus_metadata'] = { fg = colors.bright_red },
     -- ['@text.title'] = { fg = colors.pink, bold = true, }, -- title
     -- ['@text.literal'] = { fg = colors.yellow, }, -- inline code
-    -- ['@text.uri'] = { fg = colors.yellow, italic = true, }, -- urls
-    -- ['@text.reference'] = { fg = colors.yellow, bold = true, },
+    ['@text.uri'] = { fg = colors.cyan, }, -- urls
+    ['@text.reference'] = { fg = colors.bright_magenta, underline = false },
+    ['@text.quote'] = { fg = colors.yellow, },
     --
     -- ['@tag'] = { fg = colors.cyan, },
     -- ['@tag.attribute'] = { fg = colors.green, },
