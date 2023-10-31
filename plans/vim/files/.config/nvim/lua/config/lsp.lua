@@ -54,9 +54,7 @@ require('lspconfig').jsonls.setup {
   }
 }
 
-require('lspconfig').denols.setup({
-  capabilities = capabilities
-})
+require'lspconfig'.tsserver.setup{}
 
 require('lspconfig').jsonls.setup({
   capabilities = capabilities
@@ -84,17 +82,9 @@ require'lspconfig'.yamlls.setup({
   capabilities = capabilities
 })
 
-require'lspconfig'.diagnosticls.setup({
-  capabilities = capabilities
-})
-
 require'lspconfig'.dockerls.setup({
   capabilities = capabilities
 })
-
-require'lspconfig'.tailwindcss.setup({})
-require'lspconfig'.emmet_ls.setup({})
-require'lspconfig'.rust_analyzer.setup({})
 
 local elixir_ls_binary = vim.fn.expand('$HOME/.local/bin/elixir-ls/language_server.sh')
 
@@ -102,5 +92,9 @@ require'lspconfig'.elixirls.setup({
   cmd = { elixir_ls_binary }
 })
 
-require'lspconfig'.zls.setup{}
-
+-- require'lspconfig'.rust_analyzer.setup({})
+-- require'lspconfig'.tailwindcss.setup({})
+-- require'lspconfig'.emmet_ls.setup({})
+-- require'lspconfig'.ocamllsp.setup{}
+-- require'lspconfig'.zls.setup{}
+-- vim.g.zig_fmt_autosave = 0

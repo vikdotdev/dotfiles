@@ -4,6 +4,46 @@ vim.g.nvim_tree_show_icons = {
   files = 0,
 }
 
+local function my_on_attach(bufnr)
+  local api = require("nvim-tree.api")
+
+  local function opts(desc)
+    return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+  end
+
+  -- default mappings
+  api.config.mappings.default_on_attach(bufnr)
+
+  -- custom mappings
+  vim.keymap.set('n', '<C-t>', api.tree.change_root_to_parent,        opts('Up'))
+  vim.keymap.set('n', '?',     api.tree.toggle_help,                  opts('Help'))
+
+  -- Old ones below, maybe adapt to new syntax
+  -- { key = {"<CR>", "o"},     cb = tree("edit") },
+  -- { key = {"="},             cb = tree("cd") },
+  -- { key = {"-"},             cb = tree("dir_up") },
+  -- { key = {"<C-v>"},         cb = tree("vsplit") },
+  -- { key = {"<C-s>"},         cb = tree("split") },
+  -- { key = {"<C-t>"},         cb = tree("tabnew") },
+  -- { key = {"K"},             cb = tree("prev_sibling") },
+  -- { key = {"J"},             cb = tree("next_sibling") },
+  -- { key = {"<BS>"},          cb = tree("close_node") },
+  -- { key = {"<Tab>"},         cb = tree("preview") },
+  -- { key = {"I"},             cb = tree("toggle_ignored") },
+  -- { key = {"H"},             cb = tree("toggle_dotfiles") },
+  -- { key = {"<C-r>"},         cb = tree("refresh") },
+  -- { key = {"a"},             cb = tree("create") },
+  -- { key = {"d"},             cb = tree("remove") },
+  -- { key = {"r"},             cb = tree("rename") },
+  -- { key = {"R"},             cb = tree("full_rename") },
+  -- { key = {"c"},             cb = tree("cut") },
+  -- { key = {"y"},             cb = tree("copy") },
+  -- { key = {"p"},             cb = tree("paste") },
+  -- { key = {"C-p"},           cb = tree("prev_git_item") },
+  -- { key = {"C-n"},           cb = tree("next_git_item") },
+  -- { key = {"q"},             cb = tree("close") },
+end
+
 require('nvim-tree').setup({
   actions = {
     use_system_clipboard = true,
@@ -71,6 +111,7 @@ require('nvim-tree').setup({
   view = {
     adaptive_size = true,
     -- side of the tree, can be one of 'left' | 'right' | 'top' | 'bottom'
-    side = 'left',
-  }
+    side = 'left'
+  },
+  on_attach = my_on_attach
 })
