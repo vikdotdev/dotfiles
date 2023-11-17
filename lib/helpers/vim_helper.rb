@@ -26,6 +26,11 @@ module VimHelper
     cmd = "nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync' 2> /dev/null"
 
     system(cmd, out: File::NULL)
+
+    puts 'Installing tree-sitter. This will take a while ...'
+    cmd = "nvim --headless -c 'silent TSInstall all' -c 'sleep 180' -c 'qa'"
+
+    system(cmd, out: File::NULL)
   end
 end
 

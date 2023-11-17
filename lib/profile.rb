@@ -17,6 +17,10 @@ class Profile
     @number == 2
   end
 
+  def third?
+    @number == 3
+  end
+
   def hostname
     ENV['HOSTNAME']
   end

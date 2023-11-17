@@ -4,6 +4,9 @@
 - name: Perform the following post-install steps
   debug:
     msg: |
+      If this is your first install - follow the instruction below. Otherwise
+      you're good to go!
+
       Reboot the system in order for all the changes to take place. After
-      reboot, start X with 'startx', run 'dot postinstall', and follow the
+      reboot, make sure to boot from awesomewm, run 'dot postinstall', and follow the
       instructions.

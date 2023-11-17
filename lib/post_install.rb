@@ -17,8 +17,7 @@ class PostInstall
     puts
     puts <<~EOS
       ======================================================
-      Done! Final steps:
-        Once in neovim, run ":TSInstall all" or <Leader>mi.
+      Done! Check neovim :checkhealth as a precaution!
       ======================================================
     EOS
   rescue Interrupt

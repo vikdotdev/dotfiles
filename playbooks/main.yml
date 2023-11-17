@@ -8,11 +8,13 @@
     - include_tasks: tasks/tmux.yml
     - include_tasks: tasks/zk.yml
     - include_tasks: tasks/neovim.yml
-    - include_tasks: tasks/kmonad.yml
+    - name: Install KMonad
+      include_tasks: tasks/kmonad.yml
+      when: "profile_2 == 'true' or profile_3 == 'true'"
     - include_tasks: tasks/fonts.yml
     - name: Install intel configurations
       include_tasks: tasks/intel.yml
-      when: "profile_2 == 'true'"
+      when: "profile_2 == 'true' or profile_3 == 'true'"
     - include_tasks: tasks/postgresql.yml
     - include_tasks: tasks/mysql.yml
     - include_tasks: tasks/elasticsearch.yml

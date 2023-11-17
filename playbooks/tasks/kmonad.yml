@@ -3,8 +3,6 @@
   dnf:
     name:
     - stack
-  when:
-    - not "profile_1 == 'true'"
 
 - name: Register KMonad repo
   stat:
@@ -18,7 +16,6 @@
     dest: "/home/{{ target_user }}/{{ home_path.repos }}/kmonad"
   when:
     - not kmonad_repo.stat.exists
-    - not "profile_1 == 'true'"
 
 - name: Register kmonad executable
   stat:
@@ -32,7 +29,6 @@
     creates: "/home/{{ target_user }}/.local/bin/kmonad"
   when:
     - not kmonad_executable.stat.exists
-    - not "profile_1 == 'true'"
 
 - name: Ensure group KMonad groups exists
   become: yes
@@ -43,8 +39,6 @@
   loop:
     - input
     - uinput
-  when:
-    - not "profile_1 == 'true'"
 
 - name: Adding user {{ target_user }} to uinput group
   become: yes
@@ -52,16 +46,12 @@
     name: "{{ target_user }}"
     groups: input,uinput
     append: yes
-  when:
-    - not "profile_1 == 'true'"
 
 - name: Create uinput rules file
   become: yes
   copy:
     dest: /etc/modules-load.d/uinput.conf
     content: uinput
-  when:
-    - not "profile_1 == 'true'"
 
 - name: Create uinput rules file
   become: yes
@@ -69,5 +59,3 @@
     dest: /etc/udev/rules.d/90-uinput.rules
     content: |
       KERNEL=="uinput", MODE="0660", GROUP="uinput", OPTIONS+="static_node=uinput"
-  when:
-    - not "profile_1 == 'true'"
