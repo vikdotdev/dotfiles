@@ -28,6 +28,7 @@
     - '@base-x'
     - vim
     - firefox
+    - thunderbird
     - wget
     - unzip
     - xclip
@@ -66,6 +67,7 @@
     - alacritty
     - easyeffects
     - pavucontrol
+    - flameshot
     - lxappearance
     # - greybird-dark-theme
     # - peek

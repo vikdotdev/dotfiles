@@ -93,7 +93,7 @@ globalkeys = gears.table.join(
     {description = "decrease the number of columns", group = "layout"}),
   awful.key({ modkey }, "t", function () awful.layout.inc(1) end,
     {description = "cycle layout", group = "layout"}),
-  awful.key({ }, "Print", function () awful.util.spawn("gnome-screenshot -i") end),
+  awful.key({ }, "Print", function () awful.util.spawn("flameshot gui") end),
 
   -- awful.key({ modkey, "Control" }, "n",
   --           function ()
