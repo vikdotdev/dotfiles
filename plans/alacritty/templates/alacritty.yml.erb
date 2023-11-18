@@ -1,7 +1,11 @@
 draw_bold_text_with_bright_colors: true
 
 font:
-  size: <%= @profile.first? ? 14 : 16 %>
+  <% if @profile.in?(1) %>
+  size: 12
+  <% elsif @profile.in?(2, 3) %>
+  size: 14
+  <% end %>
   normal:
     family: 'Iosevka'
     style: Regular

@@ -9,16 +9,8 @@ class Profile
     @number = @config[hostname] || 1
   end
 
-  def first?
-    @number == 1
-  end
-
-  def second?
-    @number == 2
-  end
-
-  def third?
-    @number == 3
+  def in?(*args)
+    args.include?(@number)
   end
 
   def hostname

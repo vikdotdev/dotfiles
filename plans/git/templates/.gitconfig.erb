@@ -49,7 +49,7 @@
 
   navigate = true
 
-  <% if @profile.first? %>
+  <% if @profile.in?(1) %>
   side-by-side = true
   <% else %>
   side-by-side = false

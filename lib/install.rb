@@ -28,15 +28,12 @@ class Install
   end
 
   def inline_variables
+    profile = Profile.new
     variables = {
       target_host: host == :localhost ? host : :all,
-      target_user: user
+      target_user: user,
+      profile: profile.number
     }
-    profile = Profile.new
-    variables.merge!(profile.config.each_with_object({}) do |(name, number), memo|
-      memo.merge!("profile_#{number}".to_sym => (profile.hostname == name))
-      memo
-    end)
 
     variables.map { |key, value| "#{key}=#{value}" }.join(' ')
   end
@@ -45,4 +42,3 @@ class Install
     File.expand_path(File.join(__dir__, '..', 'playbooks', 'main.yml'))
   end
 end
-

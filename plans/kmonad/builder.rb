@@ -1,4 +1,4 @@
-if @profile.second?
+if @profile.in?(2, 3)
   ensure_write_file(home_file('.config/kmonad/laptop.kbd'), read_file('laptop.kbd'))
 
   ensure_write_file(home_file('.config/systemd/user/kmonad.service'), read_file('kmonad.service'))

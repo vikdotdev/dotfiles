@@ -9,14 +9,14 @@ $HOME/bin/sys-wallpaper
 killall -9 compton
 compton --vsync opengl --backend glx --paint-on-overlay &
 
-<% if @profile.first? %>
-  xrandr --output $(xrandr -q | grep " connected" | awk '{ print $1 }') \
-         --mode 3440x1440 \
-         --rate 60.00
+<% if @profile.in?(1) %>
+xrandr --output $(xrandr -q | grep " connected" | awk '{ print $1 }') \
+        --mode 3440x1440 \
+        --rate 60.00
 <% end %>
 
-<% if @profile.second? %>
-  xinput set-prop "$(xinput list --name-only | grep -i touchpad)" "libinput Tapping Enabled" 1
+<% if @profile.in?(2, 3) %>
+xinput set-prop "$(xinput list --name-only | grep -i touchpad)" "libinput Tapping Enabled" 1
 <% end %>
 
 exec awesome

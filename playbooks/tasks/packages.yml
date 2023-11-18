@@ -89,7 +89,7 @@
   dnf:
     name:
     - akmod-nvidia
-  when: "profile_1 == 'true'"
+  when: "profile == '1'"
 
 - name: Install zoom rpm
   become: yes
@@ -110,11 +110,8 @@
     method: user
     name: "{{ item }}"
   loop:
-    - com.microsoft.Teams
     - com.spotify.Client
-    - com.skype.Client
     - org.telegram.desktop
-    - com.discordapp.Discord
     - org.signal.Signal
     - md.obsidian.Obsidian
 

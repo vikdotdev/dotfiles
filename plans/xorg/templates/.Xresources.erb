@@ -1,6 +1,6 @@
-<% if @profile.first? %>
+<% if @profile.in?(1) %>
   Xft.dpi: 112
-<% elsif @profile.second? %>
+<% elsif @profile.in?(2, 3) %>
   Xft.dpi: 144
 <% end %>
 Xcursor.size: 48
