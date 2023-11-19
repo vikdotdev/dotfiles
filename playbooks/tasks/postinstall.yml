@@ -7,6 +7,12 @@
       If this is your first install - follow the instruction below. Otherwise
       you're good to go!
 
+      Things to manually set up:
+      - setup thunderbird accounts;
+      - make firefox configurations;
+        - disable smooth scrolling;
+        - configure extensions & themes;
+
       Reboot the system in order for all the changes to take place. After
       reboot, make sure to boot from awesomewm, run 'dot postinstall', and follow the
       instructions.
