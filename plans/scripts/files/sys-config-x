@@ -6,7 +6,7 @@
 timeout=300
 notify=$((timeout/15))
 
-configure_suspend() {
+configure_screen_suspend() {
   xset s $((timeout - notify)) $notify
   xset dpms $((timeout * 2)) $((timeout * 22 / 10)) $((timeout * 24 / 10))
 }

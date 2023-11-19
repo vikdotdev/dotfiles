@@ -39,6 +39,10 @@ module BuilderHelper
     File.join(Dir.home, Pathname.new(path)).delete_suffix('.erb')
   end
 
+  def home_path(path)
+    home_file(path)
+  end
+
   def ensure_service_running(name)
     system "systemctl enable --now --user #{name}"
   end
