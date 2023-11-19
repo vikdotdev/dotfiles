@@ -1,6 +1,13 @@
 local actions = require('telescope.actions')
 
 require('telescope').setup({
+  pickers = {
+    live_grep = {
+      mappings = {
+        i = { ["<C-r>"] = actions.to_fuzzy_refine },
+      },
+    },
+  },
   defaults = {
     vimgrep_arguments = {
       'rg',

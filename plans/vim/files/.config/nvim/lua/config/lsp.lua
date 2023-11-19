@@ -92,6 +92,8 @@ require'lspconfig'.elixirls.setup({
   cmd = { elixir_ls_binary }
 })
 
+require('lspconfig').tsserver.setup({})
+
 -- require'lspconfig'.rust_analyzer.setup({})
 -- require'lspconfig'.tailwindcss.setup({})
 -- require'lspconfig'.emmet_ls.setup({})

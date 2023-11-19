@@ -77,6 +77,8 @@
     - dockerfile-language-server-nodejs
     - diagnostic-languageserver
     - '@tailwindcss/language-server'
+    - typescript-language-server
+    - typescript
   environment:
     NPM_PACKAGES: "/home/{{ target_user }}/{{ home_path.npm }}"
 
