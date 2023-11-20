@@ -4,11 +4,17 @@
     name: /opt/arduino-cli/bin
     state: directory
 
-# curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=~/local/bin sh
+- name: Register arduino binary
+  stat:
+    path: /opt/arduino-cli/bin
+  register: arduino_cli_binary
+
 - name: Install Arduino CLI
   become: yes
   ansible.builtin.unarchive:
     src: https://downloads.arduino.cc/arduino-cli/arduino-cli_latest_Linux_64bit.tar.gz
     dest: /opt/arduino-cli/bin
     remote_src: yes
+  when:
+    - not arduino_cli_binary.stat.exists
 

@@ -33,14 +33,18 @@ module Dotfiles
       invoke(:build, [], theme: 'light')
     end
 
-    desc 'install HOST', 'Install system packages for HOST. Defaults to localhost.'
+    desc 'install VARIANT', <<~DESC
+    Install packages. Provide variant of either 'base' or 'all'. Defaults to 'all'.
+    DESC
     option :user, aliases: '-u', desc: 'target username'
-    def install(host = :localhost)
+    option :host, aliases: '-h', desc: 'host, default to localhost'
+    def install(variant = :all)
       user = options[:user] || ENV['USER']
+      host = options[:host] || :localhost
 
       puts "Running ansible install against #{user}@#{host}"
 
-      Install.new(host, user).run
+      Install.new(host, user, variant).run
     end
 
     desc 'postinstall', 'Perform post-install steps.'

@@ -1,11 +1,12 @@
 require 'tty-prompt'
 
 class Install
-  attr_reader :host, :user
+  attr_reader :host, :user, :variant
 
-  def initialize(host, user)
+  def initialize(host, user, variant)
     @host = host
     @user = user
+    @variant = variant
   end
 
   def run
@@ -32,7 +33,8 @@ class Install
     variables = {
       target_host: host == :localhost ? host : :all,
       target_user: user,
-      profile: profile.number
+      profile: profile.number,
+      variant: variant
     }
 
     variables.map { |key, value| "#{key}=#{value}" }.join(' ')

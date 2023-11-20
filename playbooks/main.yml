@@ -6,19 +6,40 @@
   tasks:
     - include_tasks: tasks/packages.yml
     - include_tasks: tasks/tmux.yml
+    - include_tasks: tasks/fonts.yml
     - include_tasks: tasks/zk.yml
     - include_tasks: tasks/neovim.yml
-    - name: Install KMonad
+
+    - name: Install KMonad?
       include_tasks: tasks/kmonad.yml
       when: "profile == '2' or profile == '3'"
-    - include_tasks: tasks/fonts.yml
-    - name: Install intel configurations
+
+    - name: Install redis?
+      include_tasks: tasks/redis.yml
+      when: "variant == 'all'"
+
+    - name: Install intel configurations?
       include_tasks: tasks/intel.yml
       when: "profile == '2' or profile == '3'"
-    - include_tasks: tasks/postgresql.yml
-    - include_tasks: tasks/mysql.yml
-    - include_tasks: tasks/elasticsearch.yml
-    - include_tasks: tasks/redis.yml
-    - include_tasks: tasks/virt.yml
+
+    - name: Install postgres?
+      include_tasks: tasks/postgresql.yml
+      when: "variant == 'all'"
+
+    - name: Install mysql?
+      include_tasks: tasks/mysql.yml
+      when: "variant == 'all'"
+
+    - name: Install elasticsearch?
+      include_tasks: tasks/elasticsearch.yml
+      when: "variant == 'all'"
+
+    - name: Install virtmanager?
+      include_tasks: tasks/virt.yml
+      when: "variant == 'all'"
+
+    - name: Install arduino?
+      include_tasks: tasks/arduino.yml
+      when: "variant == 'all'"
+
     - include_tasks: tasks/postinstall.yml
-    # - include_tasks: tasks/arduino.yml

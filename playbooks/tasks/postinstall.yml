@@ -1,18 +1,35 @@
 - name: Run "dot build"
   shell: "/home/{{ target_user }}/{{ home_path.dotfiles }}/bin/dot build"
 
+- name: Register postinstall ran
+  stat:
+    path: "{{ ansible_env.HOME }}/.local/share/dot-postinstall-ran"
+  register: postinstall_file
+
+# TODO: use ansible_env.HOME everywhere ??
+- name: Create installation ran file
+  copy:
+    dest: "{{ ansible_env.HOME }}/.local/share/dot-postinstall-ran"
+    content: done
+
+- name: Done
+  debug:
+    msg: All went well. You're good to go!
+  when:
+    - postinstall_file.stat.exists
+
 - name: Perform the following post-install steps
   debug:
     msg: |
-      If this is your first install - follow the instruction below. Otherwise
-      you're good to go!
-
-      Things to manually set up:
+      Things left to manually set up:
       - setup thunderbird accounts;
       - make firefox configurations;
         - disable smooth scrolling;
         - configure extensions & themes;
+      - install nvm & rvm;
 
       Reboot the system in order for all the changes to take place. After
-      reboot, make sure to boot from awesomewm, run 'dot postinstall', and follow the
+      reboot, make sure to boot from awesomewm, run 'dot postinstall', and follow further
       instructions.
+  when:
+    - not postinstall_file.stat.exists
