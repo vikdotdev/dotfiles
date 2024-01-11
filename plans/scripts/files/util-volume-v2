@@ -6,9 +6,9 @@
 # This script is intended to act as pactl wrapper, that is capable
 # of setting custom volume boandaries for the currently available sinks.
 
-require 'cgi'
 require 'optparse'
 require 'json'
+require 'fileutils'
 
 def which!(command)
   present = system("which #{command} > /dev/null 2>&1")
@@ -31,11 +31,64 @@ end
 
 BASE_VOL_INT = 65536
 DEFAULT_BOUNDARY = 100
+BOUNDARY_HARD_LIMIT = 125
+VOLUME_BOUNDARIES_KEY = "sink_volume_boundaries"
+SINK_BLACKLIST_KEY = "sink_blacklist"
+EMPTY_CONFIG_STRUCTURE = {VOLUME_BOUNDARIES_KEY => {}, SINK_BLACKLIST_KEY => []}
 
-# TODO: extract to config file and read from it
-@config = {
-  "alsa_output.pci-0000_00_1f.3.analog-stereo" => 40
-}
+def config_path = File.join(Dir.home, ".local/share/scripts/pactl-sink-config.json")
+
+def config
+  @config ||= begin
+    if File.exist?(config_path)
+      JSON.parse(File.read(config_path))
+    else
+      FileUtils.mkdir_p(File.dirname(config_path))
+      File.open(config_path, "w") do |f|
+        f.write(EMPTY_CONFIG_STRUCTURE.to_json)
+      end
+
+      JSON.parse(File.read(config_path))
+    end
+  end
+rescue Errno::ENOENT => e
+  puts "Error reading file"
+  puts e.message
+  exit(1)
+rescue JSON::ParserError => e
+  puts "Error parsing file"
+  puts e.message
+  exit(1)
+end
+
+def sink_volume_boundary(sink_name)
+  config.dig(VOLUME_BOUNDARIES_KEY, sink_name) || DEFAULT_BOUNDARY
+end
+
+def set_sink_volume_boundary!(value)
+  value = [BOUNDARY_HARD_LIMIT, value].min
+
+  if File.exist?(config_path)
+    JSON.parse(File.read(config_path))
+    config.fetch(VOLUME_BOUNDARIES_KEY)[current_sink_name] = value
+
+    File.open(config_path, "w") do |f|
+      f.write(config.to_json)
+    end
+    @config = nil
+  else
+    puts "Config does not exist."
+    exit(1)
+  end
+rescue Errno::ENOENT => e
+  puts "Error reading file"
+  puts e.message
+  exit(1)
+rescue JSON::ParserError => e
+  puts "Error parsing file"
+  puts e.message
+  exit(1)
+end
 
 def current_sink_info = @current_sink_info ||= JSON.parse(`pactl -f json info`)
 def current_sink_name = current_sink_info.fetch("default_sink_name")
@@ -56,14 +109,7 @@ rescue KeyError => e
 end
 
 def relative_int_to_percent(value) = value.to_f / BASE_VOL_INT * 100
-
-def bounded_percent(value)
-  if (default_sink_boundary = @config[current_sink_name]).nil?
-    value >= DEFAULT_BOUNDARY ? DEFAULT_BOUNDARY : value
-  else
-    value >= default_sink_boundary ? default_sink_boundary : value
-  end
-end
+def bounded_percent(value) = [value, sink_volume_boundary(current_sink_name)].min
 
 parser = OptionParser.new do |opts|
   opts.banner = <<~DESC
@@ -87,7 +133,21 @@ parser = OptionParser.new do |opts|
       .then { set_current_sink_volume!(_1) }
   end
 
-  opts.on('-s', '--show', 'Show current percentage volume value') do
+  opts.on('-bVALUE', '--set-boundary=VALUE', "Set current sink boundary") do |value|
+    value = value.to_i
+    if value.positive?
+      set_sink_volume_boundary!(value)
+
+      relative_int_to_percent(current_sink_volume)
+        .then { value < _1 ? value : _1 }
+        .then { bounded_percent(_1) }
+        .then { set_current_sink_volume!(_1) }
+    else
+      puts "Value cannot be negative"
+    end
+  end
+
+  opts.on('-p', '--print', 'Print current percentage volume value') do
     puts "Current volume: #{relative_int_to_percent(current_sink_volume).round.to_i}"
   end
 
@@ -98,5 +158,7 @@ parser = OptionParser.new do |opts|
 end
 
 parser.parse('--help') if ARGV.empty?
+
+config # initialize config
 parser.parse!
 
