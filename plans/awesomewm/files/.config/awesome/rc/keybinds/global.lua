@@ -9,8 +9,8 @@ require("awful.hotkeys_popup.keys")
 
 -- {{{ Key bindings
 globalkeys = gears.table.join(
-  awful.key({}, "XF86AudioRaiseVolume", function() os.execute("util-volume +5%") end),
-  awful.key({}, "XF86AudioLowerVolume", function() os.execute("util-volume -5%") end),
+  awful.key({}, "XF86AudioRaiseVolume", function() os.execute("util-volume -i 5") end),
+  awful.key({}, "XF86AudioLowerVolume", function() os.execute("util-volume -d 5") end),
   awful.key({}, "XF86AudioMute", function()
     os.execute("pactl set-sink-mute @DEFAULT_SINK@ toggle")
     awful.spawn.easy_async("pactl get-sink-mute @DEFAULT_SINK@", function(out, err)

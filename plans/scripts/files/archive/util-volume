@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# Author: Viktor Habchak <vikdotdev@gmail.com>
+#
+# Description:
+# This script is intended to act as pactl wrapper, that is capable
+# of setting upper volume boundary for the default sink.
+
+getdefaultsinkname() {
+  pactl info | awk -F": " '/^Default Sink: /{print $2}'
+}
+
+getdefaultsinkvol() {
+  pactl list sinks |
+    awk '/^\s+Name: /{indefault = $2 == "'$(getdefaultsinkname)'"}
+         /^\s+Volume: / && indefault {print $5; exit}'
+}
+
+setdefaulsinkvol() {
+  pactl set-sink-volume $(getdefaultsinkname) $1
+}
+
+SIGN=$(echo "$1" | head -c 1)
+VALUE=$(echo $1 | head -c 5 | cut -d '+' -f2 | cut -d '%' -f1)
+UPPERBOUND=150
+
+VOLUME=$(getdefaultsinkvol)
+NEW_VOLUME=$(echo "${VOLUME%?}" + "$VALUE" | bc)
+
+if [ "$SIGN" = '+' ]; then
+  if [ "$NEW_VOLUME" -lt "$UPPERBOUND" ]; then
+    setdefaulsinkvol $1
+  else
+    setdefaulsinkvol "$UPPERBOUND%"
+  fi
+elif [ "$SIGN" = '-' ]; then
+  setdefaulsinkvol $1
+fi
