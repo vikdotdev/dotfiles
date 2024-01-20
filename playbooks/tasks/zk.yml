@@ -7,13 +7,13 @@
 
 - name: Register zk repo
   stat:
-    path: "/home/{{ target_user }}/{{ home_path.repos }}/zk"
+    path: "/home/{{ target_user }}/{{ home_path.vendor }}/zk"
   register: zk_repo
 
 - name: Clone zk
   ansible.builtin.git:
     repo: https://github.com/mickael-menu/zk
-    dest: "/home/{{ target_user }}/{{ home_path.repos }}/zk"
+    dest: "/home/{{ target_user }}/{{ home_path.vendor }}/zk"
   when: not zk_repo.stat.exists
 
 - name: Register zk executable
@@ -24,7 +24,7 @@
 - name: Build zk
   shell: make install
   args:
-    chdir: "/home/{{ target_user }}/{{ home_path.repos }}/zk"
+    chdir: "/home/{{ target_user }}/{{ home_path.vendor }}/zk"
     creates: "/home/{{ target_user }}/.local/bin/zk"
   when: not zk_executable.stat.exists
   environment:

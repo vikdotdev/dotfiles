@@ -112,5 +112,6 @@ home_path:
   gobin: .local/bin
   gopath: .local/share/go
   repos: repos
+  vendor: repos/vendor
   dotfiles: repos/dotfiles
   bin: bin

@@ -12,7 +12,7 @@
 
 - name: Register dragon repo
   stat:
-    path: "/home/{{ target_user }}/{{ home_path.repos }}/dragon"
+    path: "/home/{{ target_user }}/{{ home_path.vendor }}/dragon"
   register: dragon_repo
 
 - name: Clone dragon
@@ -20,14 +20,14 @@
     repo: https://github.com/mwh/dragon
     depth: 50
     version: stable
-    dest: "/home/{{ target_user }}/{{ home_path.repos }}/dragon"
+    dest: "/home/{{ target_user }}/{{ home_path.vendor }}/dragon"
   when:
     - not dragon_repo.stat.exists
     - not dragon_binary.stat.exists
 
 - name: Build dragon from source
   make:
-    chdir: "/home/{{ target_user }}/{{ home_path.repos }}/dragon"
+    chdir: "/home/{{ target_user }}/{{ home_path.vendor }}/dragon"
     target: install
     params:
       CMAKE_BUILD_TYPE: Release

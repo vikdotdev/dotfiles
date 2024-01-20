@@ -24,7 +24,7 @@
 
 - name: Register neovim repo
   stat:
-    path: "/home/{{ target_user }}/{{ home_path.repos }}/neovim"
+    path: "/home/{{ target_user }}/{{ home_path.vendor }}/neovim"
   register: neovim_repo
 
 - name: Clone neovim
@@ -32,7 +32,7 @@
     repo: https://github.com/neovim/neovim
     depth: 50
     version: stable
-    dest: "/home/{{ target_user }}/{{ home_path.repos }}/neovim"
+    dest: "/home/{{ target_user }}/{{ home_path.vendor }}/neovim"
   when:
     - not neovim_repo.stat.exists
     - not neovim_binary.stat.exists
@@ -40,7 +40,7 @@
 - name: Build neovim from source
   become: yes
   make:
-    chdir: "/home/{{ target_user }}/{{ home_path.repos }}/neovim"
+    chdir: "/home/{{ target_user }}/{{ home_path.vendor }}/neovim"
     target: install
     params:
       CMAKE_BUILD_TYPE: Release
