@@ -92,3 +92,5 @@ export NVM_DIR="$HOME/.nvm"
 
 . "$HOME/.asdf/asdf.sh"
 . "$HOME/.asdf/completions/asdf.bash"
+
+test -r /home/vik/.opam/opam-init/init.sh && . /home/vik/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true

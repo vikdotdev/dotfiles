@@ -91,6 +91,7 @@ local elixir_ls_binary = vim.fn.expand('$HOME/.local/bin/elixir-ls/language_serv
 require'lspconfig'.elixirls.setup({
   cmd = { elixir_ls_binary }
 })
+require'lspconfig'.ocamllsp.setup{}
 
 require('lspconfig').tsserver.setup({})
 

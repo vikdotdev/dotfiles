@@ -186,7 +186,7 @@ local function highlight_groups(config, theme)
     ['@text.underline'] = { fg = colors.white, underline = true },
     ['@text.minus_metadata'] = { fg = colors.bright_red },
     -- ['@text.title'] = { fg = colors.pink, bold = true, }, -- title
-    -- ['@text.literal'] = { fg = colors.yellow, }, -- inline code
+    ['@text.literal'] = { fg = colors.cyan, }, -- inline code
     ['@text.uri'] = { fg = colors.cyan, }, -- urls
     ['@text.reference'] = { fg = colors.bright_magenta, underline = false },
     ['@text.quote'] = { fg = colors.yellow, },
