@@ -1,118 +1,117 @@
 #!/bin/bash
-
+#
 # Author: Viktor Habchak <vikdotdev@gmail.com>
 #
 # Description:
 # This script is intended to act as pactl wrapper, that is capable
-# of setting upper volume boundary for the default sink.
+# of setting custom volume boandaries for the currently available sinks.
 
-getdefaultsinkname() {
-  pactl info | awk -F": " '/^Default Sink: /{print $2}'
-}
+# Configuration
+CONFIG_FILE="$HOME/.local/share/scripts/pactl_sink_config"
+PACTL_MIN_VERSION=16.1
+BASE_VOL_INT=65536
+DEFAULT_BOUNDARY=100
+BOUNDARY_HARD_LIMIT=125
 
-getdefaultsinkvol() {
-  pactl list sinks |
-    awk '/^\s+Name: /{indefault = $2 == "'$(getdefaultsinkname)'"}
-         /^\s+Volume: / && indefault {print $5; exit}'
-}
+# Check if pactl is available
+if ! which pactl > /dev/null 2>&1; then
+  notify-send "pactl is not in PATH"
+  exit 1
+fi
 
-setdefaulsinkvol() {
-  pactl set-sink-volume $(getdefaultsinkname) $1
-}
+# Check pactl version
+PACTL_VERSION=$(pactl --version | grep -oP 'pactl \K\d+\.\d+')
+if [ "$(echo "$PACTL_VERSION < $PACTL_MIN_VERSION" | bc)" -eq 1 ]; then
+  echo "Requires pactl version at least $PACTL_MIN_VERSION"
+  exit 1
+fi
 
-SIGN=$(echo "$1" | head -c 1)
-VALUE=$(echo $1 | head -c 5 | cut -d '+' -f2 | cut -d '%' -f1)
-UPPERBOUND=150
+# Create config file if it doesn't exist
+if [ ! -f "$CONFIG_FILE" ]; then
+  mkdir -p "$(dirname "$CONFIG_FILE")"
+  echo "DEFAULT $DEFAULT_BOUNDARY\n" > "$CONFIG_FILE"
+fi
 
-VOLUME=$(getdefaultsinkvol)
-NEW_VOLUME=$(echo "${VOLUME%?}" + "$VALUE" | bc)
+read_config() {
+  local sink_name=$1
+  local boundary_value=$(grep "^$sink_name " "$CONFIG_FILE" | cut -d ' ' -f2)
 
-if [ "$SIGN" = '+' ]; then
-  if [ "$NEW_VOLUME" -lt "$UPPERBOUND" ]; then
-    setdefaulsinkvol $1
+  if [ -z "$boundary_value" ]; then
+    echo "$DEFAULT_BOUNDARY"
   else
-    puts "Config does not exist."
-    exit(1)
-  end
-rescue Errno::ENOENT => e
-  puts "Error reading file"
-  puts e.message
-  exit(1)
-rescue JSON::ParserError => e
-  puts "Error parsing file"
-  puts e.message
-  exit(1)
-end
+    echo "$boundary_value"
+  fi
+}
 
-def current_sink_info = @current_sink_info ||= JSON.parse(`pactl -f json info`)
-def current_sink_name = current_sink_info.fetch("default_sink_name")
-def current_sink = sink_list.find { _1["name"] == current_sink_name }
-def sink_list = @sink_list ||= JSON.parse(`pactl -f json list sinks`)
-def set_current_sink_volume!(value) = system("pactl set-sink-volume #{current_sink_name} #{value}%")
+# Write configuration
+write_config() {
+  local sink_name=$1
+  local value=$2
+  if grep -q "^$sink_name " "$CONFIG_FILE"; then
+    sed -i "/^$sink_name /c\\$sink_name $value" "$CONFIG_FILE"
+  else
+    echo "$sink_name $value\n" >> "$CONFIG_FILE"
+  fi
+}
 
-def current_sink_volume
-  volume = current_sink.fetch("volume")
-  front_left_volume = volume.fetch("front-left").fetch("value")
-  front_right_volume = volume.fetch("front-right").fetch("value")
+# Get current sink information
+current_sink_name=$(pactl info | grep 'Default Sink' | cut -d ' ' -f3)
+current_sink_volume=$(pactl get-sink-volume "$current_sink_name" | grep -oP '\d+%' | head -1 | tr -d '%')
 
-  (front_left_volume + front_right_volume) / 2
-rescue KeyError => e
-  puts "Failed to fetch current volume level"
-  puts e.backtrace.take(5)
-  exit(1)
-end
+# Adjust volume
+adjust_volume() {
+  local change=$1
+  local boundary=$(read_config "$current_sink_name")
+  echo "Debug: Current sink name is '$current_sink_name'"
+  echo "Debug: Boundary value is '$boundary'"
 
-def relative_int_to_percent(value) = value.to_f / BASE_VOL_INT * 100
-def bounded_percent(value) = [value, sink_volume_boundary(current_sink_name)].min
+  local change=$1
 
-parser = OptionParser.new do |opts|
-  opts.banner = <<~DESC
-    Volume management script. Example usage:
+  # Check if current_sink_volume is an integer
+  if ! [[ "$current_sink_volume" =~ ^[0-9]+$ ]]; then
+    echo "Error: Current sink volume is not a valid integer."
+    exit 1
+  fi
 
-    util-volume -d 5 # increases volume by 5%
-    util-volume -i 5 # increases volume by 5%
-    util-volume      # prints current volume level
-  DESC
+  local new_volume=$((current_sink_volume + change))
+  local boundary=$(read_config "$current_sink_name" || echo "$DEFAULT_BOUNDARY")
 
-  opts.on('-iVALUE', '--inc=VALUE', 'Increase volume by percentage value') do |value|
-    relative_int_to_percent(current_sink_volume)
-      .then { bounded_percent(_1 + value.to_i) }
-      .then { set_current_sink_volume!(_1) }
-  end
+  # Check if boundary is an integer
+  echo "Debug: Boundary before integer check is '$boundary'"
+  if ! [[ "$boundary" =~ ^[0-9]+$ ]]; then
+    echo "Error: Volume boundary is not a valid integer."
+    exit 1
+  fi
 
-  opts.on('-dVALUE', '--dec=VALUE', 'Decrease volume by percentage value') do |value|
-    relative_int_to_percent(current_sink_volume)
-      .then { (new_value = _1 - value.to_i) <= 0 ? 0 : new_value }
-      .then { bounded_percent(_1) }
-      .then { set_current_sink_volume!(_1) }
-  end
+  if [ "$new_volume" -gt "$boundary" ]; then
+    new_volume="$boundary"
+  elif [ "$new_volume" -lt 0 ]; then
+    new_volume=0
+  fi
 
-  opts.on('-bVALUE', '--set-boundary=VALUE', "Set current sink boundary") do |value|
-    value = value.to_i
-    if value.positive?
-      set_sink_volume_boundary!(value)
+  pactl set-sink-volume "$current_sink_name" "${new_volume}%"
+}
 
-      relative_int_to_percent(current_sink_volume)
-        .then { value < _1 ? value : _1 }
-        .then { bounded_percent(_1) }
-        .then { set_current_sink_volume!(_1) }
+# Parse arguments
+case "$1" in
+  -i|--inc)
+    adjust_volume "$2"
+    ;;
+  -d|--dec)
+    adjust_volume "-$2"
+    ;;
+  -p|--print)
+    echo $current_sink_volume
+    ;;
+  -b|--set-boundary)
+    if [ "$2" -ge 0 ] && [ "$2" -le "$BOUNDARY_HARD_LIMIT" ]; then
+      write_config "$current_sink_name" "$2"
     else
-      puts "Value cannot be negative"
-    end
-  end
-
-  opts.on('-p', '--print', 'Print current percentage volume value') do
-    puts "Current volume: #{relative_int_to_percent(current_sink_volume).round.to_i}"
-  end
-
-  opts.on_tail('--help', 'Print help') do
-    puts opts
-    exit
-  end
-end
-
-parser.parse('--help') if ARGV.empty?
-
-config # initialize config
-parser.parse!
-
+      echo "Boundary value must be between 0 and $BOUNDARY_HARD_LIMIT"
+    fi
+    ;;
+  *)
+    echo "Usage: $0 {-i|--inc <value> | -d|--dec <value> | -b|--set-boundary <value> | -p|--print}"
+    exit 1
+    ;;
+esac
