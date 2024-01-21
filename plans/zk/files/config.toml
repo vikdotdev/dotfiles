@@ -1,6 +1,9 @@
 [alias]
 open = 'cd $ZK_NOTEBOOK_DIR; $EDITOR .'
 o = 'zk open'
+daily = 'cd $ZK_NOTEBOOK_DIR; zk new store/daily --template daily.md'
+d = 'zk daily'
+ld = 'zk list store/daily --sort created --format full'
 search = '$EDITOR "+:ZkNotes { sort = "modified" }"'
 s = 'zk search'
 i = 'zk index'

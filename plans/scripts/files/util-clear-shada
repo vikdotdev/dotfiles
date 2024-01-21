@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+rm -rf ~/.local/share/nvim/shada/*
+rm -rf ~/.local/state/nvim/shada/*
