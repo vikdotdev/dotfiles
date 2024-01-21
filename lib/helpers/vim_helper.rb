@@ -10,7 +10,8 @@ module VimHelper
       tmux_windows(session).each do |window|
         tmux_panes(session, window).each do |pane_tty, pane|
           next unless tmux_pane_matches?(pane_tty, 'nvim')
-
+          # Escapes any insert modes or inner input windows
+          3.times { tmux_send_keys("Escape", session: session, window: window, pane: pane) }
           tmux_send_keys(lua_cmd, session: session, window: window, pane: pane)
         end
       end
