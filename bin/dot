@@ -33,12 +33,15 @@ module Dotfiles
       invoke(:build, [], theme: 'light')
     end
 
+    VARIANT_ALL = :all
+    VARIANT_BASE = :base
+
     desc 'install VARIANT', <<~DESC
     Install packages. Provide variant of either 'base' or 'all'. Defaults to 'all'.
     DESC
     option :user, aliases: '-u', desc: 'target username'
     option :host, aliases: '-h', desc: 'host, default to localhost'
-    def install(variant = :all)
+    def install(variant = VARIANT_BASE)
       user = options[:user] || ENV['USER']
       host = options[:host] || :localhost
 

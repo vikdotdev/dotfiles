@@ -1,3 +1,7 @@
+# DEPRECATED
+#
+# Use asdf postgres from asdf.yml
+#
 - name: Install PostgreSQL packages
   become: yes
   dnf:

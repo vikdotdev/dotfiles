@@ -47,21 +47,6 @@
   when:
     - not neovim_binary.stat.exists
 
-- name: Register .npm-packages directory
-  stat:
-    path: "/home/{{ target_user }}/{{ home_path.npm }}"
-  register: npm_dir
-
-- name: Create directory for user npm packages
-  file:
-    name: "/home/{{ target_user }}/{{ home_path.npm }}"
-    state: directory
-  when: not npm_dir.stat.exists
-
-- name: Tell npm where to store user packages
-  shell: npm config set prefix "$HOME/{{ home_path.npm }}"
-  when: not npm_dir.stat.exists
-
 - name: Install npm dependencies for neovim
   community.general.npm:
     name: "{{ item }}"
@@ -79,8 +64,6 @@
     - '@tailwindcss/language-server'
     - typescript-language-server
     - typescript
-  environment:
-    NPM_PACKAGES: "/home/{{ target_user }}/{{ home_path.npm }}"
 
 - name: Install denojs
   ansible.builtin.shell: curl -fsSL https://deno.land/x/install/install.sh | sh

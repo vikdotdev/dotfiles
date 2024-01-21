@@ -108,7 +108,6 @@ dotfiles_path:
   scripts: plans/scripts/files
 
 home_path:
-  npm: .npm-packages
   gobin: .local/bin
   gopath: .local/share/go
   repos: repos

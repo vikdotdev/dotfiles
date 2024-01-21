@@ -120,12 +120,3 @@
 
 - name: Install ruby gems
   shell: "/home/{{ target_user }}/{{ home_path.dotfiles }}/{{ dotfiles_path.scripts }}/sys-ensure-gems-installed"
-
-- name: Register .npm-packages directory
-  stat:
-    path: "/home/{{ target_user }}/{{ home_path.npm }}"
-  register: npm_dir
-
-- name: Tell npm where to store user packages
-  shell: npm config set prefix "$HOME/{{ home_path.npm }}"
-  when: not npm_dir.stat.exists

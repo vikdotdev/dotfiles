@@ -1,0 +1,37 @@
+- name: Install asdf dependencies
+  become: true
+  dnf:
+    name:
+      - curl
+      - git
+    state: latest
+
+- name: Register asdf repo
+  stat:
+    path: "/home/{{ target_user }}/.asdf"
+  register: asdf_repo
+
+- name: Clone asdf
+  ansible.builtin.git:
+    repo: https://github.com/asdf-vm/asdf.git
+    dest: "/home/{{ target_user }}/.asdf"
+  when: not asdf_repo.stat.exists
+
+- name: Add asdf nodejs plugin
+  shell: asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
+
+- name: Install asdf postgres dependencies
+  become: true
+  dnf:
+    name:
+      - openssl-devel
+      - readline-devel
+      - zlib-devel
+      - libcurl-devel
+      - uuid-devel
+      - libuuid-devel
+    state: latest
+
+- name: Add asdf postgres plugin
+  shell: asdf plugin add postgres https://github.com/smashedtoatoms/asdf-postgres
+  when: "variant == 'all'"

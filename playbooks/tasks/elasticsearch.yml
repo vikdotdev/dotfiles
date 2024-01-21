@@ -1,3 +1,4 @@
+# TODO use asdf instead asdf plugin-add elasticsearch https://github.com/asdf-community/asdf-elasticsearch.git
 - name: Register Elasticsearch Version Manager binary
   become: yes
   stat:
