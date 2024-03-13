@@ -20,8 +20,11 @@ set keyseq-timeout 5
 
 set editing-mode vi
 set show-mode-in-prompt on
-set vi-ins-mode-string \1\e[6 q\2
-set vi-cmd-mode-string \1\e[2 q\2
+# Best config which makes caret a line/bar. Broken for pry on ruby 3.3
+# set vi-ins-mode-string "\1\e[6 q\2"
+# set vi-cmd-mode-string "\1\e[2 q\2"
+set vi-ins-mode-string \1\e[1;32m\2[i]:\1\e[0m\2
+set vi-cmd-mode-string \1\e[1;31m\2[c]?\1\e[0m\2
 
 # optionally:
 # switch to block cursor before executing a command
