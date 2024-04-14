@@ -95,9 +95,5 @@ require'lspconfig'.ocamllsp.setup{}
 
 require('lspconfig').tsserver.setup({})
 
--- require'lspconfig'.rust_analyzer.setup({})
--- require'lspconfig'.tailwindcss.setup({})
--- require'lspconfig'.emmet_ls.setup({})
--- require'lspconfig'.ocamllsp.setup{}
--- require'lspconfig'.zls.setup{}
--- vim.g.zig_fmt_autosave = 0
+require'lspconfig'.rust_analyzer.setup({})
+require'lspconfig'.tailwindcss.setup({})

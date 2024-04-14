@@ -85,6 +85,8 @@
     - ruby-devel
     - nodejs
     - jpegoptim
+    - gdb
+    - valgrind
 
 - name: Install NVidia drivers
   become: yes
