@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+gemfile do
+  source 'https://rubygems.org'
+
+  gem 'tmuxinator'
+end
+
+system("tmuxinator #{ARGV.join('')}")

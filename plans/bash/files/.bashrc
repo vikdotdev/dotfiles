@@ -63,7 +63,6 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   grep="grep --color=auto" \
   diff="diff --color=auto" \
   t="tmux" \
-  tt="tmuxinator" \
   o="xdg-open" \
   open="xdg-open" \
   psql='PAGER="less -S" command psql "$@"'
