@@ -25,3 +25,5 @@ export GOPATH="$HOME/<%= @config.dig('home_path', 'gopath') %>"
   ln -s $HOME/bin $HOME/.gem/ruby/
 export DOT_PROFILE="<%= @profile.number %>"
 test -r "$HOME/.opam/opam-init/init.sh" && . "$HOME/.opam/opam-init/init.sh" > /dev/null 2> /dev/null || true
+
+source "$HOME/.asdf/asdf.sh"

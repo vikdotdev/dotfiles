@@ -27,4 +27,3 @@ return require('packer').startup(function(use)
   use({'deris/vim-shot-f'})
   use({'mickael-menu/zk-nvim'})
 end)
-

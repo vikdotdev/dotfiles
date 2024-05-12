@@ -52,7 +52,7 @@
   @mta q    w    e    r    t    y    u    i    o    p    \    XX   XX
   @ces a    s    d    f    g    h    j    k    l    ;    @qta      ret
   @lsb z    x    c    v    b    n    m    ,    .    /              @rsb
-  caps lalt @nmm           @sid           ralt prnt rctl pgup up   pgdn
+  caps @nmm lalt           @sid           ralt prnt rctl pgup up   pgdn
                                                          left down rght
 )
 

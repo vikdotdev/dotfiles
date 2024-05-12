@@ -94,6 +94,7 @@ require'lspconfig'.elixirls.setup({
 require'lspconfig'.ocamllsp.setup{}
 
 require('lspconfig').tsserver.setup({})
+require('lspconfig').gdscript.setup({})
 
 require'lspconfig'.rust_analyzer.setup({})
 require'lspconfig'.tailwindcss.setup({})
