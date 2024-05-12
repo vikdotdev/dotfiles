@@ -1,13 +1,6 @@
 # nice article about inputrc customization
 # https://www.topbug.net/blog/2017/07/31/inputrc-for-humans/
 
-"\C-e": shell-expand-line
-
-set show-mode-in-prompt on
-
-# set vi-ins-mode-string "+"
-# set vi-cmd-mode-string ":"
-
 set colored-stats On
 
 set completion-ignore-case On
@@ -17,23 +10,6 @@ set show-all-if-ambiguous On
 set show-all-if-unmodified On
 
 set keyseq-timeout 5
-
-set editing-mode vi
-set show-mode-in-prompt on
-# Best config which makes caret a line/bar. Broken for pry on ruby 3.3
-# set vi-ins-mode-string "\1\e[6 q\2"
-# set vi-cmd-mode-string "\1\e[2 q\2"
-set vi-ins-mode-string \1\e[1;32m\2[i]:\1\e[0m\2
-set vi-cmd-mode-string \1\e[1;31m\2[c]?\1\e[0m\2
-
-# optionally:
-# switch to block cursor before executing a command
-set keymap vi-insert
-RETURN: "\e\n"
-
-# Breaks tmuxinator commands
-# Control-j: menu-complete
-# Control-k: menu-complete-backward
 
 set completion-display-width 1
 set menu-complete-display-prefix on

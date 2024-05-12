@@ -66,9 +66,6 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   tt="tmuxinator" \
   o="xdg-open" \
   open="xdg-open" \
-  y="xclip -selection clipboard" \
-  yank="xclip -selection clipboard" \
-  vifm="TERM=xterm-direct vifm" \
   psql='PAGER="less -S" command psql "$@"'
 
 HISTSIZE=
@@ -78,19 +75,8 @@ export HISTIGNORE="pwd:ls:ll:la"
 export TERM=xterm-256color
 export PS1='\[\e[33m\]\u\[\e[m\]\[\e[36m\]@\[\e[m\]\[\e[35m\]\h\[\e[m\]: \[\e[32m\]\w\[\e[m\] \[\e[m\]\[\e[35m\]$(parse_git_branch)\[\e[m\]\[\e[36m\]\\$\[\e[m\] '
 
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
-
-# Workaround to toggle rvm to switch ruby on a new terminal session
-cd .
-
 # Disable a propmt to install a command if not found
 unset command_not_found_handle
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-
 . "$HOME/.asdf/asdf.sh"
 . "$HOME/.asdf/completions/asdf.bash"
-
-test -r /home/vik/.opam/opam-init/init.sh && . /home/vik/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true

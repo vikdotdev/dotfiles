@@ -1,29 +1,41 @@
-# Default variables
+# default variables
 export EDITOR="nvim"
 export GIT_EDITOR="$EDITOR"
 export PAGER="less"
 export LESS='-R --mouse --wheel-lines=3'
-# export LESS="-iMSx4 -FX"
 
-export ZK_NOTEBOOK_DIR="$HOME/notes"
+# xdg and ext
+export EXT_XDG_NOTES_DIR="$HOME/notes"
 export EXT_XDG_REPOS_DIR="$HOME/<%= @config.dig('home_path', 'repos') %>"
 export EXT_XDG_VENDOR_DIR="$HOME/<%= @config.dig('home_path', 'vendor') %>"
 export EXT_XDG_DOTFILES_DIR="$HOME/<%= @config.dig('home_path', 'dotfiles') %>"
 export EXT_XDG_WALLPAPER_DIR="$(xdg-user-dir PICTURES)/wallpapers/"
-export FLYCTL_INSTALL="$HOME/.fly"
-export PATH="$FLYCTL_INSTALL/bin:$PATH"
-export DENO_INSTALL="$HOME/.deno"
-export PATH="$DENO_INSTALL/bin:$PATH"
 export PATH="$HOME/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$EXT_XDG_DOTFILES_DIR/bin:$PATH"
-export PATH="$PATH:$HOME/.rvm/bin"
+
+# custom
+export DOT_PROFILE="<%= @profile.number %>"
+
+# fly
+export FLYCTL_INSTALL="$HOME/.fly"
+export PATH="$FLYCTL_INSTALL/bin:$PATH"
+
+# rust
+export PATH="$PATH:$HOME/.cargo/bin"
+
+# android
+export ANDROID_HOME="$HOME/.local/share/android"
+export PATH="$PATH:$ANDROID_HOME/cmdline-tools/latest/bin"
+export PATH="$PATH:$ANDROID_HOME/platform-tools/"
+export PATH="$PATH:$ANDROID_HOME/tools"
+export PATH="$PATH:$ANDROID_HOME/tools/bin"
+export PATH="$PATH:$ANDROID_HOME/emulator"
+export PATH="$PATH:$ANDROID_HOME/emulator/bin64"
+
+# golang
 export GOBIN="$HOME/<%= @config.dig('home_path', 'gobin') %>"
 export GOPATH="$HOME/<%= @config.dig('home_path', 'gopath') %>"
-[[ ! -e $HOME/.gem/ruby/bin ]] &&
-  mkdir -p "$HOME/bin" "$HOME/.gem/ruby" &&
-  ln -s $HOME/bin $HOME/.gem/ruby/
-export DOT_PROFILE="<%= @profile.number %>"
-test -r "$HOME/.opam/opam-init/init.sh" && . "$HOME/.opam/opam-init/init.sh" > /dev/null 2> /dev/null || true
 
-source "$HOME/.asdf/asdf.sh"
+# environment
+. "$HOME/.asdf/asdf.sh"

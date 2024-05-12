@@ -11,8 +11,8 @@ compton --vsync opengl --backend glx --paint-on-overlay &
 
 <% if @profile.in?(1) %>
 xrandr --output $(xrandr -q | grep " connected" | awk '{ print $1 }') \
-        --mode 3440x1440 \
-        --rate 60.00
+       --mode 3440x1440 \
+       --rate 165.00
 <% end %>
 
 <% if @profile.in?(2, 3) %>
