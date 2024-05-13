@@ -1,3 +1,5 @@
+# NOTE: this task is archived
+
 - name: Install tmux
   become: yes
   dnf:

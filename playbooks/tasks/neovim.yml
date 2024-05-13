@@ -1,3 +1,5 @@
+# NOTE: this task is arhived
+
 - name: Install neovim build dependencies
   become: yes
   dnf:

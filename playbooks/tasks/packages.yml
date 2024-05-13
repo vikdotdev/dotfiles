@@ -52,7 +52,6 @@
     - fd-find
     - aspell
     - aspell-en
-    - feh
     - pulseaudio-utils
     - xinput
     - imwheel
@@ -69,10 +68,7 @@
     - pavucontrol
     - flameshot
     - lxappearance
-    # - greybird-dark-theme
-    # - peek
-    # - deluge
-    # - seahorse
+    - deluge
     - zathura
     - zathura-pdf-poppler
     - zathura-pdf-mupdf
@@ -83,10 +79,20 @@
     - gh
     - ruby
     - ruby-devel
-    - nodejs
     - jpegoptim
-    - gdb
-    - valgrind
+
+- name: Install redis packages
+  become: yes
+  dnf:
+    name:
+    - redis
+
+- name: Start database services
+  become: yes
+  ansible.builtin.systemd:
+    name: redis
+    enabled: yes
+    state: started
 
 - name: Install NVidia drivers
   become: yes
@@ -95,13 +101,14 @@
     - akmod-nvidia
   when: "profile == '1'"
 
+# NOTE: skipped
 - name: Install zoom rpm
   become: yes
   dnf:
      name: https://zoom.us/client/latest/zoom_x86_64.rpm
      disable_gpg_check: yes
      state: present
-  when: "variant == 'all'"
+  when: "variant == 'all' and false"
 
 - name: Add the flathub flatpak repository remote to the user installation
   community.general.flatpak_remote:
@@ -118,8 +125,7 @@
     - com.spotify.Client
     - org.telegram.desktop
     - org.signal.Signal
-    - md.obsidian.Obsidian
     - com.slack.Slack
 
 - name: Install ruby gems
-  shell: "/home/{{ target_user }}/{{ home_path.dotfiles }}/{{ dotfiles_path.scripts }}/sys-ensure-gems-installed"
+  shell: "/home/{{ target_user }}/{{ home_path.dotfiles }}/{{ dotfiles_path.scripts }}/sys-gems-init"

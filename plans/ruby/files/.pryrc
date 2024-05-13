@@ -45,9 +45,10 @@ class ScopePrinter
   end
 end
 
-Pry.hooks.add_hook(:before_session, "pry_state_hook") do |_output, _binding, _pry|
-  ScopePrinter.new(_binding, _pry).call
-end
+# Usually leads to a lot of garbage.
+# Pry.hooks.add_hook(:before_session, "pry_state_hook") do |_output, _binding, _pry|
+#   ScopePrinter.new(_binding, _pry).call
+# end
 
 # Leading space is important here to avoid pry regex check
 ENV['PAGER'] = ' less --raw-control-chars --mouse --wheel-lines=3 -F -X'
@@ -69,7 +70,6 @@ end
 
 Pry.commands.alias_command 'e', 'exit'
 Pry.commands.alias_command 'clear', 'clear-screen'
-Pry.commands.alias_command 'fm', 'find-method'
 Pry.commands.alias_command 'fm', 'find-method'
 Pry.commands.alias_command 'dp', 'disable-pry'
 

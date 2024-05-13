@@ -23,10 +23,7 @@
     msg: |
       Things left to manually set up:
       - setup thunderbird accounts;
-      - make firefox configurations;
-        - disable smooth scrolling;
-        - configure extensions & themes;
-      - install nvm & rvm;
+      - set asdf global versions for ruby, node and postgres;
 
       Reboot the system in order for all the changes to take place. After
       reboot, make sure to boot from awesomewm, run 'dot postinstall', and follow further

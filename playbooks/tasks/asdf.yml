@@ -35,3 +35,14 @@
 - name: Add asdf postgres plugin
   shell: asdf plugin add postgres https://github.com/smashedtoatoms/asdf-postgres
   when: "variant == 'all'"
+
+- name: Install asdf ruby dependencies
+  become: true
+  dnf:
+    name:
+      - libffi-devel
+      - libyaml-devel
+    state: latest
+
+- name: Add asdf ruby plugin
+  shell: asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git

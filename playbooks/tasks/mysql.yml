@@ -1,3 +1,5 @@
+# NOTE: this task is arhived
+
 - name: Install MariaDB and dependencies
   become: yes
   dnf:
