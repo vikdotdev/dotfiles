@@ -1,0 +1,35 @@
+- name: Install emacs deps
+  become: yes
+  dnf:
+    name:
+    - ripgrep
+    - fd-find
+
+- name: Add native-comp emacs repository
+  become: yes
+  community.general.copr:
+    state: enabled
+    name: deathwish/emacs-pgtk-nativecomp
+    chroot: fedora-39-x86_64
+
+- name: Install emacs
+  become: yes
+  dnf:
+    name:
+    - emacs
+
+- name: Register doom repo
+  stat:
+    path: "/home/{{ target_user }}/.config/emacs//bin/doom"
+  register: doom_repo
+
+- name: Clone doom
+  ansible.builtin.git:
+    repo: https://github.com/doomemacs/doomemacs
+    dest: "/home/{{ target_user }}/.config/emacs"
+  when: not doom_repo.stat.exists
+
+- name: Install doom
+  shell: "/home/{{ target_user }}/.config/emacs//bin/doom install"
+  when: not doom_repo.stat.exists
+

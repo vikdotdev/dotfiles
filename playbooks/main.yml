@@ -3,6 +3,8 @@
   vars_files:
   - "../config.yml"
   remote_user: "{{ target_user }}"
+  environment:
+    PATH: '{{ ansible_env.PATH }}:{{ ansible_env.HOME }}/.asdf/shims'
   tasks:
     - include_tasks: tasks/packages.yml
     - include_tasks: tasks/asdf.yml
