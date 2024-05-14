@@ -113,4 +113,5 @@ home_path:
   repos: repos
   vendor: repos/vendor
   dotfiles: repos/dotfiles
+  notes: docs/notes
   bin: bin

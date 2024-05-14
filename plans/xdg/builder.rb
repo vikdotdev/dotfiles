@@ -21,6 +21,7 @@ ext_xdg_dirs = %w[
   repos
   books
   pics/wallpapers
+  docs/notes
 ]
 
 [
