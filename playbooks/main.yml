@@ -3,13 +3,10 @@
   vars_files:
   - "../config.yml"
   remote_user: "{{ target_user }}"
-  environment:
-    PATH: '{{ ansible_env.PATH }}:{{ ansible_env.HOME }}/.asdf/shims'
   tasks:
     - include_tasks: tasks/packages.yml
-    - include_tasks: tasks/asdf.yml
-    - include_tasks: tasks/emacs.yml
     - include_tasks: tasks/fonts.yml
+    - include_tasks: tasks/tmux.yml
 
     - name: Install kmonad?
       include_tasks: tasks/kmonad.yml
@@ -26,5 +23,3 @@
     - name: Install arduino?
       include_tasks: tasks/arduino.yml
       when: "variant == 'all'"
-
-    - include_tasks: tasks/postinstall.yml

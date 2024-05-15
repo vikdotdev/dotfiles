@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 
-# Prints current scope variables on breakpoint.
 class ScopePrinter
   attr_reader :binding, :pry
 
@@ -45,11 +44,6 @@ class ScopePrinter
   end
 end
 
-# Usually leads to a lot of garbage.
-# Pry.hooks.add_hook(:before_session, "pry_state_hook") do |_output, _binding, _pry|
-#   ScopePrinter.new(_binding, _pry).call
-# end
-
 # Leading space is important here to avoid pry regex check
 ENV['PAGER'] = ' less --raw-control-chars --mouse --wheel-lines=3 -F -X'
 
@@ -76,6 +70,10 @@ Pry.commands.alias_command 'dp', 'disable-pry'
 Pry::Commands.command 're', 'repeat last command' do
   last_command = Pry.history.to_a.last
   pry_instance.input = StringIO.new(last_command)
+end
+
+Pry::Commands.command 'scope', 'print local scope' do
+  ScopePrinter.new(_binding, _pry).call
 end
 
 Pry::Commands.command 'toggle-pager', "toggle pager" do

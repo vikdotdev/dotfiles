@@ -6,26 +6,26 @@
 
 - name: Register KMonad repo
   stat:
-    path: "/home/{{ target_user }}/{{ home_path.vendor }}/kmonad"
+    path: "{{ ansible_env.HOME }}/{{ home_path.vendor }}/kmonad"
   register: kmonad_repo
 
 - name: Clone KMonad
   ansible.builtin.git:
     repo: https://github.com/kmonad/kmonad.git
     depth: 50
-    dest: "/home/{{ target_user }}/{{ home_path.vendor }}/kmonad"
+    dest: "{{ ansible_env.HOME }}/{{ home_path.vendor }}/kmonad"
   when:
     - not kmonad_repo.stat.exists
 
 - name: Register kmonad executable
   stat:
-    path: "/home/{{ target_user }}/.local/bin/kmonad"
+    path: "{{ ansible_env.HOME }}/.local/bin/kmonad"
   register: kmonad_executable
 
 - name: Build KMonad
   shell: stack install
   args:
-    chdir: "/home/{{ target_user }}/{{ home_path.vendor }}/kmonad"
+    chdir: "{{ ansible_env.HOME }}/{{ home_path.vendor }}/kmonad"
     creates: "/home/{{ target_user }}/.local/bin/kmonad"
   when:
     - not kmonad_executable.stat.exists
