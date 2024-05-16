@@ -1,20 +1,21 @@
 #!/usr/bin/env bash
 
-sudo systemctl enable --now wpa_supplicant.service
-sudo systemctl restart NetworkManager.service
-sleep 10
-sudo dnf install ansible git ruby ruby-devel -y
+#sudo systemctl enable --now wpa_supplicant.service
+#sudo systemctl restart NetworkManager.service
+#sleep 10
+sudo apt install -y ansible git ruby ruby-dev
 ansible-galaxy collection install community.general
 ansible-galaxy collection install community.mysql
 
 export GEM_HOME=$HOME/.gem/ruby
-[[ ! -e $HOME/.gem/ruby/bin ]] &&
+if [ ! -e $HOME/.gem/ruby/bin ]; then
   mkdir -p "$HOME/bin" "$HOME/.gem/ruby" &&
   ln -s $HOME/bin $HOME/.gem/ruby/
+fi
 
 mkdir -p ~/repos
 pushd ~/repos
-[ ! -d dotfiles ] && git clone https://github.com/vikdotdev/dotfiles
+[ ! -d dotfiles ] && git clone https://github.com/henriknelson/dotfiles
 ./dotfiles/bin/dot install
 popd
 

@@ -1,129 +1,131 @@
-- name: Install rpmfusion repositories
-  become: yes
-  dnf:
-    disable_gpg_check: yes
-    name:
-    - "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_distribution_major_version }}.noarch.rpm"
-    - "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_distribution_major_version }}.noarch.rpm"
-
-- name: Add repo for Github command line utility
-  become: yes
-  yum_repository:
-    name: gh-cli
-    description: Github CLI
-    baseurl: https://cli.github.com/packages/rpm
-    gpgkey: https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x23F3D4EA75716059
+#- name: Install rpmfusion repositories
+#  become: yes
+#  dnf:
+#    disable_gpg_check: yes
+#    name:
+#    - "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_distribution_major_version }}.noarch.rpm"
+#    - "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_distribution_major_version }}.noarch.rpm"
+#
+#- name: Add repo for Github command line utility
+#  become: yes
+#  yum_repository:
+#    name: gh-cli
+#    description: Github CLI
+#    baseurl: https://cli.github.com/packages/rpm
+#    gpgkey: https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x23F3D4EA75716059
 
 - name: Update system
   become: yes
-  dnf:
+  apt:
     name: '*'
     state: latest
 
 - name: Install core packages
   become: yes
-  dnf:
+  apt:
     name:
-    - '@Multimedia'
-    - '@base-x'
-    - libtool
-    - autoconf
-    - automake
-    - cmake
-    - gcc
-    - gcc-c++
-    - make
-    - pkgconfig
-    - patch
-    - gettext
-    - firefox
-    - thunderbird
-    - wget
-    - unzip
-    - xclip
-    - curl
-    - clang
-    - sensible-utils
-    - xdotool
-    - screenkey
-    - redshift
-    - urlview
-    - xbacklight
-    - xset
-    - xprop
-    - xsel
-    - playerctl
-    - neovim
-    - ncdu
-    - tldr
-    - awesome
-    - rofi
-    - ripgrep
     - fd-find
-    - aspell
-    - aspell-en
-    - pulseaudio-utils
-    - xinput
-    - imwheel
-    - xrandr
-    - xdg-user-dirs
-    - ImageMagick
-    - renameutils
-    - xss-lock
-    - xsecurelock
-    - acpi
     - bat
-    - alacritty
-    - easyeffects
-    - pavucontrol
-    - flameshot
-    - lxappearance
-    - deluge
-    - zathura
-    - zathura-pdf-poppler
-    - zathura-pdf-mupdf
-    - gimp
-    - git
-    - git-credential-libsecret
-    - git-delta
-    - gh
-    - ruby
-    - ruby-devel
-    - jpegoptim
+    - homebrew
+#    - '@Multimedia'
+#    - '@base-x'
+#    - libtool
+#    - autoconf
+#    - automake
+#    - cmake
+#    - gcc
+#    - gcc-c++
+#    - make
+#    - pkgconfig
+#    - patch
+#    - gettext
+#    - firefox
+#    - thunderbird
+#    - wget
+#    - unzip
+#    - xclip
+#    - curl
+#    - clang
+#    - sensible-utils
+#    - xdotool
+#    - screenkey
+#    - redshift
+#    - urlview
+#    - xbacklight
+#    - xset
+#    - xprop
+#    - xsel
+#    - playerctl
+#    - neovim
+#    - ncdu
+#    - tldr
+#    - awesome
+#    - rofi
+#    - ripgrep
+#    - fd-find
+#    - aspell
+#    - aspell-en
+#    - pulseaudio-utils
+#    - xinput
+#    - imwheel
+#    - xrandr
+#    - xdg-user-dirs
+#    - ImageMagick
+#    - renameutils
+#    - xss-lock
+#    - xsecurelock
+#    - acpi
+#    - bat
+#    - alacritty
+#    - easyeffects
+#    - pavucontrol
+#    - flameshot
+#    - lxappearance
+#    - deluge
+#    - zathura
+#    - zathura-pdf-poppler
+#    - zathura-pdf-mupdf
+#    - gimp
+#    - git
+#    - git-credential-libsecret
+#    - git-delta
+#    - gh
+#    - ruby
+#    - ruby-devel
+#    - jpegoptim
 
-- name: Install redis packages
-  become: yes
-  dnf:
-    name:
-    - redis
+#- name: Install redis packages
+#  become: yes
+#  dnf:
+#    name:
+#    - redis
+#
+#- name: Start database services
+#  become: yes
+#  ansible.builtin.systemd:
+#    name: redis
+#    enabled: yes
+#    state: started
+#
+#- name: Install NVidia drivers
+#  become: yes
+#  dnf:
+#    name:
+#    - akmod-nvidia
+#  when: "profile == '1'"
 
-- name: Start database services
-  become: yes
-  ansible.builtin.systemd:
-    name: redis
-    enabled: yes
-    state: started
+#- name: Add the flathub flatpak repository remote to the user installation
+#  community.general.flatpak_remote:
+#    method: user
+#    name: flathub
+#    state: present
+#    flatpakrepo_url: https://flathub.org/repo/flathub.flatpakrepo
 
-- name: Install NVidia drivers
-  become: yes
-  dnf:
-    name:
-    - akmod-nvidia
-  when: "profile == '1'"
-
-- name: Add the flathub flatpak repository remote to the user installation
-  community.general.flatpak_remote:
-    method: user
-    name: flathub
-    state: present
-    flatpakrepo_url: https://flathub.org/repo/flathub.flatpakrepo
-
-- name: Install flatpaks
-  community.general.flatpak:
+- name: Install homebrew packages
+  community.general.homebrew:
     method: user
     name: "{{ item }}"
+    state: present
   loop:
-    - com.spotify.Client
-    - org.telegram.desktop
-    - org.signal.Signal
-    - com.slack.Slack
+    - kubernetes-cli
+    - stern

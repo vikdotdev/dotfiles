@@ -1,7 +1,5 @@
 profile:
-  umbra: 1
-  reddwarf: 2
-  redgiant: 3
+  kubectl: 1
 
 palette:
   monochrome:
@@ -115,3 +113,4 @@ home_path:
   dotfiles: repos/dotfiles
   notes: docs/notes
   bin: bin
+  kubeconfig: .kube
