@@ -14,6 +14,11 @@
     baseurl: https://cli.github.com/packages/rpm
     gpgkey: https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x23F3D4EA75716059
 
+- name: Add wezterm copr
+  become: yes
+  community.general.copr:
+    name: wezfurlong/wezterm-nightly
+
 - name: Update system
   become: yes
   dnf:
@@ -90,6 +95,7 @@
     - ruby
     - ruby-devel
     - jpegoptim
+    - wezterm
 
 - name: Install redis packages
   become: yes
