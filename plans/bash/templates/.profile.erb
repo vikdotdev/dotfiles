@@ -37,5 +37,7 @@ export PATH="$PATH:$ANDROID_HOME/emulator/bin64"
 export GOBIN="$HOME/<%= @config.dig('home_path', 'gobin') %>"
 export GOPATH="$HOME/<%= @config.dig('home_path', 'gopath') %>"
 
+export WEZTERM_SHELL_SKIP_ALL=1
+
 # environment
 . "$HOME/.asdf/asdf.sh"

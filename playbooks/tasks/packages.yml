@@ -96,6 +96,8 @@
     - ruby-devel
     - jpegoptim
     - wezterm
+    - yt-dlp
+    - youtube-dl
 
 - name: Install redis packages
   become: yes

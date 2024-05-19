@@ -51,6 +51,14 @@ wezterm.on('update-status', function(window, pane)
   end
 
   window:set_right_status(mode_name or '')
+
+  workspace = wezterm.format({
+    { Attribute = { Intensity = "Bold" } },
+    { Background = { Color = 'Green' } },
+    { Text = ' ' .. window:active_workspace() .. ' ' },
+    'ResetAttributes'
+  })
+  window:set_left_status(workspace)
 end)
 
 config.leader = { key = 'f', mods = 'CTRL', timeout_milliseconds = 1000 }
@@ -63,6 +71,7 @@ config.keys = {
   },
 
   { key = 'p', mods = 'LEADER', action = wezterm.action.ActivateCommandPalette },
+  { key = 's', mods = 'LEADER', action = act.ShowLauncherArgs { flags = 'WORKSPACES' } },
 
   -- Clipboard
   { key = 'c', mods = 'CTRL|SHIFT', action = act.CopyTo "Clipboard" },
@@ -99,8 +108,8 @@ config.keys = {
       act.ActivatePaneDirection 'Right',
     }
   },
-  { key = 'v', mods = 'LEADER', action = act.SplitHorizontal { domain = 'CurrentPaneDomain' }},
-  { key = 's', mods = 'LEADER', action = act.SplitVertical { domain = 'CurrentPaneDomain' }},
+  { key = '=', mods = 'LEADER', action = act.SplitHorizontal { domain = 'CurrentPaneDomain' }},
+  { key = '-', mods = 'LEADER', action = act.SplitVertical { domain = 'CurrentPaneDomain' }},
   { key = 'm', mods = 'LEADER', action = act.TogglePaneZoomState },
   { key = 'n', mods = 'LEADER', action = act.SpawnTab 'CurrentPaneDomain' },
 
@@ -177,7 +186,7 @@ config.key_tables = {
     { key = 'h', action = act.ActivateTabRelativeNoWrap(-1) },
     { key = 'l', action = act.ActivateTabRelativeNoWrap(1) },
     { key = 'h', mods = 'SHIFT', action = act.MoveTabRelative(-1) },
-    { key = '1', mods = 'CTRL', action = act.MoveTab(0), },
+    { key = 'l', mods = 'SHIFT', action = act.MoveTabRelative(1) },
     { key = 'p', action = act.Multiple { act.ShowTabNavigator, act.ClearKeyTableStack }},
     -- Switching tabs with number below with for loop.
   },
@@ -191,23 +200,11 @@ for i = 1, 8 do
 end
 
 for i = 1, 8 do
-  table.insert(config.key_tables.tab, {
-    key = tostring(i), mods = 'CTRL', action = act.MoveTab(i - 1),
-  })
-end
-
-for i = 1, 8 do
   table.insert(config.key_tables.nav, {
     key = tostring(i),
     action = act.ActivateTab(i - 1),
   })
 end
-
-config.unix_domains = {
-  { name = 'home' },
-}
-
-config.default_gui_startup_args = { 'attach', 'home' }
 
 -- TODO: in search mode when pasting it pastes newline and messes with output and screws the search
 
