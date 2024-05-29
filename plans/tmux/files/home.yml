@@ -1,9 +1,0 @@
-name: home
-root: ~/
-
-attach: true
-
-windows:
-  - init: tt; tt list
-  - dotfiles: cd <%= ENV['EXT_XDG_REPOS_DIR'] %>/dotfiles; nvim
-  - notes: cd <%= ENV['EXT_XDG_NOTES_DIR'] %>; nvim
