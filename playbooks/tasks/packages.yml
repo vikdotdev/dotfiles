@@ -98,6 +98,10 @@
     - wezterm
     - yt-dlp
     - youtube-dl
+    - docker
+    - docker-compose
+    # sudo systemctl start --enable docker<tab>
+    # sudo gpasswd -a $USER docker
 
 - name: Install redis packages
   become: yes

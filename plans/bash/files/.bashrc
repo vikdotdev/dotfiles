@@ -65,6 +65,7 @@ alias ls="ls -hN --color=auto --group-directories-first" \
   t="tmux" \
   o="xdg-open" \
   open="xdg-open" \
+  ch="chezmoi" \
   psql='PAGER="less -S" command psql "$@"'
 
 HISTSIZE=
