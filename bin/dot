@@ -6,7 +6,6 @@ gemfile do
   source 'https://rubygems.org'
 
   gem 'thor'
-  gem 'pry'
   gem 'require_all'
   gem 'tty-prompt'
 end
@@ -21,16 +20,6 @@ module Dotfiles
       theme = options[:theme]
 
       Build.new(theme: theme).run
-    end
-
-    desc 'dark', 'shortcut for build -t dark'
-    def dark
-      invoke(:build, [], theme: 'dark')
-    end
-
-    desc 'light', 'shortcut for build -t light'
-    def light
-      invoke(:build, [], theme: 'light')
     end
 
     VARIANT_ALL = :all
@@ -48,16 +37,6 @@ module Dotfiles
       puts "Running ansible install against #{user}@#{host}"
 
       Install.new(host, user, variant).run
-    end
-
-    desc 'postinstall', 'Perform post-install steps.'
-    def postinstall
-      PostInstall.run
-    end
-
-    desc 'doctor', 'NOT IMPLEMENTED.'
-    def doctor
-      puts 'NOT IMPLEMENTED'
     end
 
     def self.exit_on_failure?

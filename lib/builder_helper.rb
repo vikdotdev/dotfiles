@@ -7,13 +7,15 @@ module BuilderHelper
     ERB.new(File.read(template_path)).result(binding)
   end
 
-  def files(recursive: false)
-    glob_path = File.join(@files_path, (recursive ? '**/*' : '*'))
+  def files(recursive: false, subpath: "")
+    glob_path = File.join(@files_path, subpath, (recursive ? '**/*' : '*'))
 
     Dir.glob(File.expand_path(glob_path), File::FNM_DOTMATCH).map do |path|
       next if %w[. ..].include?(File.basename(path)) || File.directory?(path)
 
-      Pathname.new(path).relative_path_from(File.expand_path(@files_path)).to_s
+      Pathname.new(path).relative_path_from(
+        File.expand_path(File.join(@files_path, subpath))
+      ).to_s
     end.compact
   end
 
@@ -23,6 +25,14 @@ module BuilderHelper
 
   def read_file(filename)
     ERB.new(File.read(File.join(@files_path, filename))).result(binding)
+  end
+
+  def file_path(filename)
+    File.join(@files_path, filename)
+  end
+
+  def template_path(filename)
+    File.join(@templates_path, filename)
   end
 
   def chmod(mode, filepath)

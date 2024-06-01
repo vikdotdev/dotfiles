@@ -1,18 +1,12 @@
 require_rel '../'
-require_rel '../helpers'
 
 module Dotfiles
   class Build
     include BuilderHelper
-    include TmuxHelper
-    include VimHelper
-    include VifmHelper
 
     def initialize(opts = {})
-      @theme = Theme.new(opts[:theme])
       @profile = Profile.new
       @config = YAML.load_file(File.join(__dir__, '..', '..', 'config.yml'))
-      @colors = Color.new(@config)
     end
 
     def run

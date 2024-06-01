@@ -1,11 +1,7 @@
 #!/usr/bin/env bash
 
-sudo systemctl enable --now wpa_supplicant.service
-sudo systemctl restart NetworkManager.service
-sleep 10
 sudo dnf install ansible git ruby ruby-devel -y
 ansible-galaxy collection install community.general
-ansible-galaxy collection install community.mysql
 
 export GEM_HOME=$HOME/.gem/ruby
 [[ ! -e $HOME/.gem/ruby/bin ]] &&
@@ -17,7 +13,3 @@ pushd ~/repos
 [ ! -d dotfiles ] && git clone https://github.com/vikdotdev/dotfiles
 ./dotfiles/bin/dot install
 popd
-
-# curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.39.1/install.sh | bash
-# source ~/.nvm/nvm.sh && nvm install --lts
-# npm -g install yarn

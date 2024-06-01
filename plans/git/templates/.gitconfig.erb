@@ -40,20 +40,13 @@
 	light = true
   syntax-theme = GitHub
 
-[delta]
-  <% if @theme.dark? %>
-	features = vikdotdev-dark
-  <% elsif @theme.light? %>
-	features = vikdotdev-light
-  <% end %>
+navigate = true
 
-  navigate = true
-
-  <% if @profile.in?(1) %>
-  side-by-side = true
-  <% else %>
-  side-by-side = false
-  <% end %>
+<% if @profile.in?(1) %>
+side-by-side = true
+<% else %>
+side-by-side = false
+<% end %>
 
 [interactive]
   diffFilter = delta --color-only -s -n

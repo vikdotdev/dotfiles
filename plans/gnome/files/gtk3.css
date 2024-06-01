@@ -1,0 +1,13 @@
+/* Check the GNOME Adwaita theme (_common.scss) for "documentation" */
+
+.titlebar.default-decoration {
+    min-height: 12px;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.titlebar.default-decoration button.titlebutton {
+    min-height: 12px;
+    min-width: 12px;
+    font-size: 8px;
+}

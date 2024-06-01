@@ -9,7 +9,7 @@ Dir.mkdir(temp_directory, 0755) unless Dir.exist?(temp_directory)
 
 Dir.chdir(temp_directory)
 
-system('nvim')
+system('emacs -nw')
 
 puts "\nFinished working with #{temp_directory}"
 Dir.chdir(initial_directory)
