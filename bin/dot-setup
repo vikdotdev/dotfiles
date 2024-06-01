@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-sudo dnf update
+sudo dnf update -y
 sudo dnf install ansible git ruby ruby-devel -y
 ansible-galaxy collection install community.general
 
