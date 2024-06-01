@@ -1,0 +1,31 @@
+- name: Set extension name
+  set_fact:
+    extension_name: 'http://example.com/apache'
+
+- name: Register gnome-shell-go-to-last-workspace repo
+  stat:
+    path: "{{ ansible_env.HOME }}/{{ home_path.vendor }}/gnome-shell-go-to-last-workspace"
+  register: gnome_last_workspace_repo
+
+- name: Clone gnome-shell-go-to-last-workspace
+  ansible.builtin.git:
+    repo: https://github.com/arjan/gnome-shell-go-to-last-workspace.git
+    depth: 50
+    dest: "{{ ansible_env.HOME }}/{{ home_path.vendor }}/gnome-shell-go-to-last-workspace"
+  when:
+    - not gnome_last_workspace_repo.stat.exists
+
+- name: Register gnome-shell-go-to-last-workspace extension install
+  stat:
+    path: "{{ ansible_env.HOME }}/.local/share/gnome-shell/extensions/gnome-shell-go-to-last-workspace@github.com"
+  register: gnome_last_workspace_install
+
+- name: Install gnome-shell-go-to-last-workspace
+  community.general.make:
+    chdir: "{{ ansible_env.HOME }}/gnome-shell-go-to-last-workspace"
+    target: install
+  when:
+    - not gnome_last_workspace_install.stat.exists
+
+- name: Enable gnome-shell-go-to-last-workspace
+  shell: gnome-extensions enable gnome-shell-go-to-last-workspace@github.com
