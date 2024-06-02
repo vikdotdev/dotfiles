@@ -20,12 +20,17 @@
     path: "{{ ansible_env.HOME }}/.local/share/gnome-shell/extensions/gnome-shell-go-to-last-workspace@github.com"
   register: gnome_last_workspace_install
 
+- name: Build gnome-shell-go-to-last-workspace
+  community.general.make:
+    chdir: "{{ ansible_env.HOME }}/{{ home_path.vendor }}/gnome-shell-go-to-last-workspace"
+    target: build
+  when:
+    - not gnome_last_workspace_install.stat.exists
+
 - name: Install gnome-shell-go-to-last-workspace
   community.general.make:
     chdir: "{{ ansible_env.HOME }}/{{ home_path.vendor }}/gnome-shell-go-to-last-workspace"
-    targets:
-      - build
-      - install
+    target: install
   when:
     - not gnome_last_workspace_install.stat.exists
 

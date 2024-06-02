@@ -59,8 +59,8 @@
     - wezterm
     - yt-dlp
     - youtube-dl
-    - docker
-    - docker-compose
+    # - docker
+    # - docker-compose
     # sudo systemctl start --enable docker<tab>
     # sudo gpasswd -a $USER docker
 
