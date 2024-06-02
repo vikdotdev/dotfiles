@@ -13,10 +13,16 @@
 
 - name: Install core packages
   become: yes
+  state: absent
+  dnf:
+    name:
+    - gnome-terminal
+
+- name: Install core packages
+  become: yes
   dnf:
     name:
     - '@Multimedia'
-    - '@base-x'
     - libtool
     - autoconf
     - automake

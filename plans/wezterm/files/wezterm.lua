@@ -11,7 +11,6 @@ config.status_update_interval = 100
 config.show_tab_index_in_tab_bar = true
 
 config.font = wezterm.font "Iosevka"
-config.color_scheme = 'Dracula'
 
 config.window_frame = {
   font_size = 12.0,
@@ -209,5 +208,25 @@ for i = 1, 8 do
 end
 
 -- TODO: in search mode when pasting it pastes newline and messes with output and screws the search
+
+
+-- wezterm.gui is not available to the mux server, so take care to
+-- do something reasonable when this config is evaluated by the mux
+function get_appearance()
+  if wezterm.gui then
+    return wezterm.gui.get_appearance()
+  end
+  return 'Dark'
+end
+
+function scheme_for_appearance(appearance)
+  if appearance:find 'Dark' then
+    return 'Dracula'
+  else
+    return 'Builtin Solarized Light'
+  end
+end
+
+config.color_scheme = scheme_for_appearance(get_appearance())
 
 return config

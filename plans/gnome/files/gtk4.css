@@ -8,6 +8,7 @@ headerbar.titlebar > windowhandle > box > box.end > windowcontrols.end > button 
 /* Remove rounded corners */
 .titlebar, .titlebar .background, decoration, window, window.background {
     border-radius: 0;
+    border:0;
 }
 
 headerbar {
