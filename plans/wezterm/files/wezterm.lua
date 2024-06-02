@@ -2,6 +2,8 @@ local wezterm = require 'wezterm'
 local act = wezterm.action
 local config = wezterm.config_builder()
 
+-- enabled titlebar on wayland
+config.enable_wayland = false
 config.disable_default_key_bindings = true
 config.mouse_wheel_scrolls_tabs = false
 config.use_fancy_tab_bar = false

@@ -1,13 +1,41 @@
-/* Check the GNOME Adwaita theme (_common.scss) for "documentation" */
+/* https://gist.github.com/Xachman/708438f924dd8c8bc2519cf9bbad6446 */
 
-.titlebar.default-decoration {
-    min-height: 12px;
-    padding-top: 0;
-    padding-bottom: 0;
+headerbar {
+    min-height: 0px;
+    padding-left: 2px;
+    padding-right: 2px;
+    border-radius:0;
+    border:0;
 }
 
-.titlebar.default-decoration button.titlebutton {
-    min-height: 12px;
-    min-width: 12px;
-    font-size: 8px;
+headerbar entry,
+headerbar spinbutton,
+headerbar button,
+headerbar separator {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.default-decoration {
+    min-height: 0;
+    padding: 0px;
+}
+
+.default-decoration .titlebutton {
+    min-height: 0px;
+    min-width: 0px;
+}
+
+window.ssd headerbar.titlebar {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    min-height: 0;
+    font-size: 12px;
+}
+
+window.ssd headerbar.titlebar button.titlebutton {
+    padding: 2px;
+    min-height: 0;
+    border-radius: 0;
+    margin-right: 2px;
 }

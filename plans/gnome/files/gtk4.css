@@ -1,5 +1,50 @@
 headerbar.titlebar,
 headerbar.titlebar > windowhandle > box > box.start > windowcontrols.start > button,
 headerbar.titlebar > windowhandle > box > box.end > windowcontrols.end > button {
-    min-height: 12px;
+    min-height: 0px;
+    border:0;
+}
+
+/* Remove rounded corners */
+.titlebar, .titlebar .background, decoration, window, window.background {
+    border-radius: 0;
+}
+
+headerbar {
+    min-height: 0px;
+    padding-left: 2px;
+    padding-right: 2px;
+    border:0;
+}
+
+headerbar entry,
+headerbar spinbutton,
+headerbar button,
+headerbar separator {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.default-decoration {
+    min-height: 0;
+    padding: 0px;
+}
+
+.default-decoration .titlebutton {
+    min-height: 0px;
+    min-width: 0px;
+}
+
+headerbar.titlebar {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    min-height: 0;
+    font-size: 12px;
+}
+
+headerbar.titlebar button.titlebutton {
+    padding: 2px;
+    min-height: 0;
+    border-radius: 0;
+    margin-right: 2px;
 }
