@@ -33,6 +33,3 @@
     target: install
   when:
     - not gnome_last_workspace_install.stat.exists
-
-- name: Enable gnome-shell-go-to-last-workspace
-  shell: gnome-extensions enable gnome-shell-go-to-last-workspace@github.com
