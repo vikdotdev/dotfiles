@@ -57,3 +57,5 @@
 
 ;; (package! magit-delta
 ;;   :recipe (:host github :repo "dandavison/magit-delta"))
+
+(package! auto-dark)

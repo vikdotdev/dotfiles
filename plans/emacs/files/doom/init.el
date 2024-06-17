@@ -19,8 +19,8 @@
   (setq straight--native-comp-available t))
 
 ;; disable persistent undo history
-(after! undo-tree
-  (setq undo-tree-auto-save-history nil))
+;; (after! undo-tree
+;;   (setq undo-tree-auto-save-history nil))
 
 (doom! :input
        ;;bidi              ; (tfel ot) thgir etirw uoy gnipleh
