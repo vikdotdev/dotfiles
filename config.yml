@@ -9,8 +9,8 @@ dotfiles_path:
 home_path:
   gobin: .local/bin
   gopath: .local/share/go
-  repos: repos
-  vendor: repos/vendor
-  dotfiles: repos/dotfiles
-  notes: docs/notes
-  bin: bin
+  repos: Repositories
+  vendor: Repositories/vendor
+  dotfiles: Repositories/dotfiles
+  notes: Documents/notes
+  bin: .local/bin

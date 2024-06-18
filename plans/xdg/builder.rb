@@ -7,27 +7,22 @@ def xdg_user_dir(name)
 end
 
 xdg_dir_map = {
-  "Documents" => "docs",
-  "Downloads" => "dls",
-  "Videos" => "vids",
-  "Pictures" => "pics",
-  "Desktop" => xdg_user_dir("DESKTOP"),
   "Music" => xdg_user_dir("MUSIC"),
   "Public" => xdg_user_dir("PUBLICSHARE"),
   "Templates" => xdg_user_dir("TEMPLATES")
 }
 
 ext_xdg_dirs = %w[
-  repos
-  books
-  pics/wallpapers
-  docs/notes
+  Repositories
+  Documents/books
+  Documents/notes
+  Pictures/wallpapers
 ]
 
 [
   *ext_xdg_dirs,
   *xdg_dir_map.values
-].map { |path| FileUtils.mkdir_p(home_file(path)) }
+].map { |path| FileUtils.mkdir_p(path) }
 
 xdg_dir_map.each_key do |path|
   next unless File.exist?(home_file(path))

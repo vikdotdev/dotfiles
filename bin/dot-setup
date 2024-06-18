@@ -9,8 +9,8 @@ export GEM_HOME=$HOME/.gem/ruby
   mkdir -p "$HOME/bin" "$HOME/.gem/ruby" &&
   ln -s $HOME/bin $HOME/.gem/ruby/
 
-mkdir -p ~/repos
-pushd ~/repos
+mkdir -p ~/Repositories
+pushd ~/Repositories
 [ ! -d dotfiles ] && git clone https://github.com/vikdotdev/dotfiles
 ./dotfiles/bin/dot install
 popd

@@ -67,12 +67,21 @@
     - youtube-dl
     - docker
     - docker-compose
+    - syncthing
 
 - name: Start docker daemon service
   become: yes
   ansible.builtin.systemd:
     name: docker
     enabled: yes
+    state: started
+
+- name: Start syncthing daemon service
+  become: yes
+  ansible.builtin.systemd:
+    name: syncthing
+    enabled: yes
+    scope: user
     state: started
 
 - name: Install redis packages
