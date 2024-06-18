@@ -13,13 +13,6 @@
 
 - name: Install core packages
   become: yes
-  state: absent
-  dnf:
-    name:
-    - gnome-terminal
-
-- name: Install core packages
-  become: yes
   dnf:
     name:
     - '@Multimedia'
@@ -69,6 +62,13 @@
     - docker-compose
     - syncthing
 
+- name: Remove default packages
+  become: yes
+  dnf:
+    state: absent
+    name:
+    - gnome-terminal
+
 - name: Start docker daemon service
   become: yes
   ansible.builtin.systemd:
@@ -77,7 +77,6 @@
     state: started
 
 - name: Start syncthing daemon service
-  become: yes
   ansible.builtin.systemd:
     name: syncthing
     enabled: yes
