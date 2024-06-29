@@ -16,6 +16,7 @@
   dnf:
     name:
     - '@Multimedia'
+    - vlc
     - libtool
     - autoconf
     - automake

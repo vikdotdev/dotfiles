@@ -41,7 +41,11 @@
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/docs/notes/")
+(setq org-directory "~/Documents/notes/org/0-inbox/")
+(setq org-agenda-files '("~/Documents/notes/org/0-inbox/"
+      "~/Documents/notes/org/1-projects/"
+      "~/Documents/notes/org/2-areas/"
+      "~/Documents/notes/org/3-resources/"))
 
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
