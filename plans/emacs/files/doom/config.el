@@ -85,6 +85,8 @@
 (remove-hook 'doom-first-buffer-hook #'smartparens-global-mode)
 
 (require 'asdf)
+;; This ensures Emacs has the correct paths to asdf shims and bin
+(asdf-enable)
 
 (defun dot-insert-timestamp ()
   (interactive)

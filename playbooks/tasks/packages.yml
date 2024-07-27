@@ -62,6 +62,7 @@
     - docker
     - docker-compose
     - syncthing
+    - direnv
 
 - name: Remove default packages
   become: yes

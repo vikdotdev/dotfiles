@@ -7,8 +7,6 @@ def xdg_user_dir(name)
 end
 
 xdg_dir_map = {
-  "Music" => xdg_user_dir("MUSIC"),
-  "Public" => xdg_user_dir("PUBLICSHARE"),
   "Templates" => xdg_user_dir("TEMPLATES")
 }
 

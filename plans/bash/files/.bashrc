@@ -80,3 +80,6 @@ unset command_not_found_handle
 
 . "$HOME/.asdf/asdf.sh"
 . "$HOME/.asdf/completions/asdf.bash"
+
+eval "$(direnv hook bash)"
+direnv allow "$HOME/.envrc"
