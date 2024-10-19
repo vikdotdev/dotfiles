@@ -97,3 +97,5 @@
 (map! :leader "g y" #'git-link)
 
 (map! :leader "TAB o" #'+workspace/other)
+
+(setq lsp-zig-zls-executable "~/.config/emacs/.local/etc/lsp/zig/zls")

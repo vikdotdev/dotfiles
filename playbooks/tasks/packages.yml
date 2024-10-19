@@ -63,6 +63,7 @@
     - docker-compose
     - syncthing
     - direnv
+    - zig
 
 - name: Remove default packages
   become: yes
