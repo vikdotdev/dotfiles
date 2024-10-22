@@ -85,12 +85,11 @@
 (remove-hook 'doom-first-buffer-hook #'smartparens-global-mode)
 
 (require 'asdf)
-;; This ensures Emacs has the correct paths to asdf shims and bin
 (asdf-enable)
 
 (defun dot-insert-timestamp ()
   (interactive)
-  (insert (format-time-string "%Y %b, %A %H:%M")))
+  (insert (format-time-string "%Y %b %d, %A %H:%M")))
 (map! :leader "i t" #'dot-insert-timestamp)
 
 (setq git-link-use-commit t)

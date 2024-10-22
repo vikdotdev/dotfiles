@@ -5,7 +5,7 @@
 [credential]
 	helper = /usr/libexec/git-core/git-credential-libsecret
 [alias]
-  resolve = "!f() { git diff --name-status --diff-filter=U | cut -f2 ; }; nvim `f`"
+  resolve = "!f() { git diff --name-status --diff-filter=U | cut -f2 ; }; emacs -nw `f`"
   reword = commit --amend
   ci = commit
   st = status

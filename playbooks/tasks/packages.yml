@@ -59,8 +59,6 @@
     - wezterm
     - yt-dlp
     - youtube-dl
-    - docker
-    - docker-compose
     - syncthing
     - direnv
     - zig

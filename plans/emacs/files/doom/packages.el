@@ -54,8 +54,3 @@
 
 (package! git-link
   :recipe (:host github :repo "sshaw/git-link"))
-
-;; (package! magit-delta
-;;   :recipe (:host github :repo "dandavison/magit-delta"))
-
-(package! auto-dark)
