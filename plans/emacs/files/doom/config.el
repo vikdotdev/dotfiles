@@ -21,9 +21,9 @@
 ;; See 'C-h v doom-font' for documentation and more examples of what they
 ;; accept. For example:
 ;;
-(setq doom-font (font-spec :family "Iosevka" :size 20 :weight 'normal))
+(setq doom-font (font-spec :family "Iosevka" :size 16 :weight 'normal))
 (setq doom-big-font (font-spec :family "Iosevka" :size 28 :weight 'normal))
-(setq doom-variable-pitch-font (font-spec :family "IosevkaEtoile" :size 20 :weight 'normal))
+(setq doom-variable-pitch-font (font-spec :family "IosevkaEtoile" :size 16 :weight 'normal))
 ;;
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
@@ -81,20 +81,29 @@
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
-;; remove auto-parens
+;; Remove auto-parens
 (remove-hook 'doom-first-buffer-hook #'smartparens-global-mode)
 
 (require 'asdf)
 (asdf-enable)
 
-(defun dot-insert-timestamp ()
-  (interactive)
-  (insert (format-time-string "%Y %b %d, %A %H:%M")))
-(map! :leader "i t" #'dot-insert-timestamp)
-
 (setq git-link-use-commit t)
-(map! :leader "g y" #'git-link)
+
+;; - `load!' for loading external *.el files relative to this one
+
+(load! "gptel")
+(load! "dot")
 
 (map! :leader "TAB o" #'+workspace/other)
+(map! :leader "i t" #'dot-insert-timestamp)
+(map! :leader "g y" #'git-link)
 
+;; LLM integration shortcuts
+(map! :leader "l l" #'gptel)
+(map! :leader "l m" #'gptel-menu)
+(map! :leader "l f" #'gptel-add-file)
+(map! :leader "l RET" #'gptel-send)
+
+;; Paths
 (setq lsp-zig-zls-executable "~/.config/emacs/.local/etc/lsp/zig/zls")
+

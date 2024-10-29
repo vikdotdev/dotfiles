@@ -54,3 +54,5 @@
 
 (package! git-link
   :recipe (:host github :repo "sshaw/git-link"))
+
+(package! gptel)

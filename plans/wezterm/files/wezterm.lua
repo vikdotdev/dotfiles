@@ -6,6 +6,7 @@ local config = wezterm.config_builder()
 config.enable_wayland = false
 config.disable_default_key_bindings = true
 config.mouse_wheel_scrolls_tabs = false
+config.scrollback_lines = 100000
 config.use_fancy_tab_bar = false
 config.status_update_interval = 100
 config.show_tab_index_in_tab_bar = true
