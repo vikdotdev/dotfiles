@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=My Emacs
+Comment=Emacs with custom configuration
+Exec=emacs --with-profile=my
+Icon=emacs
+Terminal=false
+Categories=Development;Editor;

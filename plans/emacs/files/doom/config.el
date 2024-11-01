@@ -87,22 +87,10 @@
 (require 'asdf)
 (asdf-enable)
 
-(setq git-link-use-commit t)
-
 ;; - `load!' for loading external *.el files relative to this one
-
 (load! "gptel")
+(load! "git")
 (load! "dot")
-
-(map! :leader "TAB o" #'+workspace/other)
-(map! :leader "i t" #'dot-insert-timestamp)
-(map! :leader "g y" #'git-link)
-
-;; LLM integration shortcuts
-(map! :leader "l l" #'gptel)
-(map! :leader "l m" #'gptel-menu)
-(map! :leader "l f" #'gptel-add-file)
-(map! :leader "l RET" #'gptel-send)
 
 ;; Paths
 (setq lsp-zig-zls-executable "~/.config/emacs/.local/etc/lsp/zig/zls")
