@@ -9,5 +9,5 @@ end
 absolute_file_path = home_file(".emacs-profiles.el")
 ensure_write_file(absolute_file_path, read_file(".emacs-profiles.el"))
 
-absolute_file_path = home_file("~/.local/share/applications/myemacs.desktop")
+absolute_file_path = home_file(".local/share/applications/myemacs.desktop")
 ensure_write_file(absolute_file_path, read_file("myemacs.desktop"))
