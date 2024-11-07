@@ -90,7 +90,14 @@
 ;; - `load!' for loading external *.el files relative to this one
 (load! "gptel")
 (load! "git")
-(load! "dot")
+
+(defun dot-insert-timestamp ()
+  (interactive)
+  (insert (format-time-string "%Y %b %d, %A %H:%M")))
+
+(map! :leader "i t" #'dot-insert-timestamp)
+
+(map! :leader "TAB o" #'+workspace/other)
 
 ;; Paths
 (setq lsp-zig-zls-executable "~/.config/emacs/.local/etc/lsp/zig/zls")
