@@ -1,4 +1,4 @@
-#+title: My Emacs configuration
+:#+title: My Emacs configuration
 #+STARTUP: overview
 
 :PROPERTIES:
@@ -17,6 +17,23 @@
 * Wiki
 ** Prog mode
 Prog mode is a basic major mode for buffers containing programming language source code. All of the major modes for programming languages that are built into Emacs are derived from it.
+
+** Org mode
+   Once point is on heading:
+   - =Tab= cycles local visibility.
+   - =S-Tab= cycles global visibility.
+
+   Once point is in a bulleted-list:
+   - =Tab= toggles local visibility of the list item if it has nested items
+
+   For both:
+   - =Alt-Right= or =Alt-Left= promotes or demotes an entry (indents or removes indentation)
+   - =Alt-Up= and =Alt-Down= moves entry up and down
+
+*** Refiling
+    asdf
+
+
 * TODO Packages to look at
 - https://github.com/cyrus-and/zoom
 * Default shortcuts
@@ -215,6 +232,18 @@ Similar default shortcut is =M-^=, but it works in the other direction.
 #+end_src
 * Keybindings
 * Navigation
+  #+begin_src emacs-lisp
+	    (unless (package-installed-p 'devil)
+	  (package-install 'devil))
+	;;;(setq devil-lighter " \U0001F608")	
+
+    ;; (setq devil-prompt "\U0001F608 %t")
+	(global-devil-mode)
+	
+    (global-set-key (kbd "C-;") 'global-devil-mode)
+(devil-set-key (kbd ";"))
+    (assoc-delete-all "%k SPC" "%k RET" "%k <return>" devil-special-keys)
+  #+end_src
 * Appearance
 ** Hide unnecessary things
 #+begin_src emacs-lisp
@@ -226,13 +255,19 @@ Similar default shortcut is =M-^=, but it works in the other direction.
 #+end_src
 ** Faces
 #+begin_src emacs-lisp
-(set-face-attribute 'default nil :font "Iosevka" :height 160)
+  (set-face-attribute 'default nil :font "Iosevka" :height 120)
+(setq doom-font (font-spec :family "Iosevka" :size 16 :weight 'normal))
+(setq doom-big-font (font-spec :family "Iosevka" :size 28 :weight 'normal))
+(setq doom-variable-pitch-font (font-spec :family "IosevkaEtoile" :size 16 :weight 'normal))
+
 #+end_src
 ** Theme, spacing and colors
 #+begin_src emacs-lisp
-(load-theme 'wombat)
-;; (load-theme 'dichromacy)
-(set-fringe-mode 10)
+
+
+    (load-theme 'wombat)
+    ;; (load-theme 'dichromacy)
+    (set-fringe-mode 10)
 #+end_src
 
 * Menus and search
@@ -241,24 +276,74 @@ Similar default shortcut is =M-^=, but it works in the other direction.
 (recentf-mode 1)
 #+end_src
 * Org
+TODO customize org-directory variable, to store attachments in one place
 #+begin_src emacs-lisp
-(custom-set-faces
- '(org-level-1 ((t (:inherit outline-1 :height 1.4 :weight bold))))
- '(org-level-2 ((t (:inherit outline-2 :height 1.3 :weight bold))))
- '(org-level-3 ((t (:inherit outline-3 :height 1.2))))
- '(org-level-4 ((t (:inherit outline-4 :height 1.1))))
- '(org-level-5 ((t (:inherit outline-5 :height 1.0)))))
+  (setq org-directory "~/Documents/notes/org/0-inbox/")
+  (setq org-agenda-files '("~/Documents/notes/org/0-inbox/"
+	"~/Documents/notes/org/1-projects/"
+	"~/Documents/notes/org/2-areas/"
+	"~/Documents/notes/org/3-resources/"))
+  (setq org-adapt-indentation t)
+    (delete-selection-mode) ;; TODO move this
+    ;; (visual-line-mode) ;; TODO do in org documents only
+    (add-hook 'org-mode-hook 'visual-line-mode)
+    (setq org-hide-emphasis-markers t)
 
-(use-package org-superstar
-  :ensure t
-  :hook (org-mode . org-superstar-mode)
-  :config
-  (setq org-superstar-headline-bullets-list '("◉" "○" "✸" "✿" "■")
-        org-superstar-item-bullet-alist '((?+ . ?•) (?- . ?•))))
+  #+end_src
+  _test_ another thing df*
 
-(add-hook 'org-mode-hook #'visual-line-mode)
-(add-hook 'org-mode-hook #'org-indent-mode)
-(setq org-src-fontify-natively t)
+https://github.com/abo-abo/org-download TODO
+https://github.com/rexim/org-cliplink
+https://github.com/magit/orgit maybe
+https://github.com/integral-dw/org-superstar-mode def
+#+begin_src emacs-lisp
+
+      ;; Ensure org-appear package is loaded (install if needed)
+
+    ;; Enable all org-appear options
+    (setq org-appear-autoemphasis t        ;; Toggle emphasis markers
+	  org-appear-autolinks t           ;; Toggle links
+	  org-appear-autosubmarkers t      ;; Toggle subscript/superscript markers
+	  org-appear-autoentities t        ;; Toggle Org entities
+	  org-appear-autokeywords t        ;; Toggle keywords in org-hidden-keywords
+	  org-appear-inside-latex t        ;; Toggle LaTeX fragment elements
+	  org-appear-delay 0.5             ;; Delay before toggling (set to preferred delay)
+	  org-appear-trigger 'always)      ;; Trigger setting (e.g., on hover or always)
+    (use-package org-appear ; better markup edit
+    :hook (org-mode . org-appear-mode))
+
+  
+  (use-package org-superstar ; "prettier" bullets
+    :hook (org-mode . org-superstar-mode)
+    :config
+    ;; Make leading stars truly invisible, by rendering them as spaces!
+    (setq org-superstar-leading-bullet ?\s
+	  org-superstar-leading-fallback ?\s
+	  org-hide-leading-stars nil
+	  org-superstar-todo-bullet-alist
+	  '(("TODO" . 9744)
+	    ("[ ]"  . 9744)
+	    ("DONE" . 9745)
+	    ("[X]"  . 9745))))
+
+  
+      ;; (custom-set-faces
+      ;;  '(org-level-1 ((t (:inherit outline-1 :height 1.4 :weight bold))))
+      ;;  '(org-level-2 ((t (:inherit outline-2 :height 1.3 :weight bold))))
+      ;;  '(org-level-3 ((t (:inherit outline-3 :height 1.2))))
+      ;;  '(org-level-4 ((t (:inherit outline-4 :height 1.1))))
+      ;;  '(org-level-5 ((t (:inherit outline-5 :height 1.0)))))
+
+      ;; (use-package org-superstar
+      ;;   :ensure t
+      ;;   :hook (org-mode . org-superstar-mode)
+      ;;   :config
+      ;;   (setq org-superstar-headline-bullets-list '("◉" "○" "✸" "✿" "■")
+      ;;         org-superstar-item-bullet-alist '((?+ . ?•) (?- . ?•))))
+
+      ;; (add-hook 'org-mode-hook #'visual-line-mode)
+      ;; (add-hook 'org-mode-hook #'org-indent-mode)
+      ;; (setq org-src-fontify-natively t)
 #+end_src
 * Coding
 ** Word symbols
