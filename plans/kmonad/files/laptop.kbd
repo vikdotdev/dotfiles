@@ -50,7 +50,7 @@
   _    _    _    _                                  _    _    _
   _    _    _    _    _    _    _    _    _    _    _    _    _    _
   _    @hba @hfo @tba @tfo _    _    _    _    _    up   _    _    _
-  _    _    bspc del  rght ret  _    _    _    _    _    _         _
+  _    _    _    bspc rght ret  _    _    _    _    _    _         _
   _    _    _    _    _    left down @cst _    _    _              _
   _    _    _              _              _    _    _    _    _    _
                                                          _    _    _
