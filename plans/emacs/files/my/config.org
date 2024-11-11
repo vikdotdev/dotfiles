@@ -6,6 +6,8 @@
 
 * Cheat-sheet
 ** TODO Getting help
+** Window management
+Pressing =ESC= 3 times will maximize current window, but loses any previous layout. Use custom window maximization function `vik/window-toggle-maximize-layout'.
 ** Looking up definitions
 =C-h .= to see the signature of class/method/function at point.
 =M-.= to go to definition.
@@ -161,7 +163,42 @@ NOTE: This conflicts with some org-mode keybinds for inserting headings. Current
 (global-set-key (kbd "C-<return>") 'vik/open-line-below)
 (global-set-key (kbd "S-<return>") 'vik/open-line-above)
 #+end_src
+** Multiple cursors
+#+begin_src emacs-lisp
+(use-package multiple-cursors
+  :ensure t
+  :config
+  (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+  (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
+#+end_src
 * Navigation
+** Saving last point location
+#+begin_src emacs-lisp
+(save-place-mode 1)
+#+end_src
+** Window management
+Toggles between current layout and maximized window that is currently selected.
+#+begin_src emacs-lisp
+(defvar vik/window-layout-store
+  "State of current window maximization.")
+
+(setq vik/window-layout-store nil)
+(defun vik/window-toggle-maximize-layout ()
+  "Zoom current window so it takes the whole frame. The next time the function is called, the layout before zoom is restored."
+  (interactive)
+  (if (eq nil vik/window-layout-store)
+      (progn
+        (setq vik/window-layout-store (current-window-configuration))
+        (delete-other-windows)
+        (message "Saved window configuration"))
+    (set-window-configuration vik/window-layout-store)
+    (setq vik/window-layout-store nil)
+    (message "Restored window configuration")))
+
+(global-set-key (kbd "C-x m") 'vik/window-toggle-maximize-layout)
+#+end_src
 ** Devil mode
 #+begin_src emacs-lisp
 (unless (package-installed-p 'devil)
