@@ -75,7 +75,7 @@ named arguments:
       (package-vc-install url iname rev backend))))
 #+end_src
 
-* Packages & topics to look at
+* TODO Packages & topics to look at
 - https://github.com/cyrus-and/zoom
 - https://github.com/rexim/org-cliplink
 - https://github.com/justbur/emacs-which-key
@@ -86,6 +86,9 @@ named arguments:
 - vertico & marginalia
 - all the icons
 - embark
+- https://www.reddit.com/r/emacs/comments/hzhkk1/what_simple_key_remapping_has_transformed_your/
+- https://www.reddit.com/r/emacs/comments/nr3cxv/what_are_your_very_useful_emacs_key_bindings_fast/
+- https://stackoverflow.com/questions/22231431/sort-a-mixed-list-of-headings-in-org-mode
 
 * Repositories
 #+begin_src emacs-lisp
