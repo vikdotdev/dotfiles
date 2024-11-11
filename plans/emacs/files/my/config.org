@@ -48,7 +48,10 @@ named arguments:
 - https://github.com/justbur/emacs-which-key
 - https://github.com/magnars/multiple-cursors.el
 - https://github.com/shytikov/pragmasevka
+- https://github.com/bmag/imenu-list
+- https://github.com/emacsorphanage/git-gutter
 - vertico & marginalia
+- all the icons
 - embark
 
 * Repositories
@@ -101,13 +104,21 @@ Pixel scroll precision mode only works for mouse and touchpad.
 
   (global-devil-mode)
 
-  (global-set-key (kbd "C-;") 'global-devil-mode)
+  (global-set-key (kbd "C-x C-;") 'global-devil-mode)
   (devil-set-key (kbd ";"))
 
   (dolist (key '("%k SPC" "%k RET" "%k <return>"))
     (assoc-delete-all key devil-special-keys))
 #+end_src
 * Appearance
+** Tabs
+#+begin_src emacs-lisp
+(setq tab-bar-tab-hints t)      ; Show tab numbers
+(setq tab-bar-close-button-show nil) ; Hide close button for simplicity
+(setq tab-bar-new-tab-choice "*scratch*") ; New tab starts on *scratch* buffer
+(setq tab-bar-tab-name-truncated-max 50) ; Limit tab name length
+(setq tab-bar-format '(tab-bar-format-tabs tab-bar-separator))
+#+end_src
 ** Point
 #+begin_src emacs-lisp
   (blink-cursor-mode 0)
@@ -196,6 +207,7 @@ Code auto-completion:
                          "~/Documents/notes/org/3-resources/"))
 (setq org-adapt-indentation t)
 (setq org-hide-emphasis-markers t)
+(setq org-edit-src-content-indentation 0)
 
 ;; fixes the issue or child block face bleeding out into the parent heading
 ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=52587#49
@@ -410,6 +422,18 @@ Sometimes when point ends up positioned after heading ellipsis, you cannot `org-
       (vik/syncthing-merge-conflict-files file))))
 #+end_src
 * Coding
+** Comments
+#+begin_src emacs-lisp
+(defun vik/comment-line ()
+  "Comment or uncomment the current line without moving the cursor down."
+  (interactive)
+  (save-excursion
+    (beginning-of-line)
+    (set-mark (line-end-position))
+    (comment-or-uncomment-region (point) (mark))))
+
+(global-set-key (kbd "C-;") 'vik/comment-line)
+#+end_src
 ** Word symbols
 Camel-cased symbols will be recognized as words.
 #+begin_src emacs-lisp
