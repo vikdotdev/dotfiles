@@ -89,6 +89,7 @@ named arguments:
 - https://www.reddit.com/r/emacs/comments/hzhkk1/what_simple_key_remapping_has_transformed_your/
 - https://www.reddit.com/r/emacs/comments/nr3cxv/what_are_your_very_useful_emacs_key_bindings_fast/
 - https://stackoverflow.com/questions/22231431/sort-a-mixed-list-of-headings-in-org-mode
+- https://github.com/tumashu/posframe for window hints
 
 * Repositories
 #+begin_src emacs-lisp
@@ -184,12 +185,36 @@ NOTE: This conflicts with some org-mode keybinds for inserting headings. Current
   (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
   (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
 #+end_src
-** TODO Snippers
+** TODO Snippets
 Think of a good keymap for this.
 #+begin_src emacs-lisp
 (defun vik/insert-timestamp ()
   (interactive)
   (insert (format-time-string "%Y %b %d, %A %H:%M")))
+#+end_src
+** Searching
+#+begin_src emacs-lisp
+(defun vik/select-symbol-under-point ()
+  "Select the entire symbol under the cursor, including underscores."
+  (interactive)
+  (let ((bounds (bounds-of-thing-at-point 'symbol)))
+    (when bounds
+      (goto-char (car bounds))
+      (set-mark (cdr bounds)))))
+
+(defun vik/select-and-search-symbol-under-point ()
+  "Select the entire symbol under the cursor, including underscores, and start an incremental search for it."
+  (interactive)
+  ;; First, call the selection function
+  (vik/select-symbol-under-point)
+  ;; Then, run `isearch-forward` with the selected region
+  (when (use-region-p)  ; Ensure there is a selection
+    (let ((symbol (buffer-substring-no-properties (region-beginning) (region-end))))
+      (deactivate-mark)  ; Clear the selection after extracting the text
+      (isearch-mode t)   ; Start the search
+      (isearch-yank-string symbol))))  ; Input the symbol into the search
+
+(global-set-key (kbd "C-x *") 'vik/select-and-search-symbol-under-point)
 #+end_src
 * Navigation
 ** Saving last point location
@@ -216,6 +241,7 @@ Toggles between current layout and maximized window that is currently selected.
     (message "Restored window configuration")))
 
 (global-set-key (kbd "C-x m") 'vik/window-toggle-maximize-layout)
+(global-set-key (kbd "M-o") 'other-window)
 #+end_src
 ** Devil mode
 #+begin_src emacs-lisp
@@ -230,9 +256,13 @@ Toggles between current layout and maximized window that is currently selected.
 (dolist (key '("%k SPC" "%k RET" "%k <return>"))
   (assoc-delete-all key devil-special-keys))
 #+end_src
+** Mouse
+#+begin_src emacs-lisp
+(setq mouse-autoselect-window t)
+#+end_src
 ** TODO Jumping
 Free =C-i= and bind it to /jump list jump backwards/. Together with =C-o= to /jump forward/, similar to vim keybindings. This does not work currently, not sure why.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 
 (define-key input-decode-map (kbd "C-i") (kbd "H-i"))
 (use-package better-jumper
@@ -252,16 +282,18 @@ Free =C-i= and bind it to /jump list jump backwards/. Together with =C-o= to /ju
 #+begin_src emacs-lisp
 (blink-cursor-mode 0)
 #+end_src
-
+Enable hl-line for specific modes
 #+begin_src elisp
-(defun vik/enable-hl-line ()
-  "Enable hl-line-mode for all allowed mode types."
-  (unless (derived-mode-p 'vterm-mode)
-    (hl-line-mode 1)))
-
-(add-hook 'text-mode-hook 'vik/enable-hl-line)
-(add-hook 'prog-mode-hook 'vik/enable-hl-line)
+(setq hl-line-sticky-flag nil)
+(add-hook 'text-mode-hook 'hl-line-mode)
+(add-hook 'prog-mode-hook 'hl-line-mode)
 #+end_src
+
+Ensures end line in the file. Useful to correctly display hl-line on the last line
+#+begin_src elisp
+(setq require-final-newline t)
+#+end_src
+
 ** Hide unnecessary things
 #+begin_src emacs-lisp
 (scroll-bar-mode -1)
@@ -274,18 +306,30 @@ Free =C-i= and bind it to /jump list jump backwards/. Together with =C-o= to /ju
   (invert-face 'mode-line)
   (run-with-timer 0.1 nil #'invert-face 'mode-line))
 #+end_src
-** TODO Faces
+** Faces
 Toggle for the whole frame to change font size. =custom-set-faces= causes flicker when called, but ensures there's no weird behavior when zooming in and out with =C-x C-+= for example.
 
+Different machines get different values.
 #+begin_src emacs-lisp
-(defvar vik/font-size-default 148
-  "Default font size in 1/10 pt (e.g., 148 for 14.8 pt).")
+(cond
+ ((string= (getenv "DOT_PROFILE") "1") 120)
+ ((string= (getenv "DOT_PROFILE") "2") 150)
+ ((string= (getenv "DOT_PROFILE") "3") 150)
+ (t 120))
+#+end_src
 
-(defvar vik/font-size-large 222
-  "Large font size in 1/10 pt (e.g., 222 for 22.2 pt).")
+#+NAME: big-font-size
+#+begin_src emacs-lisp
+(cond
+ ((string= (getenv "DOT_PROFILE") "1") 150)
+ ((string= (getenv "DOT_PROFILE") "2") 180)
+ ((string= (getenv "DOT_PROFILE") "3") 180)
+ (t 150))
+#+end_src
 
-(defvar vik/current-font-size 'default
-  "Tracks the current font size state.")
+#+begin_src emacs-lisp
+(setq vik/presentation-mode-flag nil
+      vik/current-font-size <<default-font-size>>)
 
 (defun vik/set-global-font-size (size)
   "Set the global font size by modifying the `default` face."
@@ -294,25 +338,20 @@ Toggle for the whole frame to change font size. =custom-set-faces= causes flicke
    `(fixed-pitch ((t (:family "Iosevka" :height ,size))))
    `(variable-pitch ((t (:family "Iosevka Etoile" :height ,size))))))
 
-;; Initialize font size
-(vik/set-global-font-size vik/font-size-default)
-
-(defun vik/toggle-font-size ()
-  "Toggle font size between `vik/font-size-default` and `vik/font-size-large` across all buffers."
+(defun vik/toggle-presentation-mode ()
+  "Toggle presentation mode. It makes the UI bigger."
   (interactive)
-  (if (eq vik/current-font-size 'default)
-      (progn
-        (vik/set-global-font-size vik/font-size-large)
-        (setq vik/current-font-size 'large)
-        (message "Font size set to large"))
-    (progn
-      (vik/set-global-font-size vik/font-size-default)
-      (setq vik/current-font-size 'default)
-      (message "Font size set to default"))))
+  (let ((new-size (if (vik/presentation-mode-flag)
+                     big-font-size ;; larger size when toggling from default
+                   default-font-size))) ;; revert to default or set from profile
+    (vik/set-global-font-size new-size)
+    (setq vik/current-font-size (if (vik/presentation-mode-flag) <<big-font-size>> <<default-font-size>>))
+    (message "Font size set to %d" new-size)))
 
-;; Bind the toggle function to a key (e.g., F6)
+(vik/set-global-font-size vik/current-font-size)
 (global-set-key (kbd "<f6>") 'vik/toggle-font-size)
 #+end_src
+
 ** Theme, spacing and colors
 #+begin_src emacs-lisp
 (use-package modus-themes
@@ -353,8 +392,9 @@ Toggle between light and dark themes with =F5= key.
   (recentf-mode 1)
 #+end_src
 
-Code auto-completion:
-#+begin_src emacs-lisp
+** TODO In buffer auto-completion.
+It's causes emacs to crash it seems.
+#+begin_src emacs-lisp :tangle no
   (use-package corfu
     :ensure t
     :custom
@@ -715,6 +755,14 @@ Keybinds:
 #+begin_src emacs-lisp
 (unless (package-installed-p 'magit)
 (package-install 'magit))
+#+end_src
+** TODO Links
+Add shortcut
+#+begin_src emacs-lisp
+(use-package git-link
+  :init (vik/vc-install :host "github.com" :repo "sshaw/git-link")
+  :config
+  (setq git-link-use-commit t))
 #+end_src
 * KMonad
 #+begin_src emacs-lisp
