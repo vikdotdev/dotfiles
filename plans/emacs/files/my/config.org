@@ -78,9 +78,6 @@ named arguments:
 * TODO Packages & topics to look at
 - https://github.com/cyrus-and/zoom
 - https://github.com/rexim/org-cliplink
-- https://github.com/justbur/emacs-which-key
-- https://github.com/magnars/multiple-cursors.el
-- https://github.com/shytikov/pragmasevka
 - https://github.com/bmag/imenu-list
 - https://github.com/emacsorphanage/git-gutter
 - vertico & marginalia
@@ -129,6 +126,13 @@ named arguments:
 (require 'keycast)
 
 (keycast-tab-bar-mode 1)
+#+end_src
+** Which key
+#+begin_src elisp
+(use-package which-key
+  :ensure t
+  :config
+  (which-key-mode))
 #+end_src
 * In-buffer movement & editing
 ** History navigation
@@ -310,26 +314,22 @@ Ensures end line in the file. Useful to correctly display hl-line on the last li
 Toggle for the whole frame to change font size. =custom-set-faces= causes flicker when called, but ensures there's no weird behavior when zooming in and out with =C-x C-+= for example.
 
 Different machines get different values.
-#+begin_src emacs-lisp
-(cond
- ((string= (getenv "DOT_PROFILE") "1") 120)
- ((string= (getenv "DOT_PROFILE") "2") 150)
- ((string= (getenv "DOT_PROFILE") "3") 150)
- (t 120))
-#+end_src
+#+BEGIN_SRC emacs-lisp
+(defvar vik/big-font-size
+  (cond
+   ((string= (getenv "DOT_PROFILE") "1") 190)
+   ((string= (getenv "DOT_PROFILE") "2") 170)
+   ((string= (getenv "DOT_PROFILE") "3") 170)
+   (t 120)))
 
-#+NAME: big-font-size
-#+begin_src emacs-lisp
-(cond
- ((string= (getenv "DOT_PROFILE") "1") 150)
- ((string= (getenv "DOT_PROFILE") "2") 180)
- ((string= (getenv "DOT_PROFILE") "3") 180)
- (t 150))
-#+end_src
+(defvar vik/default-font-size
+  (cond
+   ((string= (getenv "DOT_PROFILE") "1") 120)
+   ((string= (getenv "DOT_PROFILE") "2") 150)
+   ((string= (getenv "DOT_PROFILE") "3") 150)
+   (t 150)))
 
-#+begin_src emacs-lisp
-(setq vik/presentation-mode-flag nil
-      vik/current-font-size <<default-font-size>>)
+(setq vik/presentation-mode-flag nil)
 
 (defun vik/set-global-font-size (size)
   "Set the global font size by modifying the `default` face."
@@ -341,16 +341,16 @@ Different machines get different values.
 (defun vik/toggle-presentation-mode ()
   "Toggle presentation mode. It makes the UI bigger."
   (interactive)
-  (let ((new-size (if (vik/presentation-mode-flag)
-                     big-font-size ;; larger size when toggling from default
-                   default-font-size))) ;; revert to default or set from profile
+  (setq vik/presentation-mode-flag (not vik/presentation-mode-flag))
+  (let ((new-size (if vik/presentation-mode-flag
+                      vik/big-font-size
+                    vik/default-font-size)))
     (vik/set-global-font-size new-size)
-    (setq vik/current-font-size (if (vik/presentation-mode-flag) <<big-font-size>> <<default-font-size>>))
     (message "Font size set to %d" new-size)))
 
-(vik/set-global-font-size vik/current-font-size)
-(global-set-key (kbd "<f6>") 'vik/toggle-font-size)
-#+end_src
+(vik/set-global-font-size vik/default-font-size)
+(global-set-key (kbd "<f6>") 'vik/toggle-presentation-mode)
+#+END_SRC
 
 ** Theme, spacing and colors
 #+begin_src emacs-lisp
@@ -751,7 +751,8 @@ Keybinds:
 #+begin_src emacs-lisp
 #+end_src
 
-* Magit
+* Version control
+** Magit
 #+begin_src emacs-lisp
 (unless (package-installed-p 'magit)
 (package-install 'magit))
@@ -763,6 +764,32 @@ Add shortcut
   :init (vik/vc-install :host "github.com" :repo "sshaw/git-link")
   :config
   (setq git-link-use-commit t))
+#+end_src
+** Gutter
+#+begin_src elisp
+(use-package git-gutter
+  :ensure t
+  :config
+  (custom-set-variables
+   '(git-gutter:visual-line t))
+  (custom-set-variables
+   '(git-gutter:hide-gutter t))
+
+  (custom-set-variables
+   '(git-gutter:modified-sign "┃")
+   '(git-gutter:added-sign "┃")
+   '(git-gutter:deleted-sign "┃"))
+
+  (set-face-background 'git-gutter:modified nil)
+  (set-face-background 'git-gutter:added nil)
+  (set-face-background 'git-gutter:deleted nil)
+
+  (set-face-foreground 'git-gutter:modified "yellow")
+  (set-face-foreground 'git-gutter:added "green")
+  (set-face-foreground 'git-gutter:deleted "red")
+
+  (add-hook 'prog-mode-hook 'git-gutter-mode)
+  (add-hook 'text-mode-hook 'git-gutter-mode))
 #+end_src
 * KMonad
 #+begin_src emacs-lisp
