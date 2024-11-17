@@ -79,7 +79,8 @@ named arguments:
 - https://github.com/cyrus-and/zoom
 - https://github.com/rexim/org-cliplink
 - https://github.com/bmag/imenu-list
-- https://github.com/emacsorphanage/git-gutter
+- https://magit.vc/manual/forge/Setup-for-Githubcom.html
+- https://github.com/natrys/whisper.el
 - vertico & marginalia
 - all the icons
 - embark
@@ -158,6 +159,7 @@ Pixel scroll precision mode only works for mouse and touchpad.
   :config
   (setq
    golden-ratio-scroll-recenter nil
+   golden-ratio-scroll-screen-ratio 1.5
    golden-ratio-scroll-highlight-flag 'before))
 #+end_src
 ** TODO Inserting newlines
@@ -715,6 +717,13 @@ TODO install zls manually and change this path.
 (add-to-list 'auto-mode-alist '("\\.rb\\'" . ruby-ts-mode))
 (add-to-list 'auto-mode-alist '("\\Gemfile\\'" . ruby-ts-mode))
 (add-to-list 'auto-mode-alist '("\\Rakefile\\'" . ruby-ts-mode))
+#+end_src
+** SQL
+#+begin_src elisp
+(use-package sqlformat
+  :ensure t
+  :config
+  (setq sqlformat-command 'sqlformat))
 #+end_src
 * TODO Terminal emulator
 #+begin_src emacs-lisp
