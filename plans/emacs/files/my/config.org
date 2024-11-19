@@ -136,23 +136,36 @@ named arguments:
   (which-key-mode))
 #+end_src
 * Back-ups
+Store lockfiles and backups outside:
 #+begin_src elisp
-(setq backup-directory-alist `(("." . "~/.local/share/emacs")))
+(setq backup-directory-alist '(("." . "~/.local/share/emacs")))
 (setq backup-by-copying t)
 (setq delete-old-versions t
   kept-new-versions 6
   kept-old-versions 2
   version-control t)
+;; Store lock files in the same directory
+(setq lock-file-name-transforms
+      `((".*" ,(concat "~/.local/share/emacs" "/lockfiles/\\1") t)))
 #+end_src
+
 * In-buffer movement & editing
 ** History navigation
 #+begin_src emacs-lisp
 (use-package undo-tree
   :ensure t
   :init
-  (global-undo-tree-mode)
+  (global-undo-tree-mode) ;; Enable undo-tree globally
   :config
-  (global-set-key (kbd "C-\\") 'undo-tree-redo))
+  ;; Set undo-tree persistent history directory
+  (setq undo-tree-history-directory-alist
+        '(("." . "~/.local/share/emacs/undo-tree")))
+  (setq undo-tree-auto-save-history t) ;; Enable saving history to disk
+
+  ;; Optional: Customize undo-tree keybindings
+  (global-set-key (kbd "C-\\") 'undo-tree-redo) ;; Redo keybinding
+  (setq undo-tree-visualizer-timestamps t) ;; Show timestamps in visualizer
+  (setq undo-tree-visualizer-diff t)) ;; Show diffs in visualizer
 #+end_src
 ** Scrolling
 Pixel scroll precision mode only works for mouse and touchpad.
