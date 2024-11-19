@@ -765,7 +765,8 @@ Custom functions for opening the terminal:
       (tab-bar-new-tab))
     ;; Set the default directory and open a new vterm
     (let ((default-directory dir)) ;; Temporarily bind default-directory for vterm
-      (vterm))))
+      (let ((current-prefix-arg '(4))) ;; Simulates C-u
+	(call-interactively #'vterm)))))
 
 (defun vik/vterm-in-current-window ()
   "Open a new vterm in the current window."
