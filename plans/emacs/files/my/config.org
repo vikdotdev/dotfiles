@@ -410,6 +410,10 @@ Toggle between light and dark themes with =F5= key.
 #+begin_src emacs-lisp
 (global-display-line-numbers-mode 1)
 #+end_src
+** Modeline
+#+begin_src elisp
+(setq column-number-mode t)
+#+end_src
 * Menus and search
 #+begin_src emacs-lisp
   (fido-vertical-mode)
@@ -633,6 +637,13 @@ Sometimes when point ends up positioned after heading ellipsis, you cannot `org-
     (when (vik/syncthing-find-conflict-files file)
       (vik/syncthing-merge-conflict-files file))))
 #+end_src
+** Latex
+(setq org-toggle-latex-fragment t)
+(setq org-preview-latex-default-process 'imagemagick)
+(setq org-format-latex-options
+      (plist-put org-format-latex-options :scale 1.5))
+(setq org-latex-preview-debug t)
+#+end_src
 * LLMs
 #+begin_src emacs-lisp
 (require 'auth-source)
@@ -667,10 +678,16 @@ Attaches eglot to every programming language buffer:
 (add-hook 'prog-mode-hook 'eglot-ensure)
 #+end_src
 
+TODO bind =eglot-inlay-hints-mode= to something:
+#+begin_src elisp
+
+#+end_src
+
 ** Documentation
 Use =C-h .= to look up documentation of thing at point.
 #+begin_src emacs-lisp
 (global-eldoc-mode 1)
+(setq eldoc-echo-area-use-multiline-p nil)
 #+end_src
 ** Basic code navigation with =dumb-jump=
 Attaches dumb-jump as xref back-end:
