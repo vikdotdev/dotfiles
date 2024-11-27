@@ -81,6 +81,7 @@ named arguments:
 - https://github.com/bmag/imenu-list
 - https://magit.vc/manual/forge/Setup-for-Githubcom.html
 - https://github.com/natrys/whisper.el
+- https://github.com/sshaw/copy-as-format
 - vertico & marginalia
 - all the icons
 - embark
@@ -637,12 +638,25 @@ Sometimes when point ends up positioned after heading ellipsis, you cannot `org-
     (when (vik/syncthing-find-conflict-files file)
       (vik/syncthing-merge-conflict-files file))))
 #+end_src
-** Latex
+
+** TODO Latex
+Make it respect font size better when zooming in and out.
+#+begin_src elisp
 (setq org-toggle-latex-fragment t)
 (setq org-preview-latex-default-process 'imagemagick)
 (setq org-format-latex-options
       (plist-put org-format-latex-options :scale 1.5))
 (setq org-latex-preview-debug t)
+#+end_src
+
+** Links
+#+begin_src elisp
+(defun vik/org-remove-link-url ()
+  "Replace an Org link at point with its description, removing the URL."
+  (interactive)
+  (when (org-in-regexp org-link-bracket-re 1)
+    (let ((desc (or (match-string 2) "")))
+      (replace-match desc t t))))
 #+end_src
 * LLMs
 #+begin_src emacs-lisp
