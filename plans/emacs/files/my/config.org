@@ -778,6 +778,18 @@ TODO install zls manually and change this path.
   :config
   (setq sqlformat-command 'sqlformat))
 #+end_src
+** Javascript/Typescript
+*** Treesitter
+Not sure if this works yet
+#+begin_src elisp
+(with-eval-after-load 'treesit
+  (add-hook 'typescript-ts-mode-hook #'tree-sitter-mode)
+  (add-hook 'tsx-ts-mode-hook #'tree-sitter-mode)
+
+  ;; Enable Tree-sitter-based syntax highlighting
+  (add-hook 'typescript-ts-mode-hook #'tree-sitter-hl-mode)
+  (add-hook 'tsx-ts-mode-hook #'tree-sitter-hl-mode))
+#+end_src
 * TODO Terminal emulator
 #+begin_src emacs-lisp
 (use-package vterm
