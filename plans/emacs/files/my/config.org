@@ -642,10 +642,19 @@ Sometimes when point ends up positioned after heading ellipsis, you cannot `org-
 ** TODO Latex
 Make it respect font size better when zooming in and out.
 #+begin_src elisp
-(setq org-toggle-latex-fragment t)
 (setq org-preview-latex-default-process 'imagemagick)
+(setq org-preview-latex-process-alist
+      '((imagemagick :programs ("latex" "convert")
+                     :description "imagemagick"
+                     :message "you need to install the programs: latex and imagemagick."
+                     :image-input-type "dvi"
+                     :image-output-type "png"
+                     :latex-compiler ("latex -interaction nonstopmode -output-directory %o %f")
+                     :image-converter ("convert -density 300 -trim -quality 100 %f %O"))))
+
 (setq org-format-latex-options
-      (plist-put org-format-latex-options :scale 1.5))
+      (plist-put org-format-latex-options :scale 1.40))
+
 (setq org-latex-preview-debug t)
 #+end_src
 
@@ -657,6 +666,27 @@ Make it respect font size better when zooming in and out.
   (when (org-in-regexp org-link-bracket-re 1)
     (let ((desc (or (match-string 2) "")))
       (replace-match desc t t))))
+#+end_src
+** TODO Export
+This produces weird markdown that is not always rendered properly in Notion. Maybe I should do a Github flavored markdown instead:
+#+begin_src elisp
+(defun vik/org-to-clipboard-as-markdown ()
+  (interactive)
+  (save-window-excursion
+    (let ((org-export-with-toc nil)) ;; Correct let-binding
+      (with-current-buffer (org-md-export-as-markdown)
+        (mark-whole-buffer)
+        (clipboard-kill-region (point-min) (point-max))
+        (kill-buffer-and-window)))))
+#+end_src
+** Captures
+#+begin_src elisp
+(setq org-capture-templates
+      '(("t" "Insert Org Title in Current File" plain
+         (function (lambda () (or (buffer-file-name) (error "No current file!"))))
+         "#+TITLE: %^{Title}\n"
+         :immediate-finish t)))
+
 #+end_src
 * LLMs
 #+begin_src emacs-lisp
