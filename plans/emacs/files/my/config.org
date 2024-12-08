@@ -42,8 +42,7 @@ For both:
 "Scheduled" means that is the time to start working on the task if it's a task. If it's an event - time of the event.
 
 =f= and =b= in agenda view I can navigate weeks.
-* TODO Configuration management
-Get rid of common lisp if possible.
+* Configuration management
 #+begin_src emacs-lisp
 (defun vik/reload-config ()
   "Reload my Emacs configuration from the Org file."
@@ -76,7 +75,6 @@ named arguments:
 #+end_src
 
 * TODO Packages & topics to look at
-- https://github.com/cyrus-and/zoom
 - https://github.com/rexim/org-cliplink
 - https://github.com/bmag/imenu-list
 - https://magit.vc/manual/forge/Setup-for-Githubcom.html
@@ -88,7 +86,6 @@ named arguments:
 - https://www.reddit.com/r/emacs/comments/hzhkk1/what_simple_key_remapping_has_transformed_your/
 - https://www.reddit.com/r/emacs/comments/nr3cxv/what_are_your_very_useful_emacs_key_bindings_fast/
 - https://stackoverflow.com/questions/22231431/sort-a-mixed-list-of-headings-in-org-mode
-- https://github.com/tumashu/posframe for window hints
 
 * Repositories
 #+begin_src emacs-lisp
@@ -214,7 +211,7 @@ NOTE: This conflicts with some org-mode keybinds for inserting headings. Current
   (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
   (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
 #+end_src
-** TODO Snippets
+** Snippets
 Think of a good keymap for this.
 #+begin_src emacs-lisp
 (defun vik/insert-timestamp ()
@@ -421,8 +418,8 @@ Toggle between light and dark themes with =F5= key.
   (recentf-mode 1)
 #+end_src
 
-** TODO In buffer auto-completion.
-It's causes emacs to crash it seems.
+** In buffer auto-completion.
+It's causes emacs to crash it seems. Disabled for now.
 #+begin_src emacs-lisp :tangle no
   (use-package corfu
     :ensure t
@@ -848,10 +845,11 @@ Not sure if this works yet
   (add-hook 'typescript-ts-mode-hook #'tree-sitter-hl-mode)
   (add-hook 'tsx-ts-mode-hook #'tree-sitter-hl-mode))
 #+end_src
-* TODO Terminal emulator
+* Terminal emulator
 #+begin_src emacs-lisp
 (use-package vterm
-  :ensure t)
+  :ensure t
+  (setq vterm-max-scrollback 100000))
 #+end_src
 
 Custom functions for opening the terminal:
@@ -882,6 +880,7 @@ Custom functions for opening the terminal:
 
 Keybinds:
 #+begin_src emacs-lisp
+(global-set-key (kbd "C-x t T") 'vik/vterm-new-tab)
 #+end_src
 
 * Version control
@@ -890,13 +889,16 @@ Keybinds:
 (unless (package-installed-p 'magit)
 (package-install 'magit))
 #+end_src
-** TODO Links
-Add shortcut
+** Links
 #+begin_src emacs-lisp
 (use-package git-link
   :init (vik/vc-install :host "github.com" :repo "sshaw/git-link")
   :config
   (setq git-link-use-commit t))
+#+end_src
+
+#+begin_src elisp
+(global-set-key (kbd "C-x C-g l") 'git-link)
 #+end_src
 ** Gutter
 #+begin_src elisp
@@ -927,8 +929,8 @@ Add shortcut
 * KMonad
 #+begin_src emacs-lisp
 (unless (package-installed-p 'kbd-mode)
-(package-vc-install
- '(kbd-mode . (:url "https://github.com/kmonad/kbd-mode"))))
+  (package-vc-install
+   '(kbd-mode . (:url "https://github.com/kmonad/kbd-mode"))))
 #+end_src
 * Dired
 #+begin_src elisp
