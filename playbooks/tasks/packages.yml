@@ -62,6 +62,7 @@
     - syncthing
     - direnv
     - zig
+    - texlive-scheme-full
 
 - name: Remove default packages
   become: yes

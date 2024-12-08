@@ -1,11 +1,49 @@
 #+title: My Emacs configuration
 #+STARTUP: overview
-
 :PROPERTIES:
 :header-args: :tangle yes
 :END:
 
-* Configuration management
+* Cheat-sheet
+** TODO Getting help
+** Window management
+Pressing =ESC= 3 times will maximize current window, but loses any previous layout. Use custom window maximization function `vik/window-toggle-maximize-layout'.
+** Git
+=C-x c g= opens a separate window with =git blame= output for a current file.
+** Looking up definitions
+=C-h .= to see the signature of class/method/function at point.
+=M-.= to go to definition.
+=M-,= to go back to the caller.
+** Vterm
+Do =C-c C-t= to enter copy mode of vterm where you can navigate like you would any other text buffer in emacs.
+** Org
+*** Basic navigation
+Once point is on heading:
+- =Tab= cycles local visibility.
+- =S-Tab= cycles global visibility.
+
+Once point is in a bulleted-list:
+- =Tab= toggles local visibility of the list item if it has nested items;
+
+For both:
+- =Alt-Right= or =Alt-Left= promotes or demotes an entry (indents or removes indentation);
+- =Alt-Up= and =Alt-Down= moves entry up and down;
+
+*** Refiling
+=C-c C-w= to refile current section into another section that is chosed interactively.
+
+*** Tasks
+=S-Left= and =S-Right= changes the header status.
+=C-c C-t= cycles the statuses too.
+=C-c C-c= allows adding tags to the header (on header hover).
+=C-c C-s= to schedule the header.
+=C-c C-d= to set a header deadline.
+
+"Scheduled" means that is the time to start working on the task if it's a task. If it's an event - time of the event.
+
+=f= and =b= in agenda view I can navigate weeks.
+* TODO Configuration management
+Get rid of common lisp if possible.
 #+begin_src emacs-lisp
 (defun vik/reload-config ()
   "Reload my Emacs configuration from the Org file."
@@ -14,12 +52,44 @@
   (org-babel-load-file (expand-file-name "~/.config/myemacs/config.org")))
 #+end_src
 
-* Wiki
-** Prog mode
-Prog mode is a basic major mode for buffers containing programming language source code. All of the major modes for programming languages that are built into Emacs are derived from it.
-* TODO Packages to look at
+Custom version-control install package function. Taken from https://tony-zorman.com/posts/package-vc-install.html
+#+begin_src emacs-lisp
+(cl-defun vik/vc-install (&key (host "github.com") repo name rev backend)
+  "Install a package from a remote if it's not already installed.
+This is a thin wrapper around `package-vc-install' in order to
+make non-interactive usage more ergonomic.  Takes the following
+named arguments:
+
+- HOST the remote where to get the package (e.g., \"gitlab.com\").
+  If omitted, this defaults to \"github.com\".
+
+- REPO should be the name of the repository (e.g.,
+  \"username/reponame\".
+
+- NAME, REV, and BACKEND are as in `package-vc-install' (which
+  see)."
+  (let* ((url (format "https://%s/%s" host repo))
+         (iname (when name (intern name)))
+         (pac-name (or iname (intern (file-name-base repo)))))
+    (unless (package-installed-p pac-name)
+      (package-vc-install url iname rev backend))))
+#+end_src
+
+* TODO Packages & topics to look at
 - https://github.com/cyrus-and/zoom
-* Default shortcuts
+- https://github.com/rexim/org-cliplink
+- https://github.com/bmag/imenu-list
+- https://magit.vc/manual/forge/Setup-for-Githubcom.html
+- https://github.com/natrys/whisper.el
+- https://github.com/sshaw/copy-as-format
+- vertico & marginalia
+- all the icons
+- embark
+- https://www.reddit.com/r/emacs/comments/hzhkk1/what_simple_key_remapping_has_transformed_your/
+- https://www.reddit.com/r/emacs/comments/nr3cxv/what_are_your_very_useful_emacs_key_bindings_fast/
+- https://stackoverflow.com/questions/22231431/sort-a-mixed-list-of-headings-in-org-mode
+- https://github.com/tumashu/posframe for window hints
+
 * Repositories
 #+begin_src emacs-lisp
 (require 'package)
@@ -35,257 +105,670 @@ Prog mode is a basic major mode for buffers containing programming language sour
 
 * Defaults
 #+begin_src emacs-lisp
-; C-n adds new lines
-(setq next-line-add-newlines t)
+(setq next-line-add-newlines t) ; C-n adds new lines
+(delete-selection-mode) ;; selection gets replaced on yank
+(global-auto-revert-mode 1) ;; file changed on disk, auto reload it
 #+end_src
-* Introspection
+* Introspection and debugging
+** Hide warnings
+#+begin_src emacs-lisp
+;; Suppress warnings and show only errors
+(setq warning-minimum-level :error)
+
+;; Configure *Warnings* buffer to only show on actual errors
+(add-to-list 'display-buffer-alist
+             '("*Warnings*"
+               (display-buffer-no-window)
+               (allow-no-window . t)))
+#+end_src
 ** Keycast
 #+begin_src emacs-lisp
 (unless (package-installed-p 'keycast)
   (package-install 'keycast))
 (require 'keycast)
 
-(keycast-mode-line-mode)
+(keycast-tab-bar-mode 1)
+#+end_src
+** Which key
+#+begin_src elisp
+(use-package which-key
+  :ensure t
+  :config
+  (which-key-mode))
+#+end_src
+* Back-ups
+Store lockfiles and backups outside:
+#+begin_src elisp
+(setq backup-directory-alist '(("." . "~/.local/share/emacs")))
+(setq backup-by-copying t)
+(setq delete-old-versions t
+  kept-new-versions 6
+  kept-old-versions 2
+  version-control t)
+;; Store lock files in the same directory
+(setq lock-file-name-transforms
+      `((".*" ,(concat "~/.local/share/emacs" "/lockfiles/\\1") t)))
 #+end_src
 
 * In-buffer movement & editing
-** TODO Buffer management
+** History navigation
 #+begin_src emacs-lisp
-(defun vik/switch-to-previous-buffer ()
-  (interactive)
-  (switch-to-buffer (other-buffer (current-buffer) 1)))
+(use-package undo-tree
+  :ensure t
+  :init
+  (global-undo-tree-mode) ;; Enable undo-tree globally
+  :config
+  ;; Set undo-tree persistent history directory
+  (setq undo-tree-history-directory-alist
+        '(("." . "~/.local/share/emacs/undo-tree")))
+  (setq undo-tree-auto-save-history t) ;; Enable saving history to disk
+
+  ;; Optional: Customize undo-tree keybindings
+  (global-set-key (kbd "C-\\") 'undo-tree-redo) ;; Redo keybinding
+  (setq undo-tree-visualizer-timestamps t) ;; Show timestamps in visualizer
+  (setq undo-tree-visualizer-diff t)) ;; Show diffs in visualizer
 #+end_src
-** =meow= config
-:PROPERTIES:
-:header-args: :tangle no
-:END:
-
-#+begin_src emacs-lisp
-(unless (package-installed-p 'meow)
-  (package-install 'meow))
-
-  (require 'meow)
-  (defun vdd/meow-setup ()
-    (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
-    (meow-motion-overwrite-define-key
-     '("j" . meow-next)
-     '("k" . meow-prev)
-     '("<escape>" . ignore))
-    (meow-leader-define-key
-     ;; SPC j/k will run the original command in MOTION state.
-     '("j" . "H-j")
-     '("k" . "H-k")
-     ;; Use SPC (0-9) for digit arguments.
-     '("1" . meow-digit-argument)
-     '("2" . meow-digit-argument)
-     '("3" . meow-digit-argument)
-     '("4" . meow-digit-argument)
-     '("5" . meow-digit-argument)
-     '("6" . meow-digit-argument)
-     '("7" . meow-digit-argument)
-     '("8" . meow-digit-argument)
-     '("9" . meow-digit-argument)
-     '("0" . meow-digit-argument)
-     '("/" . meow-keypad-describe-key)
-     '("?" . meow-cheatsheet))
-    (meow-normal-define-key
-     '("0" . meow-expand-0)
-     '("9" . meow-expand-9)
-     '("8" . meow-expand-8)
-     '("7" . meow-expand-7)
-     '("6" . meow-expand-6)
-     '("5" . meow-expand-5)
-     '("4" . meow-expand-4)
-     '("3" . meow-expand-3)
-     '("2" . meow-expand-2)
-     '("1" . meow-expand-1)
-     '("'" . repeat)
-     '("-" . negative-argument)
-     '(";" . meow-reverse)
-     '(":" . meow-goto-line)
-     '("," . meow-inner-of-thing)
-     '("." . meow-bounds-of-thing)
-     '("[" . meow-beginning-of-thing)
-     '("]" . meow-end-of-thing)
-
-     '("a" . meow-append)
-     '("i" . meow-insert)
-     '("e" . meow-expand-1)
-
-     ;; TODO change should save stuff to kill ring
-     '("c" . meow-change)
-
-     '("o" . meow-open-below)
-     '("O" . meow-open-above)
-
-     '("b" . meow-left)
-     '("f" . meow-right)
-     '("n" . meow-next)
-     '("p" . meow-prev)
-
-     ;; '("S" . my/meow-select-symbol) ;; TODO M + W
-     '("w" . meow-next-word)
-     '("W" . meow-next-symbol)
-     '("m" . meow-back-word)
-     '("M" . meow-back-symbol)
-
-     '("t" . meow-find)
-
-     '("g" . meow-cancel-selection)
-     '("G" . meow-grab)
-
-     ;; '("o" . meow-block) TODO bind. what is a block?
-     ;; '("O" . meow-to-block)
-
-     '("J" . meow-join)
-     '("l" . meow-line)
-     ;; '("n" . meow-search)
-
-     '("y" . meow-yank)
-     '("Y" . meow-yank-pop)
-     '("s" . meow-save)
-     '("k" . meow-kill)
-     '("d" . meow-backward-delete)
-     '("x" . meow-delete)
-
-     ;; TODO replace should save stuff to kill ring
-     '("r" . meow-replace)
-     '("U" . undo-redo)
-     '("u" . meow-undo)
-     '("z" . meow-pop-selection)
-     '("<escape>" . ignore)))
-
-  (setq meow-expand-hint-remove-delay 0)
-
-  (with-eval-after-load 'meow
-    (meow-global-mode 1)
-    (vdd/meow-setup))
-#+end_src
-
 ** Scrolling
-*** Smooth scrolling
 Pixel scroll precision mode only works for mouse and touchpad.
 #+begin_src emacs-lisp
-    (pixel-scroll-precision-mode)
-
-    ;; (unless (package-installed-p 'scroll-on-jump)
-    ;; (package-install 'scroll-on-jump))
-    ;; (require 'scroll-on-jump)
-    ;; (with-eval-after-load 'scroll-on-jump
-    ;;   (with-eval-after-load 'meow
-    ;;     (scroll-on-jump-advice-add undo-redo)
-    ;;     (scroll-on-jump-advice-add meow-undo))
-    ;;   (scroll-on-jump-with-scroll-advice-add scroll-up-command)
-    ;;   (scroll-on-jump-with-scroll-advice-add scroll-down-command)
-    ;;   (scroll-on-jump-with-scroll-advice-add recenter-top-bottom))
-
+(pixel-scroll-precision-mode)
 #+end_src
-
-*** TODO Half-page scrolling
-#+begin_src emacs-lisp
-(defun vik/scroll-half-page (direction)
-  "Scrolls half page up if `direction' is non-nil, otherwise will scroll half page down."
-  (let ((opos (cdr (nth 6 (posn-at-point)))))
-    ;; opos = original position line relative to window
-    (move-to-window-line nil)  ;; Move cursor to middle line
-    (if direction
-        (recenter-top-bottom -1)  ;; Current line becomes last
-      (recenter-top-bottom 0))  ;; Current line becomes first
-    (move-to-window-line opos)))  ;; Restore cursor/point position
-
-(defun vik/scroll-half-page-down ()
-  "Scrolls exactly half page down keeping cursor/point position."
-  (interactive)
-  (my/scroll-half-page nil))
-
-(defun vik/scroll-half-page-up ()
-  "Scrolls exactly half page up keeping cursor/point position."
-  (interactive)
-  (my/scroll-half-page t))
-#+end_src
-
-** Joining lines
-Similar default shortcut is =M-^=, but it works in the other direction.
 
 #+begin_src emacs-lisp
-(defun vik/join-line-with-next ()
-  "Join the current line with the next line, similar to Vim's J."
-  (interactive)
-  (join-line -1))
+(use-package golden-ratio-scroll-screen
+  :ensure t
+  :bind (([remap scroll-down-command] . golden-ratio-scroll-screen-down)
+         ([remap scroll-up-command] . golden-ratio-scroll-screen-up))
+  :config
+  (setq
+   golden-ratio-scroll-recenter nil
+   golden-ratio-scroll-screen-ratio 1.5
+   golden-ratio-scroll-highlight-flag 'before))
 #+end_src
-* Keybindings
+** TODO Inserting newlines
+=C-<return>= to insert newline below, =S-<return>= to insert newline above.
+
+NOTE: This conflicts with some org-mode keybinds for inserting headings. Currently those keybinds below are not respecred in org-mode.
+#+begin_src emacs-lisp
+(defun vik/open-line-below ()
+  "Move to the end of the current line, insert a newline, and indent."
+  (interactive)
+  (end-of-line)
+  (newline-and-indent))
+(defun vik/open-line-above ()
+  "Move to the start of the current line and open a new line above, and indent."
+  (interactive)
+  (beginning-of-line)
+  (newline-and-indent)
+  (previous-line))
+(global-set-key (kbd "C-<return>") 'vik/open-line-below)
+(global-set-key (kbd "S-<return>") 'vik/open-line-above)
+#+end_src
+** Multiple cursors
+#+begin_src emacs-lisp
+(use-package multiple-cursors
+  :ensure t
+  :config
+  (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+  (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
+#+end_src
+** TODO Snippets
+Think of a good keymap for this.
+#+begin_src emacs-lisp
+(defun vik/insert-timestamp ()
+  (interactive)
+  (insert (format-time-string "%Y %b %d, %A %H:%M")))
+#+end_src
+** Searching
+#+begin_src emacs-lisp
+(defun vik/select-symbol-under-point ()
+  "Select the entire symbol under the cursor, including underscores."
+  (interactive)
+  (let ((bounds (bounds-of-thing-at-point 'symbol)))
+    (when bounds
+      (goto-char (car bounds))
+      (set-mark (cdr bounds)))))
+
+(defun vik/select-and-search-symbol-under-point ()
+  "Select the entire symbol under the cursor, including underscores, and start an incremental search for it."
+  (interactive)
+  ;; First, call the selection function
+  (vik/select-symbol-under-point)
+  ;; Then, run `isearch-forward` with the selected region
+  (when (use-region-p)  ; Ensure there is a selection
+    (let ((symbol (buffer-substring-no-properties (region-beginning) (region-end))))
+      (deactivate-mark)  ; Clear the selection after extracting the text
+      (isearch-mode t)   ; Start the search
+      (isearch-yank-string symbol))))  ; Input the symbol into the search
+
+(global-set-key (kbd "C-x *") 'vik/select-and-search-symbol-under-point)
+#+end_src
 * Navigation
+** Saving last point location
+#+begin_src emacs-lisp
+(save-place-mode 1)
+#+end_src
+** Window management
+Toggles between current layout and maximized window that is currently selected.
+#+begin_src emacs-lisp
+(defvar vik/window-layout-store
+  "State of current window maximization.")
+
+(setq vik/window-layout-store nil)
+(defun vik/window-toggle-maximize-layout ()
+  "Zoom current window so it takes the whole frame. The next time the function is called, the layout before zoom is restored."
+  (interactive)
+  (if (eq nil vik/window-layout-store)
+      (progn
+        (setq vik/window-layout-store (current-window-configuration))
+        (delete-other-windows)
+        (message "Saved window configuration"))
+    (set-window-configuration vik/window-layout-store)
+    (setq vik/window-layout-store nil)
+    (message "Restored window configuration")))
+
+(global-set-key (kbd "C-x m") 'vik/window-toggle-maximize-layout)
+(global-set-key (kbd "M-o") 'other-window)
+#+end_src
+** Devil mode
+#+begin_src emacs-lisp
+(unless (package-installed-p 'devil)
+  (package-install 'devil))
+
+(global-devil-mode)
+
+(global-set-key (kbd "C-x C-;") 'global-devil-mode)
+(devil-set-key (kbd ";"))
+
+(dolist (key '("%k SPC" "%k RET" "%k <return>"))
+  (assoc-delete-all key devil-special-keys))
+#+end_src
+** Mouse
+#+begin_src emacs-lisp
+(setq mouse-autoselect-window t)
+#+end_src
+** TODO Jumping
+Free =C-i= and bind it to /jump list jump backwards/. Together with =C-o= to /jump forward/, similar to vim keybindings. This does not work currently, not sure why.
+#+begin_src emacs-lisp :tangle no
+
+(define-key input-decode-map (kbd "C-i") (kbd "H-i"))
+(use-package better-jumper
+  :ensure t
+  :config
+  (better-jumper-mode +1))
+(global-set-key (kbd "H-i") 'better-jumper-jump-backward)
+(global-set-key (kbd "C-o") 'better-jumper-jump-forward)
+#+end_src
 * Appearance
+** Tabs
+#+begin_src emacs-lisp
+(setq tab-bar-close-button-show nil) ; Hide close button for simplicity
+(setq tab-bar-new-tab-choice "*scratch*") ; New tab starts on *scratch* buffer
+#+end_src
+** Point
+#+begin_src emacs-lisp
+(blink-cursor-mode 0)
+#+end_src
+Enable hl-line for specific modes
+#+begin_src elisp
+(setq hl-line-sticky-flag nil)
+(add-hook 'text-mode-hook 'hl-line-mode)
+(add-hook 'prog-mode-hook 'hl-line-mode)
+#+end_src
+
+Ensures end line in the file. Useful to correctly display hl-line on the last line
+#+begin_src elisp
+(setq require-final-newline t)
+#+end_src
+
 ** Hide unnecessary things
 #+begin_src emacs-lisp
-  (scroll-bar-mode -1)
-  (tool-bar-mode -1)
-  (menu-bar-mode -1)
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
+(menu-bar-mode -1)
 (setq inhibit-startup-message t)
-(setq ring-bell-function 'ignore)
+(setq visible-bell nil
+      ring-bell-function 'vik/flash-mode-line)
+(defun vik/flash-mode-line ()
+  (invert-face 'mode-line)
+  (run-with-timer 0.1 nil #'invert-face 'mode-line))
 #+end_src
 ** Faces
-#+begin_src emacs-lisp
-(set-face-attribute 'default nil :font "Iosevka" :height 160)
-#+end_src
+Toggle for the whole frame to change font size. =custom-set-faces= causes flicker when called, but ensures there's no weird behavior when zooming in and out with =C-x C-+= for example.
+
+Different machines get different values.
+#+BEGIN_SRC emacs-lisp
+(defvar vik/big-font-size
+  (cond
+   ((string= (getenv "DOT_PROFILE") "1") 190)
+   ((string= (getenv "DOT_PROFILE") "2") 170)
+   ((string= (getenv "DOT_PROFILE") "3") 170)
+   (t 120)))
+
+(defvar vik/default-font-size
+  (cond
+   ((string= (getenv "DOT_PROFILE") "1") 120)
+   ((string= (getenv "DOT_PROFILE") "2") 150)
+   ((string= (getenv "DOT_PROFILE") "3") 150)
+   (t 150)))
+
+(setq vik/presentation-mode-flag nil)
+
+(defun vik/set-global-font-size (size)
+  "Set the global font size by modifying the `default` face."
+  (custom-set-faces
+   `(default ((t (:family "Iosevka" :height ,size))))
+   `(fixed-pitch ((t (:family "Iosevka" :height ,size))))
+   `(variable-pitch ((t (:family "Iosevka Etoile" :height ,size))))))
+
+(defun vik/toggle-presentation-mode ()
+  "Toggle presentation mode. It makes the UI bigger."
+  (interactive)
+  (setq vik/presentation-mode-flag (not vik/presentation-mode-flag))
+  (let ((new-size (if vik/presentation-mode-flag
+                      vik/big-font-size
+                    vik/default-font-size)))
+    (vik/set-global-font-size new-size)
+    (message "Font size set to %d" new-size)))
+
+(vik/set-global-font-size vik/default-font-size)
+(global-set-key (kbd "<f6>") 'vik/toggle-presentation-mode)
+#+END_SRC
+
 ** Theme, spacing and colors
 #+begin_src emacs-lisp
-(load-theme 'wombat)
-;; (load-theme 'dichromacy)
-(set-fringe-mode 10)
+(use-package modus-themes
+  :ensure t
+  :config
+  (load-theme 'modus-vivendi :no-confirm))
 #+end_src
 
+Toggle between light and dark themes with =F5= key.
+#+begin_src emacs-lisp
+(defun vik/theme-toggle ()
+  (interactive)
+  (if (eq (car custom-enabled-themes) 'modus-vivendi)
+            (load-theme 'modus-operandi :no-confirm)
+          (load-theme 'modus-vivendi :no-confirm)))
+
+(global-set-key (kbd "<f5>") 'vik/theme-toggle)
+#+end_src
+** Indentation and whitespace
+#+begin_src emacs-lisp
+;; Set whitespace-style to avoid highlighting long lines
+(setq whitespace-style '(face tabs spaces trailing space-before-tab newline
+                              indentation empty space-after-tab space-mark
+                              tab-mark newline-mark))
+;; Exclude newline $ signs
+(setq whitespace-style '(face tabs spaces space-mark tab-mark))
+
+;; Enable whitespace-mode in programming modes
+(add-hook 'prog-mode-hook 'whitespace-mode)
+#+end_src
+** Gutter
+#+begin_src emacs-lisp
+(global-display-line-numbers-mode 1)
+#+end_src
+** Modeline
+#+begin_src elisp
+(setq column-number-mode t)
+#+end_src
 * Menus and search
 #+begin_src emacs-lisp
-(fido-vertical-mode)
-(recentf-mode 1)
+  (fido-vertical-mode)
+  (recentf-mode 1)
+#+end_src
+
+** TODO In buffer auto-completion.
+It's causes emacs to crash it seems.
+#+begin_src emacs-lisp :tangle no
+  (use-package corfu
+    :ensure t
+    :custom
+    (corfu-auto t)
+    :config
+    (keymap-unset corfu-map "RET")
+  :init
+    (global-corfu-mode))
 #+end_src
 * Org
+** Appearance
 #+begin_src emacs-lisp
+(setq org-ellipsis " [...]")
 (custom-set-faces
- '(org-level-1 ((t (:inherit outline-1 :height 1.4 :weight bold))))
- '(org-level-2 ((t (:inherit outline-2 :height 1.3 :weight bold))))
- '(org-level-3 ((t (:inherit outline-3 :height 1.2))))
- '(org-level-4 ((t (:inherit outline-4 :height 1.1))))
- '(org-level-5 ((t (:inherit outline-5 :height 1.0)))))
+ `(org-ellipsis ((t (:foreground fg-dim) :underline nil))))
+#+end_src
+** Configuration
+#+begin_src emacs-lisp
+(setq org-directory "~/Documents/notes/org/0-inbox/")
+(setq org-agenda-files '("~/Documents/notes/org/0-inbox/"
+                         "~/Documents/notes/org/1-projects/"
+                         "~/Documents/notes/org/2-areas/"
+                         "~/Documents/notes/org/3-resources/"))
+(setq org-adapt-indentation t)
+(setq org-hide-emphasis-markers t)
+(setq org-edit-src-content-indentation 0)
 
+;; fixes the issue or child block face bleeding out into the parent heading
+;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=52587#49
+(setq org-fontify-whole-block-delimiter-line nil)
+
+(add-hook 'org-mode-hook #'org-indent-mode)
+(add-hook 'org-mode-hook 'visual-line-mode) ;; smart word wrap
+#+end_src
+
+Smart return which tries to not enter new-lines in a folder code block.
+#+begin_src emacs-lisp
+(defun vik/org-insert-line-after-block ()
+  "Insert a new line immediately after the current Org source block without unfolding it."
+  (interactive)
+  (when (org-in-block-p '("src"))
+    (let ((block-end (save-excursion
+                       (goto-char (org-element-property :end (org-element-context)))
+                       (skip-chars-backward "\n")
+                       (point))))
+      ;; Move to the end of the block
+      (goto-char block-end)
+      ;; Insert a new line
+      (newline-and-indent))))
+
+(defun vik/org-return ()
+  "Custom return function for Org mode.
+If on a folded source block, add a new line after the block without unfolding.
+If on an unfolded source block, add a new line inside the block.
+Otherwise, perform regular `org-return` behavior."
+  (interactive)
+  (let ((context (org-element-context)))
+    (if (and (eq (org-element-type context) 'src-block)
+             (save-excursion
+               (goto-char (org-element-property :begin context))
+               (end-of-line)
+               (eq (get-char-property (point) 'invisible) 'org-fold-block)))
+        ;; If the source block is folded, add a line after it
+        (vik/org-insert-line-after-block)
+      ;; If inside an unfolded source block, insert a newline inside the block
+      (if (org-in-block-p '("src"))
+          (newline-and-indent)
+        ;; Otherwise, perform the regular `org-return` behavior
+        (org-return)))))
+
+;; Remap `Enter` key in Org mode to use `vik/org-return`
+(with-eval-after-load 'org
+  (define-key org-mode-map (kbd "RET") 'vik/org-return))
+#+end_src
+
+Disable automatic blank lines when inserting a new heading.
+#+begin_src emacs-lisp
+(setf org-blank-before-new-entry '((heading . nil) (plain-list-item . nil)))
+(setq org-cycle-separator-lines 0)
+#+end_src
+
+Pretty headings.
+#+begin_src emacs-lisp
 (use-package org-superstar
   :ensure t
+  :after org
   :hook (org-mode . org-superstar-mode)
   :config
-  (setq org-superstar-headline-bullets-list '("◉" "○" "✸" "✿" "■")
-        org-superstar-item-bullet-alist '((?+ . ?•) (?- . ?•))))
+  ;; Set basic title font
+  (set-face-attribute 'org-level-8 nil :weight 'bold :inherit 'default)
+  (set-face-attribute 'org-level-7 nil :inherit 'org-level-8)
+  (set-face-attribute 'org-level-6 nil :inherit 'org-level-8)
+  (set-face-attribute 'org-level-5 nil :inherit 'org-level-8)
+  (set-face-attribute 'org-level-4 nil :inherit 'org-level-8)
+  (set-face-attribute 'org-level-3 nil :inherit 'org-level-8 :height 1.05)
+  (set-face-attribute 'org-level-2 nil :inherit 'org-level-8 :height 1.1)
+  (set-face-attribute 'org-level-1 nil :inherit 'org-level-8 :height 1.15)
 
-(add-hook 'org-mode-hook #'visual-line-mode)
-(add-hook 'org-mode-hook #'org-indent-mode)
-(setq org-src-fontify-natively t)
+  ;; Define custom headline bullets, with a fallback for terminal use
+  (setq org-superstar-headline-bullets-list '("◉" ("🞛" ?◈) "○" "▷"))
+
+  ;; Disable bullet cycling to emphasize headline hierarchy
+  (setq org-superstar-cycle-headline-bullets nil)
+
+  ;; Set a fallback for leading stars in terminals
+  (setq org-superstar-leading-fallback ?\s)
+  (setq org-superstar-leading-bullet ?\s
+        org-superstar-leading-fallback ?\s
+        org-hide-leading-stars nil
+        org-superstar-todo-bullet-alist
+        '(("TODO" . 9744)
+          ("[ ]"  . 9744)
+          ("DONE" . 9745)
+          ("[X]"  . 9745))))
+#+end_src
+Make formatted text appear with markers when hover over.
+#+begin_src emacs-lisp
+(use-package org-appear
+  :ensure t
+  :hook (org-mode . org-appear-mode)
+  :custom
+  (org-appear-autoemphasis t)       ;; Toggle emphasis markers
+  (org-appear-autolinks t)          ;; Toggle links
+  (org-appear-autosubmarkers t)     ;; Toggle subscript/superscript markers
+  (org-appear-autoentities t)       ;; Toggle Org entities
+  (org-appear-autokeywords t)       ;; Toggle keywords in org-hidden-keywords
+  (org-appear-inside-latex t)       ;; Toggle LaTeX fragment elements
+  (org-appear-delay 0.5)            ;; Delay before toggling
+  (org-appear-trigger 'always))     ;; Trigger setting
+#+end_src
+
+** Point after ellipsis fix
+Sometimes when point ends up positioned after heading ellipsis, you cannot `org-cycle' it.
+#+begin_src emacs-lisp
+(defun my-org-prepare-expand-heading ()
+  "Move point to before ellipsis, if after ellipsis."
+  (when (and (not (org-at-heading-p))
+             (save-excursion
+               (org-end-of-line)
+               (org-at-heading-p)))
+    (org-end-of-line)))
+
+(add-hook 'org-tab-first-hook #'my-org-prepare-expand-heading)
+#+end_src
+** Ediff conflict resolution for notes
+#+begin_src emacs-lisp
+(customize-set-variable 'ediff-setup-windows-plain 1)
+(defun vik/ediff-before-setup ()
+  (select-frame (make-frame)))
+(add-hook 'ediff-before-setup-hook 'vik/ediff-before-setup)
+
+;; -*- lexical-binding: t -*-
+
+(custom-set-variables
+ '(ediff-window-setup-function 'ediff-setup-windows-plain)
+ '(ediff-split-window-function 'split-window-horizontally))
+
+(defun vik/ediff-org-expand-all ()
+  "Expand all Org entries in the current buffer if in Org mode."
+  (when (derived-mode-p 'org-mode)
+    (org-show-all)))  ;; Show all headings and content
+
+(defun vik/ediff-setup-windows-hook ()
+  "Hook to expand Org entries in Ediff buffers A and B if they are set."
+  (when (buffer-live-p ediff-buffer-A)
+    (with-current-buffer ediff-buffer-A
+      (vik/ediff-org-expand-all)))
+  (when (buffer-live-p ediff-buffer-B)
+    (with-current-buffer ediff-buffer-B
+      (vik/ediff-org-expand-all))))
+
+(add-hook 'ediff-prepare-buffer-hook 'vik/ediff-setup-windows-hook)
+
+(require 'cl-lib)
+(require 's)
+
+(defun vik/syncthing-find-conflict-files (file)
+  "Find Syncthing conflict files for a given FILE."
+  (let ((dir (file-name-directory file))
+        (base-name (file-name-nondirectory file)))
+    (directory-files
+     dir t
+     (concat "^" (regexp-quote (file-name-sans-extension base-name))
+             "\\.sync-conflict-[0-9]+-[0-9]+-[A-Za-z0-9]+\\.org$"))))
+
+(defun vik/syncthing-merge-conflict-files (file)
+  "Perform a merge on Syncthing conflict FILE with its original version."
+  (interactive "fSelect base .org file to check for conflicts: ")
+  (let ((conflict-files (vik/syncthing-find-conflict-files file)))
+    (cond
+     ((null conflict-files)
+      (message "No conflict files found for %s" file))
+     ((= (length conflict-files) 1)
+      (let ((conflict-file (car conflict-files)))
+        (ediff-files
+         file conflict-file
+         (lambda ()
+           (message "Merged conflicts. Use `C-c C-c` to finalize.")))))
+     (t
+      (message "Multiple conflict files found. Using the latest conflict file."))
+      ;; Sort by date to get the latest conflict file
+      (let* ((latest-conflict-file (car (sort conflict-files #'string<))))
+        (ediff-files
+         file latest-conflict-file
+         (lambda ()
+           (message "Merged conflicts. Use `C-c C-c` to finalize.")))))))
+
+(defun vik/syncthing-merge-all-conflicts (directory)
+  "Merge all Syncthing conflicts in DIRECTORY for .org files."
+  (interactive "DSelect directory to search for conflicts: ")
+  (dolist (file (directory-files directory t "\\.org$"))
+    (when (vik/syncthing-find-conflict-files file)
+      (vik/syncthing-merge-conflict-files file))))
+#+end_src
+
+** TODO Latex
+Make it respect font size better when zooming in and out.
+#+begin_src elisp
+(setq org-preview-latex-default-process 'imagemagick)
+(setq org-preview-latex-process-alist
+      '((imagemagick :programs ("latex" "convert")
+                     :description "imagemagick"
+                     :message "you need to install the programs: latex and imagemagick."
+                     :image-input-type "dvi"
+                     :image-output-type "png"
+                     :latex-compiler ("latex -interaction nonstopmode -output-directory %o %f")
+                     :image-converter ("convert -density 300 -trim -quality 100 %f %O"))))
+
+(setq org-format-latex-options
+      (plist-put org-format-latex-options :scale 1.40))
+
+(setq org-latex-preview-debug t)
+#+end_src
+
+** Links
+#+begin_src elisp
+(defun vik/org-remove-link-url ()
+  "Replace an Org link at point with its description, removing the URL."
+  (interactive)
+  (when (org-in-regexp org-link-bracket-re 1)
+    (let ((desc (or (match-string 2) "")))
+      (replace-match desc t t))))
+#+end_src
+
+#+begin_src elisp
+(defun vik/org-generate-uuid-to-kill-ring ()
+  "Generate a UUID using Org's `org-id` and copy it to the kill ring."
+  (interactive)
+  (let ((uuid (org-id-new)))
+    (kill-new uuid)
+    (message "UUID copied to kill ring: %s" uuid)))
+#+end_src
+** Export
+Exporting as Github flawored markdown to clipboard:
+#+begin_src elisp
+(use-package ox-gfm
+  :ensure t)
+
+(defun vik/org-to-clipboard-as-markdown ()
+  (interactive)
+  (save-window-excursion
+    (let ((org-export-with-toc nil)) 
+      (with-current-buffer (org-gfm-export-to-markdown)
+        (mark-whole-buffer)
+        (clipboard-kill-region (point-min) (point-max))
+        (kill-buffer-and-window)))))
+(defun vik/org-region-to-clipboard-as-markdown ()
+  "Export the selected region from Org mode to Markdown and copy it to the clipboard."
+  (interactive)
+  (if (use-region-p)
+      (let ((org-export-with-toc nil) ; Disable table of contents
+            (region-text (buffer-substring-no-properties (region-beginning) (region-end))))
+        (with-temp-buffer
+          (insert region-text)
+          (org-mode)
+          (let ((markdown-text (org-export-as 'gfm nil nil t nil)))
+            (with-temp-buffer
+              (insert markdown-text)
+              (clipboard-kill-region (point-min) (point-max)))))
+        (message "Region exported to Markdown and copied to clipboard."))
+    (message "No region selected!")))
+
+#+end_src
+
+** Capture
+#+begin_src elisp
+(setq org-capture-templates
+      '(("t" "Insert Org Title in Current File" plain
+         (function (lambda () (or (buffer-file-name) (error "No current file!"))))
+         "#+TITLE: %^{Title}\n"
+         :immediate-finish t)))
+#+end_src
+* LLMs
+#+begin_src emacs-lisp
+(require 'auth-source)
+
+(use-package gptel
+  :ensure t
+  :config
+  (setq gptel-default-mode #'org-mode)
+  (setq gptel-api-key (auth-source-pick-first-password :host "openai.com" :user "EMACS_API_KEY" :secret t)))
 #+end_src
 * Coding
+** Comments
+#+begin_src emacs-lisp
+(defun vik/comment-line ()
+  "Comment or uncomment the current line without moving the cursor down."
+  (interactive)
+  (save-excursion
+    (beginning-of-line)
+    (set-mark (line-end-position))
+    (comment-or-uncomment-region (point) (mark))))
+(global-set-key (kbd "C-;") 'vik/comment-line)
+#+end_src
 ** Word symbols
 Camel-cased symbols will be recognized as words.
 #+begin_src emacs-lisp
 (add-hook 'prog-mode-hook 'subword-mode)
 #+end_src
 
-** LSP configuration
+** Eglot
 Attaches eglot to every programming language buffer:
 #+begin_src emacs-lisp
 (add-hook 'prog-mode-hook 'eglot-ensure)
 #+end_src
 
+TODO bind =eglot-inlay-hints-mode= to something:
+#+begin_src elisp
+
+#+end_src
+
 ** Documentation
+Use =C-h .= to look up documentation of thing at point.
 #+begin_src emacs-lisp
 (global-eldoc-mode 1)
+(setq eldoc-echo-area-use-multiline-p nil)
 #+end_src
 ** Basic code navigation with =dumb-jump=
 Attaches dumb-jump as xref back-end:
 #+begin_src emacs-lisp
-  (unless (package-installed-p 'dumb-jump)
-    (package-install 'dumb-jump))
-  (require 'dumb-jump)
+(unless (package-installed-p 'dumb-jump)
+  (package-install 'dumb-jump))
+(require 'dumb-jump)
 
-  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
-
+(add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
 #+end_src
 ** Treesitter configuration
 Treesitter sources:
@@ -302,30 +785,31 @@ Treesitter sources:
     (unless (treesit-ready-p (car source))
       (treesit-install-language-grammar (car source)))))
 #+end_src
-
-** Zig
-*** Packages
+** TODO Zig
 #+begin_src emacs-lisp
-(unless (package-installed-p 'zig-mode)
-  (package-install 'zig-mode))
+(use-package zig-mode
+  :ensure t
+  :config
+  (add-to-list 'auto-mode-alist '("\\.zig\\'" . zig-mode))
+  (add-to-list 'auto-mode-alist '("\\.zig.zon\\'" . zig-mode)))
+
+;; For some reason this conflicts with eglot:
+;; (use-package zig-ts-mode
+;;   :init (vik/vc-install :host "codeberg.org" :repo "meow_king/zig-ts-mode")
+;;   :config
+;;   (add-to-list 'auto-mode-alist '("\\.zig\\'" . zig-ts-mode))
+;;   (add-to-list 'auto-mode-alist '("\\.zig.zon\\'" . zig-ts-mode)))
 #+end_src
 
 *** TODO LSP
 TODO install zls manually and change this path.
 #+begin_src emacs-lisp
-(add-to-list 'exec-path "~/.config/emacs/.local/etc/lsp/zig")
-;; (setq lsp-zig-zls-executable "~/.config/emacs/.local/etc/lsp/zig/zls")
-(with-eval-after-load 'eglot
-  (add-to-list 'eglot-server-programs
-               '(zig-mode . ("zls"))))
+  (add-to-list 'exec-path "~/.config/emacs/.local/etc/lsp/zig")
+  ;; (setq lsp-zig-zls-executable "~/.config/emacs/.local/etc/lsp/zig/zls")
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs
+                 '(zig-mode . ("zls"))))
 #+end_src
-*** Treesitter
-#+begin_src emacs-lisp
-(autoload 'zig-mode "zig-mode" nil t)
-(add-to-list 'auto-mode-alist '("\\.zig\\'" . zig-mode))
-(add-to-list 'auto-mode-alist '("\\.zig.zon\\'" . zig-mode))
-#+end_src
-
 ** Ruby
 *** Packages
 #+begin_src emacs-lisp
@@ -345,14 +829,109 @@ TODO install zls manually and change this path.
 (add-to-list 'auto-mode-alist '("\\Gemfile\\'" . ruby-ts-mode))
 (add-to-list 'auto-mode-alist '("\\Rakefile\\'" . ruby-ts-mode))
 #+end_src
-* Magit
+** SQL
+#+begin_src elisp
+(use-package sqlformat
+  :ensure t
+  :config
+  (setq sqlformat-command 'sqlformat))
+#+end_src
+** Javascript/Typescript
+*** Treesitter
+Not sure if this works yet
+#+begin_src elisp
+(with-eval-after-load 'treesit
+  (add-hook 'typescript-ts-mode-hook #'tree-sitter-mode)
+  (add-hook 'tsx-ts-mode-hook #'tree-sitter-mode)
+
+  ;; Enable Tree-sitter-based syntax highlighting
+  (add-hook 'typescript-ts-mode-hook #'tree-sitter-hl-mode)
+  (add-hook 'tsx-ts-mode-hook #'tree-sitter-hl-mode))
+#+end_src
+* TODO Terminal emulator
 #+begin_src emacs-lisp
-    (unless (package-installed-p 'magit)
-    (package-install 'magit))
+(use-package vterm
+  :ensure t)
+#+end_src
+
+Custom functions for opening the terminal:
+#+begin_src emacs-lisp
+(defun vik/vterm-open (new-tab)
+  "Open a new vterm. If NEW-TAB is non-nil, open in a new tab. Sets the directory to project root or ~/ if no project is defined."
+  (let* ((project (project-current))
+        (dir (if project
+                 (project-root project)
+               "~/")))
+    (when new-tab
+      (tab-bar-new-tab))
+    ;; Set the default directory and open a new vterm
+    (let ((default-directory dir)) ;; Temporarily bind default-directory for vterm
+      (let ((current-prefix-arg '(4))) ;; Simulates C-u
+	(call-interactively #'vterm)))))
+
+(defun vik/vterm-in-current-window ()
+  "Open a new vterm in the current window."
+  (interactive)
+  (vik/vterm-open nil))
+
+(defun vik/vterm-new-tab ()
+  "Open a new vterm in a new tab."
+  (interactive)
+  (vik/vterm-open t))
+#+end_src
+
+Keybinds:
+#+begin_src emacs-lisp
+#+end_src
+
+* Version control
+** Magit
+#+begin_src emacs-lisp
+(unless (package-installed-p 'magit)
+(package-install 'magit))
+#+end_src
+** TODO Links
+Add shortcut
+#+begin_src emacs-lisp
+(use-package git-link
+  :init (vik/vc-install :host "github.com" :repo "sshaw/git-link")
+  :config
+  (setq git-link-use-commit t))
+#+end_src
+** Gutter
+#+begin_src elisp
+(use-package git-gutter
+  :ensure t
+  :config
+  (custom-set-variables
+   '(git-gutter:visual-line t))
+  (custom-set-variables
+   '(git-gutter:hide-gutter t))
+
+  (custom-set-variables
+   '(git-gutter:modified-sign "┃")
+   '(git-gutter:added-sign "┃")
+   '(git-gutter:deleted-sign "┃"))
+
+  (set-face-background 'git-gutter:modified nil)
+  (set-face-background 'git-gutter:added nil)
+  (set-face-background 'git-gutter:deleted nil)
+
+  (set-face-foreground 'git-gutter:modified "yellow")
+  (set-face-foreground 'git-gutter:added "green")
+  (set-face-foreground 'git-gutter:deleted "red")
+
+  (add-hook 'prog-mode-hook 'git-gutter-mode)
+  (add-hook 'text-mode-hook 'git-gutter-mode))
 #+end_src
 * KMonad
 #+begin_src emacs-lisp
 (unless (package-installed-p 'kbd-mode)
 (package-vc-install
  '(kbd-mode . (:url "https://github.com/kmonad/kbd-mode"))))
+#+end_src
+* Dired
+#+begin_src elisp
+(with-eval-after-load 'dired
+  (define-key dired-mode-map (kbd "b") #'dired-up-directory))
 #+end_src
