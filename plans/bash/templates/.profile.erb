@@ -24,14 +24,17 @@ export PATH="$FLYCTL_INSTALL/bin:$PATH"
 # rust
 export PATH="$PATH:$HOME/.cargo/bin"
 
-# android
-export ANDROID_HOME="$HOME/.local/share/android"
-export PATH="$PATH:$ANDROID_HOME/cmdline-tools/latest/bin"
-export PATH="$PATH:$ANDROID_HOME/platform-tools/"
-export PATH="$PATH:$ANDROID_HOME/tools"
-export PATH="$PATH:$ANDROID_HOME/tools/bin"
-export PATH="$PATH:$ANDROID_HOME/emulator"
-export PATH="$PATH:$ANDROID_HOME/emulator/bin64"
+# android for flutter?
+# export ANDROID_HOME="$HOME/.local/share/android"
+# export PATH="$PATH:$ANDROID_HOME/cmdline-tools/latest/bin"
+# export PATH="$PATH:$ANDROID_HOME/platform-tools/"
+# export PATH="$PATH:$ANDROID_HOME/tools"
+# export PATH="$PATH:$ANDROID_HOME/tools/bin"
+# export PATH="$PATH:$ANDROID_HOME/emulator"
+# export PATH="$PATH:$ANDROID_HOME/emulator/bin64"
+
+export ANDROID_INSTALLATION="$HOME/.local/share/Google/android-studio"
+export PATH="$PATH:$ANDROID_INSTALLATION/bin"
 
 # golang
 export GOBIN="$HOME/<%= @config.dig('home_path', 'gobin') %>"

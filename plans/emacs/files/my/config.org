@@ -667,26 +667,54 @@ Make it respect font size better when zooming in and out.
     (let ((desc (or (match-string 2) "")))
       (replace-match desc t t))))
 #+end_src
-** TODO Export
-This produces weird markdown that is not always rendered properly in Notion. Maybe I should do a Github flavored markdown instead:
+
 #+begin_src elisp
+(defun vik/org-generate-uuid-to-kill-ring ()
+  "Generate a UUID using Org's `org-id` and copy it to the kill ring."
+  (interactive)
+  (let ((uuid (org-id-new)))
+    (kill-new uuid)
+    (message "UUID copied to kill ring: %s" uuid)))
+#+end_src
+** Export
+Exporting as Github flawored markdown to clipboard:
+#+begin_src elisp
+(use-package ox-gfm
+  :ensure t)
+
 (defun vik/org-to-clipboard-as-markdown ()
   (interactive)
   (save-window-excursion
-    (let ((org-export-with-toc nil)) ;; Correct let-binding
-      (with-current-buffer (org-md-export-as-markdown)
+    (let ((org-export-with-toc nil)) 
+      (with-current-buffer (org-gfm-export-to-markdown)
         (mark-whole-buffer)
         (clipboard-kill-region (point-min) (point-max))
         (kill-buffer-and-window)))))
+(defun vik/org-region-to-clipboard-as-markdown ()
+  "Export the selected region from Org mode to Markdown and copy it to the clipboard."
+  (interactive)
+  (if (use-region-p)
+      (let ((org-export-with-toc nil) ; Disable table of contents
+            (region-text (buffer-substring-no-properties (region-beginning) (region-end))))
+        (with-temp-buffer
+          (insert region-text)
+          (org-mode)
+          (let ((markdown-text (org-export-as 'gfm nil nil t nil)))
+            (with-temp-buffer
+              (insert markdown-text)
+              (clipboard-kill-region (point-min) (point-max)))))
+        (message "Region exported to Markdown and copied to clipboard."))
+    (message "No region selected!")))
+
 #+end_src
-** Captures
+
+** Capture
 #+begin_src elisp
 (setq org-capture-templates
       '(("t" "Insert Org Title in Current File" plain
          (function (lambda () (or (buffer-file-name) (error "No current file!"))))
          "#+TITLE: %^{Title}\n"
          :immediate-finish t)))
-
 #+end_src
 * LLMs
 #+begin_src emacs-lisp

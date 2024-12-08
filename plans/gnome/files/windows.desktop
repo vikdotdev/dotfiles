@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Reboot to windows
+Comment=Reboot the computer into windows
+Exec=pkexec util-reboot-to-windows
+Icon=windows
+Terminal=false
+Categories=System;
