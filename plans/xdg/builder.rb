@@ -20,7 +20,7 @@ ext_xdg_dirs = %w[
 [
   *ext_xdg_dirs,
   *xdg_dir_map.values
-].map { |path| FileUtils.mkdir_p(path) }
+].map { |path| FileUtils.mkdir_p(home_path(path)) }
 
 xdg_dir_map.each_key do |path|
   next unless File.exist?(home_file(path))

@@ -10,7 +10,6 @@ home_path:
   gobin: .local/bin
   gopath: .local/share/go
   repos: Repositories
-  vendor: Repositories/vendor
   dotfiles: Repositories/dotfiles
   notes: Documents/notes
   bin: .local/bin

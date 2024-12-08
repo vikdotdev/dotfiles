@@ -4,14 +4,14 @@
 
 - name: Register gnome-shell-go-to-last-workspace repo
   stat:
-    path: "{{ ansible_env.HOME }}/{{ home_path.vendor }}/gnome-shell-go-to-last-workspace"
+    path: "{{ ansible_env.HOME }}/{{ home_path.repos }}/gnome-shell-go-to-last-workspace"
   register: gnome_last_workspace_repo
 
 - name: Clone gnome-shell-go-to-last-workspace
   ansible.builtin.git:
     repo: https://github.com/arjan/gnome-shell-go-to-last-workspace.git
     depth: 50
-    dest: "{{ ansible_env.HOME }}/{{ home_path.vendor }}/gnome-shell-go-to-last-workspace"
+    dest: "{{ ansible_env.HOME }}/{{ home_path.repos }}/gnome-shell-go-to-last-workspace"
   when:
     - not gnome_last_workspace_repo.stat.exists
 
@@ -22,14 +22,14 @@
 
 - name: Build gnome-shell-go-to-last-workspace
   community.general.make:
-    chdir: "{{ ansible_env.HOME }}/{{ home_path.vendor }}/gnome-shell-go-to-last-workspace"
+    chdir: "{{ ansible_env.HOME }}/{{ home_path.repos }}/gnome-shell-go-to-last-workspace"
     target: build
   when:
     - not gnome_last_workspace_install.stat.exists
 
 - name: Install gnome-shell-go-to-last-workspace
   community.general.make:
-    chdir: "{{ ansible_env.HOME }}/{{ home_path.vendor }}/gnome-shell-go-to-last-workspace"
+    chdir: "{{ ansible_env.HOME }}/{{ home_path.repos }}/gnome-shell-go-to-last-workspace"
     target: install
   when:
     - not gnome_last_workspace_install.stat.exists
