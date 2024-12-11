@@ -650,11 +650,15 @@ Make it respect font size better when zooming in and out.
                      :image-converter ("convert -density 300 -trim -quality 100 %f %O"))))
 
 (setq org-format-latex-options
-      (plist-put org-format-latex-options :scale 1.40))
+      (plist-put org-format-latex-options :scale 1.25))
 
 (setq org-latex-preview-debug t)
 #+end_src
-
+** Images
+Show images max 500px each side, with fallback to ORG_ATTR:
+#+begin_src elisp
+(setq org-image-actual-width (list 400))
+#+end_src
 ** Links
 #+begin_src elisp
 (defun vik/org-remove-link-url ()
@@ -704,7 +708,24 @@ Exporting as Github flawored markdown to clipboard:
     (message "No region selected!")))
 
 #+end_src
+** Refiling
+#+begin_src elisp
+(setq org-refile-targets '((nil :maxlevel . 6)
+                           (org-agenda-files :maxlevel . 6)))
+(setq org-refile-targets
+      '((nil :maxlevel . 6) ; Current buffer, up to level 6
+        (org-agenda-files :maxlevel . 6) ; Agenda files, up to level 6
+        (nil :level . 0) ; Current buffer, only top-level headings
+        (org-agenda-files :level . 0))) ; Agenda files, only top-level headings
 
+(setq org-refile-use-outline-path 'file)
+(setq org-outline-path-complete-in-steps nil)
+#+end_src
+** Task managemant
+So that =C-u 2 C-c C-t= stores entries into a =LOGBOOK= drawer:
+#+begin_src elisp
+(setq org-log-into-drawer t)
+#+end_src
 ** Capture
 #+begin_src elisp
 (setq org-capture-templates
@@ -936,4 +957,9 @@ Keybinds:
 #+begin_src elisp
 (with-eval-after-load 'dired
   (define-key dired-mode-map (kbd "b") #'dired-up-directory))
+
+(with-eval-after-load 'dired
+  (define-key dired-mode-map (kbd "e") 'eshell))
+
+(setq dired-listing-switches "-lah --group-directories-first")
 #+end_src
