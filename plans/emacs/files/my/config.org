@@ -136,7 +136,14 @@ named arguments:
 * Back-ups
 Store lockfiles and backups outside:
 #+begin_src elisp
-(setq backup-directory-alist '(("." . "~/.local/share/emacs")))
+(defvar vik/custom-cache-location
+  "Where all emacs polluting crap is going to be stored.")
+(setq vik/custom-cache-location "~/.local/share/emacs")
+(unless (file-exists-p vik/custom-cache-location)
+  (make-directory vik/custom-cache-location t))
+
+(setq backup-directory-alist `(("." . ,vik/custom-cache-location)))
+
 (setq backup-by-copying t)
 (setq delete-old-versions t
   kept-new-versions 6
@@ -144,7 +151,7 @@ Store lockfiles and backups outside:
   version-control t)
 ;; Store lock files in the same directory
 (setq lock-file-name-transforms
-      `((".*" ,(concat "~/.local/share/emacs" "/lockfiles/\\1") t)))
+      `((".*" ,(concat vik/custom-cache-location "/lockfiles/\\1") t)))
 #+end_src
 
 * In-buffer movement & editing
@@ -414,25 +421,26 @@ Toggle between light and dark themes with =F5= key.
 #+end_src
 * Menus and search
 #+begin_src emacs-lisp
-  (fido-vertical-mode)
-  (recentf-mode 1)
+(fido-vertical-mode)
+(recentf-mode 1)
 #+end_src
 
 ** In buffer auto-completion.
 It's causes emacs to crash it seems. Disabled for now.
 #+begin_src emacs-lisp :tangle no
-  (use-package corfu
-    :ensure t
-    :custom
-    (corfu-auto t)
-    :config
-    (keymap-unset corfu-map "RET")
+(use-package corfu
+  :ensure t
+  :custom
+  (corfu-auto t)
+  :config
+  (keymap-unset corfu-map "RET")
   :init
-    (global-corfu-mode))
+  (global-corfu-mode))
 #+end_src
 * Org
 ** Appearance
-#+begin_src emacs-lisp
+This causes problems with tags:
+#+begin_src emacs-lisp :tangle no
 (setq org-ellipsis " [...]")
 (custom-set-faces
  `(org-ellipsis ((t (:foreground fg-dim) :underline nil))))
@@ -647,18 +655,25 @@ Make it respect font size better when zooming in and out.
                      :image-input-type "dvi"
                      :image-output-type "png"
                      :latex-compiler ("latex -interaction nonstopmode -output-directory %o %f")
-                     :image-converter ("convert -density 300 -trim -quality 100 %f %O"))))
+                     :image-converter ("convert -density 200 -trim -quality 100 %f %O"))))
 
 (setq org-format-latex-options
       (plist-put org-format-latex-options :scale 1.25))
-
 (setq org-latex-preview-debug t)
 #+end_src
 ** Images
 Show images max 500px each side, with fallback to ORG_ATTR:
 #+begin_src elisp
 (setq org-image-actual-width (list 400))
+(add-hook 'org-mode-hook #'org-display-inline-images)
 #+end_src
+
+Move cache data out of the way:
+#+begin_src elisp
+(setq org-preview-latex-image-directory
+      (concat vik/custom-cache-location "/ltximg"))
+#+end_src
+
 ** Links
 #+begin_src elisp
 (defun vik/org-remove-link-url ()
