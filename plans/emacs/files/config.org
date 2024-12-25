@@ -48,7 +48,7 @@ For both:
   "Reload my Emacs configuration from the Org file."
   (interactive)
   (shell-command "dot")
-  (org-babel-load-file (expand-file-name "~/.config/myemacs/config.org")))
+  (org-babel-load-file (expand-file-name "~/.config/emacs/config.org")))
 #+end_src
 
 Custom version-control install package function. Taken from https://tony-zorman.com/posts/package-vc-install.html
@@ -750,7 +750,7 @@ So that =C-u 2 C-c C-t= stores entries into a =LOGBOOK= drawer:
          :immediate-finish t)))
 #+end_src
 * LLMs
-#+begin_src emacs-lisp
+#+begin_src elisp
 (require 'auth-source)
 
 (use-package gptel
@@ -885,6 +885,7 @@ Not sure if this works yet
 #+begin_src emacs-lisp
 (use-package vterm
   :ensure t
+  :config
   (setq vterm-max-scrollback 100000))
 #+end_src
 
@@ -927,6 +928,9 @@ Keybinds:
 #+end_src
 ** Links
 #+begin_src emacs-lisp
+(unless (package-installed-p 's)
+  (package-install 's))
+
 (use-package git-link
   :init (vik/vc-install :host "github.com" :repo "sshaw/git-link")
   :config
@@ -964,6 +968,9 @@ Keybinds:
 #+end_src
 * KMonad
 #+begin_src emacs-lisp
+(unless (package-installed-p 's)
+  (package-install 's))
+
 (unless (package-installed-p 'kbd-mode)
   (package-vc-install
    '(kbd-mode . (:url "https://github.com/kmonad/kbd-mode"))))
