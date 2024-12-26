@@ -85,16 +85,16 @@
     scope: user
     state: started
 
-- name: Install redis packages
+- name: Install valkey (redis) package
   become: yes
   dnf:
     name:
-    - redis
+    - valkey
 
 - name: Start database services
   become: yes
   ansible.builtin.systemd:
-    name: redis
+    name: valkey
     enabled: yes
     state: started
 
