@@ -2,14 +2,10 @@ local wezterm = require 'wezterm'
 local act = wezterm.action
 local config = wezterm.config_builder()
 
--- enabled titlebar on wayland
-config.enable_wayland = false
 config.disable_default_key_bindings = true
 config.mouse_wheel_scrolls_tabs = false
 config.scrollback_lines = 100000
-config.use_fancy_tab_bar = false
-config.status_update_interval = 100
-config.show_tab_index_in_tab_bar = true
+config.status_update_interval = 500
 
 config.font = wezterm.font "Iosevka"
 
@@ -18,36 +14,25 @@ config.window_frame = {
   font = wezterm.font { family = 'Iosevka', weight = 'Bold' },
 }
 
-wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_width)
-  local title = ' ' .. tostring(tab.tab_index + 1) .. ' '
-
-  return wezterm.format({
-    { Attribute = { Intensity = "Bold" } },
-    { Text = title },
-    { Attribute = { Intensity = "Normal" } },
-  })
-end)
-
 wezterm.on('update-status', function(window, pane)
   local mode_name = window:active_key_table()
   if mode_name then
     local color = 'Black'
-    if mode_name == 'nav' then color = 'Fuchsia' end
-    if mode_name == 'tab' then color = 'Purple' end
-    if mode_name == 'window' then color = 'Green' end
-    if mode_name == 'resize' then color = 'Blue' end
+    if mode_name == 'xmode' then color = 'Fuchsia' end
+    if mode_name == 'cmode' then color = 'Purple' end
     if mode_name == 'config' then color = 'Navy' end
     if mode_name == 'copy_mode' then color = 'Tomato' end
     if mode_name == 'search_mode' then color = 'Red' end
 
     if mode_name == 'search_mode' then mode_name = 'search' end
     if mode_name == 'copy_mode' then mode_name = 'copy' end
-    -- TODO helper shortcuts in status?
+    if mode_name == 'xmode' then mode_name = 'C-x' end
+    if mode_name == 'cmode' then mode_name = 'C-c' end
 
     mode_name = wezterm.format({
       { Attribute = { Intensity = "Bold" } },
       { Background = { Color = color } },
-      { Text = ' ' .. string.upper(mode_name) .. ' ' },
+      { Text = ' ' .. mode_name .. ' ' },
       'ResetAttributes'
     })
   end
@@ -63,156 +48,66 @@ wezterm.on('update-status', function(window, pane)
   window:set_left_status(workspace)
 end)
 
-config.leader = { key = 'f', mods = 'CTRL', timeout_milliseconds = 1000 }
+config.leader = { key = ';', timeout_milliseconds = 1000 }
 config.keys = {
-  -- Sends "CTRL-f" to the terminal when pressing CTRL-f, CTRL-f
-  {
-    key = 'f',
-    mods = 'LEADER|CTRL',
-    action = wezterm.action.SendKey { key = 'f', mods = 'CTRL' },
-  },
+   { key = ';', mods = 'LEADER', action = wezterm.action.SendKey { key = ';' }},
+   {
+      key = 'x',
+      mods = 'LEADER',
+      action = act.ActivateKeyTable {name = 'xmode', one_shot = true, prevent_fallback = true },
+   },
+   {
+      key = 'c',
+      mods = 'LEADER',
+      action = act.ActivateKeyTable {name = 'cmode', one_shot = true, prevent_fallback = true },
+   },
 
-  { key = 'p', mods = 'LEADER', action = wezterm.action.ActivateCommandPalette },
-  { key = 's', mods = 'LEADER', action = act.ShowLauncherArgs { flags = 'WORKSPACES' } },
+   -- Clipboard
+   { key = 'w', mods = 'ALT', action = act.CopyTo "Clipboard" },
+   { key = 'y', mods = 'CTRL', action = act.PasteFrom "Clipboard" },
 
-  -- Clipboard
-  { key = 'c', mods = 'CTRL|SHIFT', action = act.CopyTo "Clipboard" },
-  { key = 'v', mods = 'CTRL|SHIFT', action = act.PasteFrom "Clipboard" },
+   -- Tab navigation
+   { key = 'Tab', mods = 'SHIFT|CTRL', action = act.ActivateTabRelative(-1) },
+   { key = 'Tab', mods = 'SHIFT', action = act.ActivateTabRelative(1) },
 
-  -- Font size
-  { key = '=', mods = 'CTRL', action = act.IncreaseFontSize },
-  { key = '-', mods = 'CTRL', action = act.DecreaseFontSize },
-  { key = '0', mods = 'CTRL', action = act.ResetFontSize },
+   -- Font size
+   { key = '=', mods = 'CTRL', action = act.IncreaseFontSize },
+   { key = '-', mods = 'CTRL', action = act.DecreaseFontSize },
+   { key = '0', mods = 'CTRL', action = act.ResetFontSize },
 
-  -- Quick navigation
-  { key = 'o', mods = 'LEADER', action = wezterm.action.ActivateLastTab },
-  {
-    key = 'h', mods = 'LEADER', action = act.Multiple {
-      act.ActivateKeyTable {name = 'nav', one_shot = false, prevent_fallback = true},
-      act.ActivatePaneDirection 'Left',
-    }
-  },
-  {
-    key = 'j', mods = 'LEADER', action = act.Multiple {
-      act.ActivateKeyTable {name = 'nav', one_shot = false, prevent_fallback = true},
-      act.ActivatePaneDirection 'Down',
-    }
-  },
-  {
-    key = 'k', mods = 'LEADER', action = act.Multiple {
-      act.ActivateKeyTable {name = 'nav', one_shot = false, prevent_fallback = true},
-      act.ActivatePaneDirection 'Up',
-    }
-  },
-  {
-    key = 'l', mods = 'LEADER', action = act.Multiple {
-      act.ActivateKeyTable {name = 'nav', one_shot = false, prevent_fallback = true},
-      act.ActivatePaneDirection 'Right',
-    }
-  },
-  { key = '=', mods = 'LEADER', action = act.SplitHorizontal { domain = 'CurrentPaneDomain' }},
-  { key = '-', mods = 'LEADER', action = act.SplitVertical { domain = 'CurrentPaneDomain' }},
-  { key = 'm', mods = 'LEADER', action = act.TogglePaneZoomState },
-  { key = 'n', mods = 'LEADER', action = act.SpawnTab 'CurrentPaneDomain' },
-
-  -- Modes
-  {
-    key = 'd', mods = 'LEADER',
-    action = act.ActivateKeyTable {name = 'domain', one_shot = true, prevent_fallback = true },
-  },
-  { key = 'c', mods = 'LEADER', action = act.ActivateCopyMode },
-  { key = '/', mods = 'LEADER', action = act.Search { CaseSensitiveString="" }},
-  {
-    key = 'w', mods = 'LEADER',
-    action = act.ActivateKeyTable {name = 'window', one_shot = false, prevent_fallback = true },
-  },
-  {
-    key = 't', mods = 'LEADER',
-    action = act.ActivateKeyTable {name = 'tab', one_shot = false, prevent_fallback = true },
-
-  },
-  {
-    key = 'q', mods = 'LEADER',
-    action = act.ActivateKeyTable {name = 'config', one_shot = true, prevent_fallback = true },
-  },
+   { key = 'o', mods = 'ALT', action = act.ActivatePaneDirection('Next') },
 }
-
-for i = 1, 8 do
-  table.insert(config.keys, {
-    key = tostring(i),
-    mods = 'LEADER',
-    action = act.ActivateTab(i - 1),
-  })
-end
 
 config.key_tables = {
-  config = {
-    { key = 'd', action = wezterm.action.ShowDebugOverlay },
-    { key = 'r', action = act.ReloadConfiguration },
-  },
-  nav = {
-    { key = 'Escape', action = 'ClearKeyTableStack' },
-    { key = 'h', action = act.ActivatePaneDirection 'Left' },
-    { key = 'j', action = act.ActivatePaneDirection 'Down' },
-    { key = 'k', action = act.ActivatePaneDirection 'Up' },
-    { key = 'l', action = act.ActivatePaneDirection 'Right' },
-    { key = 'h', mods = 'SHIFT', action = act.ActivateTabRelativeNoWrap(-1) },
-    { key = 'l', mods = 'SHIFT', action = act.ActivateTabRelativeNoWrap(1) },
-  },
-  window = {
-    { key = 'Escape', action = 'ClearKeyTableStack' },
-    { key = 'w', mods = 'LEADER', action = 'ClearKeyTableStack' },
-    { key = 'v', action = act.SplitHorizontal { domain = 'CurrentPaneDomain' }},
-    { key = 's', action = act.SplitVertical { domain = 'CurrentPaneDomain' }},
-    { key = 'd', action = act.CloseCurrentPane { confirm = false }},
-    { key = 'h', action = act.ActivatePaneDirection 'Left' },
-    { key = 'j', action = act.ActivatePaneDirection 'Down' },
-    { key = 'k', action = act.ActivatePaneDirection 'Up' },
-    { key = 'l', action = act.ActivatePaneDirection 'Right' },
-    { key = 'r', action = act.ActivateKeyTable {name = 'resize', one_shot = false}},
-    { key = 'm', action = act.Multiple { act.TogglePaneZoomState, act.ClearKeyTableStack }},
-  },
-  resize = {
-    { key = 'Escape', action = 'PopKeyTable' },
-    { key = 'r', action = 'PopKeyTable' },
-    { key = 'h', action = act.AdjustPaneSize { 'Left', 4 }},
-    { key = 'j', action = act.AdjustPaneSize { 'Down', 2 }},
-    { key = 'k', action = act.AdjustPaneSize { 'Up', 2 }},
-    { key = 'l', action = act.AdjustPaneSize { 'Right', 4 }},
-  },
-  tab = {
-    { key = 'Escape', action = 'ClearKeyTableStack' },
-    { key = 't', mods = 'LEADER', action = 'PopKeyTable' },
-    { key = 'd', action = act.CloseCurrentTab { confirm = false }},
-    { key = 'n', action = act.SpawnTab 'CurrentPaneDomain'},
-    { key = 'h', action = act.ActivateTabRelativeNoWrap(-1) },
-    { key = 'l', action = act.ActivateTabRelativeNoWrap(1) },
-    { key = 'h', mods = 'SHIFT', action = act.MoveTabRelative(-1) },
-    { key = 'l', mods = 'SHIFT', action = act.MoveTabRelative(1) },
-    { key = 'p', action = act.Multiple { act.ShowTabNavigator, act.ClearKeyTableStack }},
-    -- Switching tabs with number below with for loop.
-  },
+   xmode = {
+      { key = 'g', mods = "CTRL", action = 'ClearKeyTableStack' },
+      { key = '3', action = act.SplitHorizontal { domain = 'CurrentPaneDomain' }},
+      { key = '2', action = act.SplitVertical { domain = 'CurrentPaneDomain' }},
+      { key = 'm', action = act.TogglePaneZoomState },
+      { key = 't', action = act.ActivateKeyTable {name = 'tab', one_shot = true, prevent_fallback = true }},
+      { key = 'p', action = wezterm.action.ActivateCommandPalette },
+      { key = 'c', action = act.ActivateKeyTable {name = 'config', one_shot = true, prevent_fallback = true }},
+   },
+   cmode = {
+      { key = 'g', mods = "CTRL", action = 'ClearKeyTableStack' },
+      { key = 'c', action = act.ActivateCopyMode },
+      -- TODO add C-s and C-r for search mode properly
+      { key = 's', mods = 'CTRL', action = act.Search { CaseSensitiveString="Regex" }},
+   },
+   config = {
+      { key = 'g', mods = "CTRL", action = 'ClearKeyTableStack' },
+      { key = 'd', action = wezterm.action.ShowDebugOverlay },
+      { key = 'r', action = act.ReloadConfiguration },
+   },
+   tab = {
+      { key = 'g', mods = "CTRL", action = 'ClearKeyTableStack' },
+      { key = '0', action = act.CloseCurrentTab { confirm = true }},
+      { key = '2', action = act.SpawnTab 'CurrentPaneDomain'},
+   }
 }
-
-for i = 1, 8 do
-  table.insert(config.key_tables.tab, {
-    key = tostring(i),
-    action = act.ActivateTab(i - 1),
-  })
-end
-
-for i = 1, 8 do
-  table.insert(config.key_tables.nav, {
-    key = tostring(i),
-    action = act.ActivateTab(i - 1),
-  })
-end
 
 -- TODO: in search mode when pasting it pastes newline and messes with output and screws the search
 
-
--- wezterm.gui is not available to the mux server, so take care to
--- do something reasonable when this config is evaluated by the mux
 function get_appearance()
   if wezterm.gui then
     return wezterm.gui.get_appearance()
