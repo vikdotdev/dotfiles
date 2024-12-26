@@ -601,47 +601,6 @@ Sometimes when point ends up positioned after heading ellipsis, you cannot `org-
       (vik/ediff-org-expand-all))))
 
 (add-hook 'ediff-prepare-buffer-hook 'vik/ediff-setup-windows-hook)
-
-(require 'cl-lib)
-(require 's)
-
-(defun vik/syncthing-find-conflict-files (file)
-  "Find Syncthing conflict files for a given FILE."
-  (let ((dir (file-name-directory file))
-        (base-name (file-name-nondirectory file)))
-    (directory-files
-     dir t
-     (concat "^" (regexp-quote (file-name-sans-extension base-name))
-             "\\.sync-conflict-[0-9]+-[0-9]+-[A-Za-z0-9]+\\.org$"))))
-
-(defun vik/syncthing-merge-conflict-files (file)
-  "Perform a merge on Syncthing conflict FILE with its original version."
-  (interactive "fSelect base .org file to check for conflicts: ")
-  (let ((conflict-files (vik/syncthing-find-conflict-files file)))
-    (cond
-     ((null conflict-files)
-      (message "No conflict files found for %s" file))
-     ((= (length conflict-files) 1)
-      (let ((conflict-file (car conflict-files)))
-        (ediff-files
-         file conflict-file
-         (lambda ()
-           (message "Merged conflicts. Use `C-c C-c` to finalize.")))))
-     (t
-      (message "Multiple conflict files found. Using the latest conflict file."))
-      ;; Sort by date to get the latest conflict file
-      (let* ((latest-conflict-file (car (sort conflict-files #'string<))))
-        (ediff-files
-         file latest-conflict-file
-         (lambda ()
-           (message "Merged conflicts. Use `C-c C-c` to finalize.")))))))
-
-(defun vik/syncthing-merge-all-conflicts (directory)
-  "Merge all Syncthing conflicts in DIRECTORY for .org files."
-  (interactive "DSelect directory to search for conflicts: ")
-  (dolist (file (directory-files directory t "\\.org$"))
-    (when (vik/syncthing-find-conflict-files file)
-      (vik/syncthing-merge-conflict-files file))))
 #+end_src
 
 ** TODO Latex
