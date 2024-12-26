@@ -45,9 +45,6 @@
     - renameutils
     - bat
     - deluge
-    - zathura
-    - zathura-pdf-poppler
-    - zathura-pdf-mupdf
     - gimp
     - git
     - git-credential-libsecret
