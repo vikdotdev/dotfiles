@@ -845,9 +845,10 @@ Not sure if this works yet
 * Terminal emulator
 #+begin_src emacs-lisp
 (use-package vterm
-  :ensure t
-  :config
-  (setq vterm-max-scrollback 100000))
+  :ensure t)
+  (setq
+   vterm-max-scrollback 100000
+   vterm-timer-delay nil)
 #+end_src
 
 Custom functions for opening the terminal:
