@@ -67,6 +67,7 @@
     state: absent
     name:
     - gnome-terminal
+    - gnome-text-editor
 
 - name: Start docker daemon service
   become: yes
@@ -118,3 +119,5 @@
     - org.telegram.desktop
     - org.signal.Signal
     - com.slack.Slack
+    - org.gnome.Solanum
+    - com.rafaelmardojai.Blanket
