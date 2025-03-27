@@ -1,9 +1,9 @@
 [user]
-	email = vikdotdev@gmail.com
-	name = Viktor Habchak
-	signingkey = 7392D21113383CBB
+  email = vikdotdev@gmail.com
+  name = Viktor Habchak
+  signingkey = 7392D21113383CBB
 [credential]
-	helper = /usr/libexec/git-core/git-credential-libsecret
+  helper = /usr/libexec/git-core/git-credential-libsecret
 [alias]
   resolve = "!f() { git diff --name-status --diff-filter=U | cut -f2 ; }; $GIT_EDITOR `f`"
   reword = commit --amend
@@ -20,36 +20,35 @@
   authors = log --pretty=format:'%an <%%ae>'
   amend = commit --amend --no-edit
 [core]
-	autocrlf = input
+  autocrlf = input
 [commit]
-	verbose = true
-	; gpgsign = true
+  verbose = true
+  ; gpgsign = true
 [github]
-	user = vikdotdev
+  user = vikdotdev
 [pager]
   diff = delta --paging always
   log = delta
   reflog = delta
   show = delta
-
 [delta "vikdotdev-dark"]
   dark = true
   syntax-theme = Dracula
-
 [delta "vikdotdev-light"]
-	light = true
+  light = true
   syntax-theme = GitHub
-
-navigate = true
-
+  navigate = true
 <% if @profile.in?(1) %>
-side-by-side = true
+  side-by-side = true
 <% else %>
-side-by-side = false
+  side-by-side = false
 <% end %>
 
 [interactive]
   diffFilter = delta --color-only -s -n
 
 [gpg]
-	program = gpg
+  program = gpg
+[diff "gpg"]
+  textconv = gpg --no-tty --decrypt
+
