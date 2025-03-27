@@ -86,7 +86,6 @@ named arguments:
 - https://www.reddit.com/r/emacs/comments/hzhkk1/what_simple_key_remapping_has_transformed_your/
 - https://www.reddit.com/r/emacs/comments/nr3cxv/what_are_your_very_useful_emacs_key_bindings_fast/
 - https://stackoverflow.com/questions/22231431/sort-a-mixed-list-of-headings-in-org-mode
-
 * Repositories
 #+begin_src emacs-lisp
 (require 'package)
@@ -99,12 +98,21 @@ named arguments:
 (package-initialize)
 (unless package-archive-contents (package-refresh-contents))
 #+end_src
-
+* Credentials
+#+begin_src elisp
+(require 'auth-source)
+(setq auth-sources '("~/.authinfo.gpg"))
+#+end_src
 * Defaults
 #+begin_src emacs-lisp
 (setq next-line-add-newlines t) ; C-n adds new lines
 (delete-selection-mode) ;; selection gets replaced on yank
 (global-auto-revert-mode 1) ;; file changed on disk, auto reload it
+#+end_src
+
+Never auto insert tabs:
+#+begin_src elisp
+(setq-default indent-tabs-mode nil)
 #+end_src
 * Introspection and debugging
 ** Hide warnings
@@ -178,17 +186,6 @@ Pixel scroll precision mode only works for mouse and touchpad.
 (pixel-scroll-precision-mode)
 #+end_src
 
-#+begin_src emacs-lisp
-(use-package golden-ratio-scroll-screen
-  :ensure t
-  :bind (([remap scroll-down-command] . golden-ratio-scroll-screen-down)
-         ([remap scroll-up-command] . golden-ratio-scroll-screen-up))
-  :config
-  (setq
-   golden-ratio-scroll-recenter nil
-   golden-ratio-scroll-screen-ratio 1.5
-   golden-ratio-scroll-highlight-flag 'before))
-#+end_src
 ** TODO Inserting newlines
 =C-<return>= to insert newline below, =S-<return>= to insert newline above.
 
@@ -209,6 +206,7 @@ NOTE: This conflicts with some org-mode keybinds for inserting headings. Current
 (global-set-key (kbd "S-<return>") 'vik/open-line-above)
 #+end_src
 ** Multiple cursors
+Use by selecting region-symbol beforehand:
 #+begin_src emacs-lisp
 (use-package multiple-cursors
   :ensure t
@@ -340,20 +338,23 @@ Ensures end line in the file. Useful to correctly display hl-line on the last li
   (run-with-timer 0.1 nil #'invert-face 'mode-line))
 #+end_src
 ** Faces
+#+begin_src elisp
+(setq text-scale-mode-step 1.05)
+#+end_src
 Toggle for the whole frame to change font size. =custom-set-faces= causes flicker when called, but ensures there's no weird behavior when zooming in and out with =C-x C-+= for example.
 
 Different machines get different values.
 #+BEGIN_SRC emacs-lisp
 (defvar vik/big-font-size
   (cond
-   ((string= (getenv "DOT_PROFILE") "1") 190)
+   ((string= (getenv "DOT_PROFILE") "1") 180)
    ((string= (getenv "DOT_PROFILE") "2") 170)
    ((string= (getenv "DOT_PROFILE") "3") 170)
    (t 120)))
 
 (defvar vik/default-font-size
   (cond
-   ((string= (getenv "DOT_PROFILE") "1") 120)
+   ((string= (getenv "DOT_PROFILE") "1") 110)
    ((string= (getenv "DOT_PROFILE") "2") 150)
    ((string= (getenv "DOT_PROFILE") "3") 150)
    (t 150)))
@@ -425,17 +426,105 @@ Toggle between light and dark themes with =F5= key.
 (recentf-mode 1)
 #+end_src
 
-** In buffer auto-completion.
-It's causes emacs to crash it seems. Disabled for now.
-#+begin_src emacs-lisp :tangle no
-(use-package corfu
-  :ensure t
-  :custom
-  (corfu-auto t)
-  :config
-  (keymap-unset corfu-map "RET")
-  :init
-  (global-corfu-mode))
+** TODO Nicer xref
+TODO There's another xref section somewhere - is it duplicated?
+TODO This does not really work as I intended:
+#+begin_src elisp :tangle no
+(defface my/xref-modeline-face
+  '((t :weight bold :foreground "#ffcc00"))
+  "Face for highlighting the xref code window in the modeline.")
+
+(defvar my/xref-code-window nil
+  "Stores the window displaying xref results.")
+
+(defun my/is-window-visible-in-current-tab (window)
+  "Check if a WINDOW is visible in the current tab."
+  (let ((current-tab (tab-bar--current-tab)))
+    (seq-find
+     (lambda (tab)
+       (member window (tab-bar-tab-windows tab)))
+     (tab-bar-tabs))))
+
+(defun my/xref-display-buffer (buffer _alist)
+  "Ensure `*xref*` stays open and reuse only one other window for code."
+
+  (message "Setting xref display buffer with buffer: %s" buffer)
+  (message "Selected window %s" (selected-window))
+  (message "Assigned code window %s" my/xref-code-window)
+
+  (if (not (equal (buffer-name buffer) "*xref*"))
+      (error "Error: `my/xref-code-window` is not set or invalid!")
+
+    (display-buffer-in-side-window buffer
+                                   '((side . left) (window-width . 0.25)))
+
+    (let* ((xref-window (get-buffer-window "*xref*"))
+           (current-window (selected-window))
+           (valid-code-windows
+            (seq-filter (lambda (w) (and (not (eq w xref-window))
+                                         ;; If my window is set-up, then it's the only valid window
+                                         (eq (window-buffer w) (window-buffer (or my/xref-code-window w)))))
+                        (window-list))))
+
+      (message "Valid windows: %s" valid-code-windows)
+      ;; Check if the current window is not the xref window and is not already tracked
+      (if (and (not (eq current-window xref-window))
+               (memq current-window valid-code-windows))
+          ;; If it's a valid code window and not already tracked, set it as `my/xref-code-window`
+          (progn
+            (message "Setting my/xref-code-window to %s" current-window)
+            (setq my/xref-code-window current-window))
+        (progn
+          (message "Setting my/xref-code-window to first valid code window: %s" (car valid-code-windows))
+          (setq my/xref-code-window (car valid-code-windows))))
+
+      ;; Ensure `my/xref-code-window` is set; otherwise, throw an error
+      (if (not my/xref-code-window)
+          (error "Error: `my/xref-code-window` is not set or invalid!")
+        ;; (select-window xref-window) ; does not work, buffer may not exist yet?
+        (my/update-xref-modeline)
+        my/xref-code-window))))
+
+;; (add-to-list 'display-buffer-alist
+             ;; '("\\*xref\\*" my/xref-display-buffer))
+
+(defun my/update-xref-modeline ()
+  "Update the modeline to mark the code window when `*xref*` is visible."
+  (let* ((xref-window (get-buffer-window "*xref*"))
+         (code-window my/xref-code-window))
+
+    (if (and xref-window code-window)
+        (progn
+          (dolist (w (window-list))
+            (unless (eq w code-window)
+              (with-selected-window w
+                (setq-local mode-line-format (default-value 'mode-line-format)))))
+          (with-selected-window code-window
+            (setq-local mode-line-format
+                        (append (default-value 'mode-line-format)
+                                '((:eval (propertize " [xref]" 'face 'my/xref-modeline-face))))))
+          (force-mode-line-update))
+      (when code-window
+        (with-selected-window my/xref-code-window
+          (setq-local mode-line-format (default-value 'mode-line-format))
+          (force-mode-line-update))))))
+
+(defun my/xref-clear-highlight (&rest _)
+  "Remove `[xref]` from modeline when `*xref*` buffer is closed."
+  (unless (get-buffer-window "*xref*")
+    (when my/xref-code-window
+      (progn
+        (dolist (w (window-list))
+          (with-selected-window w
+            (setq-local mode-line-format (default-value 'mode-line-format))))
+      (with-selected-window my/xref-code-window
+        (setq-local mode-line-format (default-value 'mode-line-format))
+        (force-mode-line-update))
+    (setq my/xref-code-window nil)))))
+
+;; Hook to update modeline when `xref` opens or closes
+;; (add-hook 'window-configuration-change-hook #'my/update-xref-modeline)
+;; (add-hook 'window-selection-change-functions #'my/xref-clear-highlight)
 #+end_src
 * Org
 ** Appearance
@@ -445,6 +534,15 @@ This causes problems with tags:
 (custom-set-faces
  `(org-ellipsis ((t (:foreground fg-dim) :underline nil))))
 #+end_src
+** Agenda
+#+begin_src elisp
+(global-set-key (kbd "C-c a") 'org-agenda)
+#+end_src
+** Code
+TODO These can be run as code blocks - fails for some reason when ran on start-up:
+#+begin_src elisp
+;; (setq org-babel-load-languages ((ruby . t) (emacs-lisp . t)))
+#+end_src
 ** Configuration
 #+begin_src emacs-lisp
 (setq org-directory "~/Documents/notes/org/0-inbox/")
@@ -452,7 +550,7 @@ This causes problems with tags:
                          "~/Documents/notes/org/1-projects/"
                          "~/Documents/notes/org/2-areas/"
                          "~/Documents/notes/org/3-resources/"))
-(setq org-adapt-indentation t)
+;; (setq org-adapt-indentation t) ; why tf did I set this up idk, it breaks :PROPERTIES: indents insertion
 (setq org-hide-emphasis-markers t)
 (setq org-edit-src-content-indentation 0)
 
@@ -608,7 +706,7 @@ Make it respect font size better when zooming in and out.
 #+begin_src elisp
 (setq org-preview-latex-default-process 'imagemagick)
 (setq org-preview-latex-process-alist
-      '((imagemagick :programs ("latex" "convert")
+      '((imagemagick :programs ("latex" "magick")
                      :description "imagemagick"
                      :message "you need to install the programs: latex and imagemagick."
                      :image-input-type "dvi"
@@ -617,7 +715,7 @@ Make it respect font size better when zooming in and out.
                      :image-converter ("convert -density 200 -trim -quality 100 %f %O"))))
 
 (setq org-format-latex-options
-      (plist-put org-format-latex-options :scale 1.25))
+      (plist-put org-format-latex-options :scale 1.1))
 (setq org-latex-preview-debug t)
 #+end_src
 ** Images
@@ -630,10 +728,16 @@ Show images max 500px each side, with fallback to ORG_ATTR:
 Move cache data out of the way:
 #+begin_src elisp
 (setq org-preview-latex-image-directory
-      (concat vik/custom-cache-location "/ltximg"))
+      (concat vik/custom-cache-location "/ltximg/"))
 #+end_src
 
 ** Links
+#+begin_src elisp
+(setq org-id-link-to-org-use-id 'create-if-interactive)
+
+(global-set-key (kbd "C-c l s") 'org-store-link)
+#+end_src
+
 #+begin_src elisp
 (defun vik/org-remove-link-url ()
   "Replace an Org link at point with its description, removing the URL."
@@ -641,6 +745,7 @@ Move cache data out of the way:
   (when (org-in-regexp org-link-bracket-re 1)
     (let ((desc (or (match-string 2) "")))
       (replace-match desc t t))))
+(global-set-key (kbd "C-c l r") 'vik/org-remove-link-url)
 #+end_src
 
 #+begin_src elisp
@@ -702,6 +807,10 @@ So that =C-u 2 C-c C-t= stores entries into a =LOGBOOK= drawer:
 #+end_src
 ** Capture
 #+begin_src elisp
+(global-set-key (kbd "C-c c") 'org-capture)
+#+end_src
+
+#+begin_src elisp
 (setq org-capture-templates
       '(("t" "Insert Org Title in Current File" plain
          (function (lambda () (or (buffer-file-name) (error "No current file!"))))
@@ -709,14 +818,72 @@ So that =C-u 2 C-c C-t= stores entries into a =LOGBOOK= drawer:
          :immediate-finish t)))
 #+end_src
 * LLMs
+TODO This think-block thing was likely already fixed in the gptel package. This should be deleted at some point.
 #+begin_src elisp
-(require 'auth-source)
-
 (use-package gptel
   :ensure t
   :config
   (setq gptel-default-mode #'org-mode)
-  (setq gptel-api-key (auth-source-pick-first-password :host "openai.com" :user "EMACS_API_KEY" :secret t)))
+  (setq gptel-api-key (auth-source-pick-first-password :host "openai.com" :user "EMACS_API_KEY" :secret t))
+  (gptel-make-ollama "Ollama"
+    :host "localhost:11434"
+    :stream t
+    :models '(deepseek-r1:latest deepseek-coder-v2:latest))
+
+  (defun my-gptel-deepseek-org-wrap-think-in-drawer (beg end)
+    "Wrap '<think>' blocks in an Org-mode drawer if not already wrapped when in org-mode."
+    (when (derived-mode-p 'org-mode)
+      (save-excursion
+	(goto-char beg)
+	;; Find all occurrences of <think> blocks
+	(while (re-search-forward "^<think>" end t)
+          (let ((start (line-beginning-position)))
+            ;; Check if the block is already wrapped
+            (unless (save-excursion
+                      (forward-line -1)
+                      (looking-at "^:THINKING:$"))
+              ;; Insert Org-mode drawer start
+              (goto-char start)
+              (insert-and-inherit ":THINKING:\n")
+              (forward-line 1)
+              ;; Find the closing tag again after insertion
+              (when (re-search-forward "</think>" end t)
+		(end-of-line)
+		;; Ensure we don't add duplicate :END:
+		(unless (looking-at "\n:END:")
+                  (insert-and-inherit "\n:END:\n"))
+		;; Move back to the start of the drawer for org-cycle
+		(goto-char start)
+		(org-cycle)))))))
+    (message "Think blocks wrapped and folded."))
+
+  (defun my-gptel-deepseek-prog-write-think-to-buffer (beg end)
+    "Write '<think>' blocks to a separate buffer when in prog-mode."
+    (when (derived-mode-p 'prog-mode)
+      (let ((think-buffer (get-buffer-create "*Ollamas' thinking*")))
+	(with-current-buffer think-buffer
+          (org-mode)  ;; Set the buffer to Org-mode
+          (goto-char (point-max))
+          (insert "\n* Thinking\n"))  ;; Use Org-mode heading
+	(save-excursion
+          (goto-char beg)
+          (while (re-search-forward "^<think>\(\(.\|
+\)*?\)</think>" end t)
+            (let ((think-content (match-string 1)))
+              (with-current-buffer think-buffer
+		(goto-char (point-max))
+		(insert "\n" think-content "\n")))))
+	(message "Think blocks written to *Ollamas' thinking* buffer."))))
+
+    (add-hook 'gptel-post-response-functions #'my-gptel-deepseek-org-wrap-think-in-drawer)
+    (add-hook 'gptel-post-response-functions #'my-gptel-deepseek-prog-write-think-to-buffer))
+
+  (define-prefix-command 'vik/gptel-prefix)
+  (global-set-key (kbd "C-x l") 'vik/gptel-prefix)
+  (global-set-key (kbd "C-x l n") 'gptel)
+  (global-set-key (kbd "C-x l m") 'gptel-menu)
+  (global-set-key (kbd "C-x l a") 'gptel-add)
+  (global-set-key (kbd "C-x l r") 'gptel-rewrite)
 #+end_src
 * Coding
 ** Comments
@@ -740,18 +907,21 @@ Camel-cased symbols will be recognized as words.
 Attaches eglot to every programming language buffer:
 #+begin_src emacs-lisp
 (add-hook 'prog-mode-hook 'eglot-ensure)
+(setq eglot-report-progress nil)
 #+end_src
 
 TODO bind =eglot-inlay-hints-mode= to something:
+TODO this was failing when loading the config
 #+begin_src elisp
-
+;; (eglot-inlay-hints-mode 0)
 #+end_src
 
 ** Documentation
 Use =C-h .= to look up documentation of thing at point.
 #+begin_src emacs-lisp
 (global-eldoc-mode 1)
-(setq eldoc-echo-area-use-multiline-p nil)
+(setq eldoc-echo-area-use-multiline-p t)
+(setq eldoc-echo-area-prefer-doc-buffer t)
 #+end_src
 ** Basic code navigation with =dumb-jump=
 Attaches dumb-jump as xref back-end:
@@ -761,6 +931,17 @@ Attaches dumb-jump as xref back-end:
 (require 'dumb-jump)
 
 (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
+#+end_src
+** TODO xref
+Show search bar in the bottom sheet - does not really work:
+#+begin_src elisp :tangle no
+(add-to-list 'display-buffer-alist
+             '("\\*xref\\*"
+               (display-buffer-in-side-window)
+               (window-height . 0.3)
+               (side . bottom)
+               (slot . 1)))
+
 #+end_src
 ** Treesitter configuration
 Treesitter sources:
@@ -805,10 +986,29 @@ Treesitter sources:
   (add-to-list 'auto-mode-alist '("\\Rakefile\\'" . ruby-ts-mode)))
 #+end_src
 
+TODO: bind these:
+flymake-goto-next-error
+flymake-goto-prev-error
+flymake-show-buffer-diagnostics
+
+=M-<TAB>= completion at point
+=M-?= to find references
+=M-.= find definition
+=M-,= go back from prev find definition
+=C-.= view docs
+=C-c {= ruby toggle block type.
+=C-c '= ruby inside change quote type.
 #+begin_src emacs-lisp
 (with-eval-after-load 'eglot
   (add-to-list 'eglot-server-programs
-               '(ruby-ts-mode . ("solargraph" "stdio"))))
+               '(ruby-mode . ("solargraph" "stdio"))))
+#+end_src
+
+#+begin_src elisp :tangle no
+(use-package robe
+  :ensure t
+  :config
+  (add-hook 'ruby-mode-hook 'robe-mode))
 #+end_src
 ** Lua
 #+begin_src elisp
@@ -887,6 +1087,11 @@ Keybinds:
 #+begin_src emacs-lisp
 (unless (package-installed-p 'magit)
 (package-install 'magit))
+(use-package magit
+  :ensure t)
+(use-package forge
+  :ensure t
+  :after magit)
 #+end_src
 ** Links
 #+begin_src emacs-lisp
