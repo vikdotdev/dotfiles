@@ -8,7 +8,6 @@
     - include_tasks: tasks/fonts.yml
     - include_tasks: tasks/gnome.yml
     - include_tasks: tasks/emacs.yml
-    - include_tasks: tasks/asdf.yml
 
     - name: Install kmonad?
       include_tasks: tasks/kmonad.yml
