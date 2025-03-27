@@ -6,25 +6,75 @@ gemfile do
   source 'https://rubygems.org'
 
   gem 'tty-prompt'
+  gem 'colorize'
 end
 
 class FailedToPush < StandardError; end
 class FailedToCreatePullRequest < StandardError; end
 
-prompt = TTY::Prompt.new
+tty = TTY::Prompt.new
+
+def cmd(str) = str.colorize(:blue)
+
+FetchPrune = Struct.new do
+  def self.exec! = new.exec!
+  def exec!
+    puts cmd(to_s)
+    system(to_s)
+  end
+  def to_s = "git fetch --prune"
+end
+
+BranchCurrent = Struct.new do
+  def self.exec! = new.exec!
+  def exec!
+    puts cmd(to_s)
+    `#{to_s}`.chomp
+  end
+  def to_s = "git branch --show-current"
+end
+
+SetupUpstream = Struct.new(:tty, :branch, keyword_init: true) do
+  def self.exec!(**kwargs) = new(**kwargs).exec!
+  def exec!
+    if !tty.yes?('Use default upstream branch?')
+      `git branch -r`.chomp.split("\n").map(&:strip).then do |origin_branch_list|
+        self.branch = tty.select('Select upstream branch:', origin_branch_list, filter: true)
+        puts cmd(to_s)
+        system(to_s)
+      end
+    end
+  end
+  def to_s = "git branch --set-upstream-to=#{branch}"
+end
+
+Push = Struct.new(:tty, :branch, keyword_init: true) do
+  def self.exec!(**kwargs) = new(**kwargs).exec!
+  def exec!
+    if tty.yes?("Push to origin/#{branch}?")
+      puts cmd(to_s)
+      system("git push -u origin #{branch}")
+    end => pushed
+    
+    raise FailedToPush unless pushed
+  end
+  def to_s = "git push -u origin #{branch}"
+end
 
 begin
   begin
-    branch = `git branch --show-current`.chomp
-    pushed = system("git push -u origin #{branch}") if prompt.yes?("Push to origin/#{branch}?")
-    raise FailedToPush unless pushed
-  rescue FailedToPush
+    FetchPrune.exec!
+    SetupUpstream.exec!(tty:)
+    BranchCurrent.exec! => branch
+    Push.exec!(tty:, branch:)
+  rescue FailedToPush => e
     puts 'Failed to push.'
+    puts e.message
     retry
   end
 
-  create_pr = prompt.yes?('Create pull request?')
-  as_draft = prompt.yes?('As draft?') if create_pr
+  create_pr = tty.yes?('Create pull request?')
+  as_draft = tty.yes?('As draft?') if create_pr
 
   begin
     pr_created = system("gh pr create #{'-d' if as_draft} --fill") if create_pr
@@ -34,7 +84,8 @@ begin
     retry
   end
 
-  system('gh pr view --web') if pr_created && prompt.yes?('Open pull request in browser?')
+
+  system('gh pr view --web') if pr_created && tty.yes?('Open pull request in browser?')
 rescue Interrupt
   puts
   exit 130
