@@ -1147,10 +1147,17 @@ Keybinds:
 * Version control
 ** Magit
 #+begin_src emacs-lisp
-(unless (package-installed-p 'magit)
-(package-install 'magit))
 (use-package magit
-  :ensure t)
+  :ensure t
+  :config
+  (setq magit-define-global-key-bindings nil)
+
+  (defvar vik/magit-prefix-map (make-sparse-keymap)
+    "Keymap for custom Magit-related keybindings.")
+  (define-key global-map (kbd "C-x g") vik/magit-prefix-map)
+  (define-key vik/magit-prefix-map (kbd "g") #'magit-status)
+  (define-key vik/magit-prefix-map (kbd "d") #'magit-dispatch)
+  (define-key vik/magit-prefix-map (kbd "f") #'magit-file-dispatch))
 (use-package forge
   :ensure t
   :after magit)
