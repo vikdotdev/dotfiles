@@ -186,6 +186,12 @@ Pixel scroll precision mode only works for mouse and touchpad.
 (pixel-scroll-precision-mode)
 #+end_src
 
+Makes the buffer scroll smoothly on =C-n= or =C-p=. Does not work well within org-mode buffers. When encountering a heading with contents it will re-center the screen, presumably to better reveal the content.
+#+begin_src elisp
+(setq scroll-margin 8)
+(setq scroll-step 1)
+#+end_src
+
 Cursor stays put on C-v M-v:
 #+begin_src elisp
 (setq scroll-preserve-screen-position 'always)
