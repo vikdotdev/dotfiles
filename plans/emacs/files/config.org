@@ -186,6 +186,55 @@ Pixel scroll precision mode only works for mouse and touchpad.
 (pixel-scroll-precision-mode)
 #+end_src
 
+Cursor stays put on C-v M-v:
+#+begin_src elisp
+(setq scroll-preserve-screen-position 'always)
+#+end_src
+
+Half page scrolling:
+#+begin_src elisp
+(defun vik/scroll-half-page-down ()
+  (interactive)
+  (let* ((lines (/ (window-body-height) 2))
+         (current-line (line-number-at-pos)))
+    (scroll-up-command lines)
+    (goto-char (point-min))
+    (forward-line (+ lines (- current-line 1)))))
+
+(defun vik/scroll-half-page-up ()
+  (interactive)
+  (let* ((lines (/ (window-body-height) 2))
+         (current-line (line-number-at-pos)))
+    (scroll-down-command lines)
+    (goto-char (point-min))
+    (forward-line (- current-line lines 1))))
+
+(global-set-key (kbd "C-v") 'vik/scroll-half-page-down)
+(global-set-key (kbd "M-v") 'vik/scroll-half-page-up)
+#+end_src
+
+One line scrolling:
+#+begin_src elisp
+(defun vik/scroll-one-line-down ()
+  (interactive)
+  (let* ((lines 1)
+         (current-line (line-number-at-pos)))
+    (scroll-up-command lines)
+    (goto-char (point-min))
+    (forward-line (+ lines (- current-line 1)))))
+
+(defun vik/scroll-one-line-up ()
+  (interactive)
+  (let* ((lines 1)
+         (current-line (line-number-at-pos)))
+    (scroll-down-command lines)
+    (goto-char (window-start))
+    (forward-line (- current-line 1))))
+
+(global-set-key (kbd "C-S-v") 'vik/scroll-one-line-down)
+(global-set-key (kbd "M-V") 'vik/scroll-one-line-up) ; M-S-v
+#+end_src
+
 ** TODO Inserting newlines
 =C-<return>= to insert newline below, =S-<return>= to insert newline above.
 
@@ -222,6 +271,10 @@ Think of a good keymap for this.
 (defun vik/insert-timestamp ()
   (interactive)
   (insert (format-time-string "%Y %b %d, %A %H:%M")))
+
+(defun vik/insert-datestamp ()
+  (interactive)
+  (insert (format-time-string "%Y %b %d, %A")))
 #+end_src
 ** Searching
 #+begin_src emacs-lisp
@@ -536,7 +589,16 @@ This causes problems with tags:
 #+end_src
 ** Agenda
 #+begin_src elisp
-(global-set-key (kbd "C-c a") 'org-agenda)
+(define-prefix-command 'org-window-map)
+(global-set-key (kbd "C-x o") 'org-window-map)
+(define-key 'org-window-map (kbd "a") 'org-agenda)
+
+(setq org-agenda-custom-commands
+      '(("w" "Work" tags-todo "+work")
+        ("U" "Untagged" tags-todo "-{.*}")
+        ("t" "Test"
+         ((tags-todo "+work" (org-agenda-overriding-header))
+          (tags-todo "-{.*}")))))
 #+end_src
 ** Code
 TODO These can be run as code blocks - fails for some reason when ran on start-up:
