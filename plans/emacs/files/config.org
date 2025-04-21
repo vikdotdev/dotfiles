@@ -188,7 +188,7 @@ Pixel scroll precision mode only works for mouse and touchpad.
 
 Makes the buffer scroll smoothly on =C-n= or =C-p=. Does not work well within org-mode buffers. When encountering a heading with contents it will re-center the screen, presumably to better reveal the content.
 #+begin_src elisp
-(setq scroll-margin 8)
+(setq scroll-margin 5)
 (setq scroll-step 1)
 #+end_src
 
@@ -586,6 +586,11 @@ TODO This does not really work as I intended:
 ;; (add-hook 'window-selection-change-functions #'my/xref-clear-highlight)
 #+end_src
 * Org
+** Mapping
+#+begin_src elisp
+(define-prefix-command 'org-window-map)
+(global-set-key (kbd "C-x o") 'org-window-map)
+#+end_src
 ** Appearance
 This causes problems with tags:
 #+begin_src emacs-lisp :tangle no
@@ -595,16 +600,87 @@ This causes problems with tags:
 #+end_src
 ** Agenda
 #+begin_src elisp
-(define-prefix-command 'org-window-map)
-(global-set-key (kbd "C-x o") 'org-window-map)
 (define-key 'org-window-map (kbd "a") 'org-agenda)
+#+end_src
+
+Sub-headings inherit tags from parent headings:
+#+begin_src elisp
+(setq org-use-tag-inheritance t)
+#+end_src
+
+Include gpg encrypted file headings to be displayed in agenda:
+#+begin_src elisp
+(setq org-agenda-file-regexp "\\`[^.].*\\.org\\\(\\.gpg\\\)?\\'")
+#+end_src
+
+See global list of tags in =C-c C-q=:
+#+begin_src elisp
+(setq org-complete-tags-always-offer-all-agenda-tags t)
+#+end_src
+
+What to log when changing entry status:
+#+begin_src elisp
+(setq org-log-done 'time)
+(setq org-agenda-start-with-log-mode t)
+#+end_src
+
+Custom agendas:
+#+begin_src elisp
+(defun vik/org-agenda-skip-entry-non-work ()
+  "Skip entries that are not tagged with 'work'. Intended to be used in custom agendas."
+  (let ((tags (org-get-tags)))
+    (when (not (member "work" tags))
+      (or (outline-next-heading) (point-max)))))
+
+(defun vik/org-agenda-skip-entry-work ()
+  "Skip entries that are tagged with 'work'. Intended to be used in custom agendas."
+  (let ((tags (org-get-tags-at (point))))
+    (when (member "work" tags)
+      (or (outline-next-heading) (point-max)))))
 
 (setq org-agenda-custom-commands
-      '(("w" "Work" tags-todo "+work")
-        ("U" "Untagged" tags-todo "-{.*}")
-        ("t" "Test"
-         ((tags-todo "+work" (org-agenda-overriding-header))
-          (tags-todo "-{.*}")))))
+      '(("w" "Work"
+         ((agenda ""
+                  ((org-agenda-overriding-header "Work")
+                   (org-agenda-span 21)
+                   (org-agenda-skip-function #'vik/org-agenda-skip-entry-non-work)))
+          (tags-todo "+work+PRIORITY=\"A\""
+                     ((org-agenda-overriding-header "High priority")))
+          (tags-todo "+work"
+                     ((org-agenda-overriding-header "Work non-scheduled")
+                      (org-agenda-skip-function
+                       '(org-agenda-skip-entry-if 'deadline 'scheduled 'done))))
+          ))
+        ("p" "Personal"
+         ((agenda ""
+                  ((org-agenda-overriding-header "Personal")
+                   (org-agenda-span 21)
+                   (org-agenda-skip-function #'vik/org-agenda-skip-entry-work)))
+          (tags-todo "-work+PRIORITY=\"A\""
+                     ((org-agenda-overriding-header "High priority")))
+          (tags-todo "+occurence-work"
+                     ((org-agenda-overriding-header "Occurences")))
+          (tags-todo "+travel+event-work"
+                     ((org-agenda-overriding-header "Events & travels")))
+          (tags-todo "-occurence-event-travel-work"
+                     ((org-agenda-overriding-header "Other without timeframe")
+                      (org-agenda-skip-function
+                       '(org-agenda-skip-entry-if 'deadline 'scheduled 'done))))
+          ))))
+#+end_src
+
+Format the agenda view:
+#+begin_src elisp
+(setq org-agenda-prefix-format
+      '((todo . " %i %-16:c %s%b")
+        (tags . " %i %-16:c %s%b")
+        (search . " %i %-16:c %s%b")
+        (agenda . " %i %-16:c %s%b")))
+#+end_src
+
+Skip empty days:
+#+begin_src elisp
+(setq org-agenda-show-all-dates nil)
 #+end_src
 ** Code
 TODO These can be run as code blocks - fails for some reason when ran on start-up:
