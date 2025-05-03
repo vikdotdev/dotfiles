@@ -968,6 +968,9 @@ TODO This think-block thing was likely already fixed in the gptel package. This 
   :ensure t
   :config
   (setq gptel-default-mode #'org-mode)
+  (setq gptel-org-branching-context t)
+  (setf (alist-get 'org-mode gptel-prompt-prefix-alist) "=@user=\n")
+  (setf (alist-get 'org-mode gptel-response-prefix-alist) "=@assistant=\n")
   (setq gptel-api-key (auth-source-pick-first-password :host "openai.com" :user "EMACS_API_KEY" :secret t))
   (gptel-make-ollama "Ollama"
     :host "localhost:11434"
@@ -1022,12 +1025,13 @@ TODO This think-block thing was likely already fixed in the gptel package. This 
     (add-hook 'gptel-post-response-functions #'my-gptel-deepseek-org-wrap-think-in-drawer)
     (add-hook 'gptel-post-response-functions #'my-gptel-deepseek-prog-write-think-to-buffer))
 
-  (define-prefix-command 'vik/gptel-prefix)
-  (global-set-key (kbd "C-x l") 'vik/gptel-prefix)
-  (global-set-key (kbd "C-x l n") 'gptel)
-  (global-set-key (kbd "C-x l m") 'gptel-menu)
-  (global-set-key (kbd "C-x l a") 'gptel-add)
-  (global-set-key (kbd "C-x l r") 'gptel-rewrite)
+(define-prefix-command 'vik/gptel-prefix)
+(global-set-key (kbd "C-x l") 'vik/gptel-prefix)
+(global-set-key (kbd "C-x l n") 'gptel)
+(global-set-key (kbd "C-x l m") 'gptel-menu)
+(global-set-key (kbd "C-x l M") 'gptel-mode)
+(global-set-key (kbd "C-x l a") 'gptel-add)
+(global-set-key (kbd "C-x l r") 'gptel-rewrite)
 #+end_src
 * Coding
 ** Comments
