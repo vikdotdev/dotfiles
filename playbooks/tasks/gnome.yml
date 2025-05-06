@@ -1,35 +1,52 @@
-- name: Set extension name
+- name: Set extension variables
   set_fact:
-    extension_name: 'http://example.com/apache'
+    extension_name: 'gnome-shell-go-to-last-workspace@github.com'
+    repo_url: 'https://github.com/arjan/gnome-shell-go-to-last-workspace.git'
+    repo_path: "{{ ansible_env.HOME }}/{{ home_path.repos }}/gnome-shell-go-to-last-workspace"
+    metadata_file: 'metadata.json'
 
-- name: Register gnome-shell-go-to-last-workspace repo
+- name: Set dependend extension variables 
+  set_fact:
+    install_path: "{{ ansible_env.HOME }}/.local/share/gnome-shell/extensions/{{ extension_name }}"
+
+- name: Check if repo directory exists
   stat:
-    path: "{{ ansible_env.HOME }}/{{ home_path.repos }}/gnome-shell-go-to-last-workspace"
+    path: "{{ repo_path }}"
   register: gnome_last_workspace_repo
 
 - name: Clone gnome-shell-go-to-last-workspace
   ansible.builtin.git:
-    repo: https://github.com/arjan/gnome-shell-go-to-last-workspace.git
+    repo: "{{ repo_url }}"
+    dest: "{{ repo_path }}"
     depth: 50
-    dest: "{{ ansible_env.HOME }}/{{ home_path.repos }}/gnome-shell-go-to-last-workspace"
-  when:
-    - not gnome_last_workspace_repo.stat.exists
+  when: not gnome_last_workspace_repo.stat.exists
 
-- name: Register gnome-shell-go-to-last-workspace extension install
+- name: Pull latest changes if repo exists
+  ansible.builtin.git:
+    repo: "{{ repo_url }}"
+    dest: "{{ repo_path }}"
+    update: yes
+  register: gnome_last_workspace_git_pull
+  when: gnome_last_workspace_repo.stat.exists
+
+- name: Check if installed extension metadata.json exists
   stat:
-    path: "{{ ansible_env.HOME }}/.local/share/gnome-shell/extensions/gnome-shell-go-to-last-workspace@github.com"
-  register: gnome_last_workspace_install
+    path: "{{ install_path }}/{{ metadata_file }}"
+  register: metadata_installed
+
+- name: Check if repo metadata.json exists
+  stat:
+    path: "{{ repo_path }}/{{ metadata_file }}"
+  register: metadata_repo
 
 - name: Build gnome-shell-go-to-last-workspace
   community.general.make:
-    chdir: "{{ ansible_env.HOME }}/{{ home_path.repos }}/gnome-shell-go-to-last-workspace"
+    chdir: "{{ repo_path }}"
     target: build
-  when:
-    - not gnome_last_workspace_install.stat.exists
+  when: metadata_repo.stat.checksum != metadata_installed.stat.checksum
 
 - name: Install gnome-shell-go-to-last-workspace
   community.general.make:
-    chdir: "{{ ansible_env.HOME }}/{{ home_path.repos }}/gnome-shell-go-to-last-workspace"
+    chdir: "{{ repo_path }}"
     target: install
-  when:
-    - not gnome_last_workspace_install.stat.exists
+  when: metadata_repo.stat.checksum != metadata_installed.stat.checksum
