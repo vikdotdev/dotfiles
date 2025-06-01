@@ -961,6 +961,12 @@ So that =C-u 2 C-c C-t= stores entries into a =LOGBOOK= drawer:
          "#+TITLE: %^{Title}\n"
          :immediate-finish t)))
 #+end_src
+* Project
+#+begin_src elisp
+(with-eval-after-load 'project
+  (add-to-list 'project-switch-commands '(magit-project-status "Magit") t)
+  (keymap-set project-prefix-map "m" #'magit-project-status))
+#+end_src
 * LLMs
 TODO This think-block thing was likely already fixed in the gptel package. This should be deleted at some point.
 #+begin_src elisp
