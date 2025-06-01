@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Cursor
+Comment=AI Editor
+Exec=/home/vik/.local/bin/Cursor
+Icon=cursor-editor
+Terminal=false
+Categories=Utility;
