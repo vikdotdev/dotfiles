@@ -642,7 +642,7 @@ Custom agendas:
       '(("w" "Work"
          ((agenda ""
                   ((org-agenda-overriding-header "Work")
-                   (org-agenda-span 21)
+                   (org-agenda-span 5)
                    (org-agenda-skip-function #'vik/org-agenda-skip-entry-non-work)))
           (tags-todo "+work+PRIORITY=\"A\""
                      ((org-agenda-overriding-header "High priority")))
@@ -654,7 +654,7 @@ Custom agendas:
         ("p" "Personal"
          ((agenda ""
                   ((org-agenda-overriding-header "Personal")
-                   (org-agenda-span 21)
+                   (org-agenda-span 5)
                    (org-agenda-skip-function #'vik/org-agenda-skip-entry-work)))
           (tags-todo "-work+PRIORITY=\"A\""
                      ((org-agenda-overriding-header "High priority")))
@@ -672,10 +672,10 @@ Custom agendas:
 Format the agenda view:
 #+begin_src elisp
 (setq org-agenda-prefix-format
-      '((todo . " %i %-16:c %s%b")
-        (tags . " %i %-16:c %s%b")
-        (search . " %i %-16:c %s%b")
-        (agenda . " %i %-16:c %s%b")))
+      '((todo . "  %-16:c %s%b")
+        (tags . "  %-16:c %s%b")
+        (search . "  %-16:c %s%b")
+        (agenda . "  %t%-16:c %s%b")))
 #+end_src
 
 Skip empty days:
