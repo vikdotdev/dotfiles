@@ -624,7 +624,7 @@ What to log when changing entry status:
 (setq org-agenda-start-with-log-mode t)
 #+end_src
 
-Shorter boilerplate:
+Shorter labels for scheduled and deadline headings:
 #+begin_src elisp
 (setq org-agenda-scheduled-leaders '("S: " "S: ")
       org-agenda-deadline-leaders  '("D: " "D: "))
@@ -643,6 +643,7 @@ Shorter boilerplate:
 (add-hook 'org-agenda-finalize-hook #'my/org-agenda-replace-closed-label)
 #+end_src
 
+Replaces tags with shorter emojis:
 #+begin_src elisp
 (defun my/org-agenda-replace-keywords-with-emojis ()
   "Replace TODO keywords in the agenda with custom emojis."
@@ -660,6 +661,23 @@ Shorter boilerplate:
           (replace-match (concat prefix emoji) t t))))))
 
 (add-hook 'org-agenda-finalize-hook #'my/org-agenda-replace-keywords-with-emojis)
+#+end_src
+
+Fixes spacing between date/timestamps when range is present:
+#+begin_src elisp
+(defun my/org-agenda-fix-timerange-spacing ()
+  "Adjust spacing between time/time-range and filename in Org agenda lines."
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward
+            "^\\([ 0-9]+:[0-9]+\\)\\(-[0-9]+:[0-9]+\\)?\\(\\s-*\\)\\([^ \n]\\)" nil t)
+      (let* ((start (match-string 1))
+             (end (match-string 2))
+             (space " ")
+             (after (match-string 4)))
+        (replace-match (concat start (or end "") space after) t t)))))
+
+(add-hook 'org-agenda-finalize-hook #'my/org-agenda-fix-timerange-spacing)
 #+end_src
 
 Custom agendas:
