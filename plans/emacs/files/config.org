@@ -624,6 +624,44 @@ What to log when changing entry status:
 (setq org-agenda-start-with-log-mode t)
 #+end_src
 
+Shorter boilerplate:
+#+begin_src elisp
+(setq org-agenda-scheduled-leaders '("S: " "S: ")
+      org-agenda-deadline-leaders  '("D: " "D: "))
+
+(defun my/org-agenda-replace-closed-label ()
+  "Replace 'Closed:' with 'C:' and preserve green face."
+  (save-excursion
+    (goto-char (point-min))
+    (let ((case-fold-search nil))
+      (while (search-forward "Closed:" nil t)
+        (replace-match "C:" t t)
+        (add-text-properties
+         (- (point) 2) (point)
+         '(face org-agenda-done))))))
+
+(add-hook 'org-agenda-finalize-hook #'my/org-agenda-replace-closed-label)
+#+end_src
+
+#+begin_src elisp
+(defun my/org-agenda-replace-keywords-with-emojis ()
+  "Replace TODO keywords in the agenda with custom emojis."
+  (save-excursion
+    (goto-char (point-min))
+    (let ((case-fold-search t))
+      (while (re-search-forward "^\\(.*\\)\\b\\(TODO\\|DONE\\)\\b" nil t)
+        (let* ((prefix (match-string 1))
+               (keyword (match-string 2))
+               (emoji
+                (pcase keyword
+                  ("TODO" "📋")
+                  ("DONE" "✅")
+                  (_ keyword))))
+          (replace-match (concat prefix emoji) t t))))))
+
+(add-hook 'org-agenda-finalize-hook #'my/org-agenda-replace-keywords-with-emojis)
+#+end_src
+
 Custom agendas:
 #+begin_src elisp
 (defun vik/org-agenda-skip-entry-non-work ()
