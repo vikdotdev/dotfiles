@@ -627,20 +627,7 @@ What to log when changing entry status:
 Shorter labels for scheduled and deadline headings:
 #+begin_src elisp
 (setq org-agenda-scheduled-leaders '("S: " "S: ")
-      org-agenda-deadline-leaders  '("D: " "D: "))
-
-(defun my/org-agenda-replace-closed-label ()
-  "Replace 'Closed:' with 'C:' and preserve green face."
-  (save-excursion
-    (goto-char (point-min))
-    (let ((case-fold-search nil))
-      (while (search-forward "Closed:" nil t)
-        (replace-match "C:" t t)
-        (add-text-properties
-         (- (point) 2) (point)
-         '(face org-agenda-done))))))
-
-(add-hook 'org-agenda-finalize-hook #'my/org-agenda-replace-closed-label)
+      org-agenda-deadline-leaders  '("D: " "D. in %2d d.: " "D. %2d d. ago: "))
 #+end_src
 
 Replaces tags with shorter emojis:
@@ -698,7 +685,7 @@ Custom agendas:
       '(("w" "Work"
          ((agenda ""
                   ((org-agenda-overriding-header "Work")
-                   (org-agenda-span 5)
+                   (org-agenda-span 3)
                    (org-agenda-skip-function #'vik/org-agenda-skip-entry-non-work)))
           (tags-todo "+work+PRIORITY=\"A\""
                      ((org-agenda-overriding-header "High priority")))
@@ -710,7 +697,7 @@ Custom agendas:
         ("p" "Personal"
          ((agenda ""
                   ((org-agenda-overriding-header "Personal")
-                   (org-agenda-span 5)
+                   (org-agenda-span 3)
                    (org-agenda-skip-function #'vik/org-agenda-skip-entry-work)))
           (tags-todo "-work+PRIORITY=\"A\""
                      ((org-agenda-overriding-header "High priority")))
@@ -725,13 +712,18 @@ Custom agendas:
           ))))
 #+end_src
 
+Exclude =closed= items to hide them in agenda view:
+#+begin_src elisp
+(setq org-agenda-log-mode-items '(clock))
+#+end_src
+
 Format the agenda view:
 #+begin_src elisp
 (setq org-agenda-prefix-format
-      '((todo . "  %-16:c %s%b")
-        (tags . "  %-16:c %s%b")
-        (search . "  %-16:c %s%b")
-        (agenda . "  %t%-16:c %s%b")))
+      '((todo . "  %-36:c %s%b")
+        (tags . "  %-36:c %s%b")
+        (search . "  %-36:c %s%b")
+        (agenda . "  %t%-36:c %s%b")))
 #+end_src
 
 Skip empty days:
