@@ -1243,6 +1243,11 @@ flymake-show-buffer-diagnostics
   :config
   (setq sqlformat-command 'sqlformat))
 #+end_src
+** Nix
+#+begin_src elisp
+(use-package nix-mode
+  :ensure t)
+#+end_src
 ** Javascript/Typescript
 *** Treesitter
 Not sure if this works yet

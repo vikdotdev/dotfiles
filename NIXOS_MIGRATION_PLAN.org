@@ -1,0 +1,566 @@
+#+TITLE: NixOS Migration Plan
+
+* Overview
+*Current State*: Ruby builders + Ansible playbooks managing Fedora systems
+*Target State*: NixOS with flakes for Linux machines + nix-darwin for macOS
+*Timeline*: Approximately 6 months
+*Risk Level*: Low (gradual migration with fallback options)
+
+* Phase 1: Learn & Experiment (2-4 weeks)
+
+*Goal*: Learn Nix basics while keeping current system fully operational
+
+** Tasks
+
+*** Install Nix on Fedora
+#+begin_src bash
+sh <(curl -L https://nixos.org/nix/install) --daemon
+#+end_src
+
+*** Learn Nix fundamentals
+- [ ] Complete Nix language tour: https://nixos.org/manual/nix/stable/language/
+- [ ] Practice with ~nix-shell -p package-name~
+- [ ] Understand derivations and the Nix store
+- [ ] Learn about channels vs flakes
+
+*** Create first flake
+#+begin_src nix
+# test-flake/flake.nix
+{
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+  outputs = { self, nixpkgs }: {
+    devShells.x86_64-linux.default = nixpkgs.legacyPackages.x86_64-linux.mkShell {
+      packages = with nixpkgs.legacyPackages.x86_64-linux; [ 
+        zig 
+        ruby_3_3 
+      ];
+    };
+  };
+}
+#+end_src
+
+*** Experiment with development environments
+- [ ] Replace ~.tool-versions~ with flake-based dev shells
+- [ ] Test with existing projects
+
+** Success Criteria
+- Can create and use Nix development shells
+- Understand flakes and basic Nix language
+- Current system remains unchanged
+
+* Phase 2: Home Manager Migration (4-6 weeks)
+
+*Goal*: Migrate user configurations to Home Manager while staying on Fedora
+
+** Setup
+
+*** Install Home Manager
+#+begin_src bash
+nix run home-manager/master -- init
+#+end_src
+
+*** Create structure
+#+begin_example
+~/.config/home-manager/
+├── flake.nix
+├── home.nix          # Common configuration
+├── profiles/
+│   ├── umbra.nix     # Desktop (profile 1)
+│   ├── reddwarf.nix  # Laptop (profile 2)
+│   └── redgiant.nix  # Profile 3
+└── modules/
+    ├── emacs.nix
+    ├── firefox.nix
+    ├── git.nix
+    ├── shell.nix
+    └── development.nix
+#+end_example
+
+** Package Management Strategy
+
+*Hybrid Approach*: Combine Nix profiles and development shells for optimal workflow
+
+*** Nix Profiles (Global Tools)
+Tools you always want available everywhere:
+- [ ] Core CLI tools: ripgrep, fd, bat, delta, direnv
+- [ ] Development essentials: git, gh (GitHub CLI)
+- [ ] Global Node.js tools (replacing npm -g installs)
+- [ ] System utilities: tldr, ncdu
+
+*** Development Shells (Project-Specific)
+Per-project environments via flakes:
+- [ ] Different Node.js versions per project
+- [ ] Language-specific toolchains (Ruby, Zig, Python)
+- [ ] Project dependencies and build tools
+
+** Migration Order (Easy → Complex)
+
+*** Week 1: Basic tools & profiles
+- [ ] Install core CLI tools via Nix profiles
+- [ ] Git configuration
+- [ ] SSH configuration
+- [ ] Shell (bash/zsh) basics
+
+*** Week 2: Development environments
+- [ ] Create development shells for different projects
+- [ ] Replace .tool-versions with flake-based environments
+- [ ] Custom scripts from ~plans/scripts/~
+
+*** Week 3: Terminal & Applications
+- [ ] Wezterm configuration
+- [ ] Development tools (compilers, language servers)
+- [ ] Firefox with user.js and userChrome.css
+- [ ] Thunderbird
+
+*** Week 4-6: Complex configs
+- [ ] Emacs (largest configuration)
+- [ ] GNOME settings (dconf)
+- [ ] Services (syncthing)
+
+** Example Module
+
+#+begin_src nix
+# modules/git.nix
+{ config, lib, pkgs, ... }:
+{
+  programs.git = {
+    enable = true;
+    userName = "Your Name";
+    userEmail = "your.email@example.com";
+    
+    delta = {
+      enable = true;
+      options = {
+        navigate = true;
+        side-by-side = true;
+      };
+    };
+    
+    extraConfig = {
+      init.defaultBranch = "main";
+      pull.rebase = true;
+      push.autoSetupRemote = true;
+    };
+    
+    includes = [
+      {
+        condition = "gitdir:~/work/";
+        contents = {
+          user.email = "work.email@company.com";
+        };
+      }
+    ];
+  };
+}
+#+end_src
+
+** Success Criteria
+- All user configurations managed by Home Manager
+- Can switch between machine profiles
+- Ruby builders no longer needed for dotfiles
+
+* Phase 3: Flake-Based Structure (2-3 weeks)
+
+*Goal*: Create unified configuration structure for NixOS and Darwin
+
+** Repository Structure
+
+#+begin_example
+~/nixos-config/
+├── flake.nix
+├── flake.lock
+├── hosts/
+│   ├── umbra/
+│   │   ├── configuration.nix
+│   │   └── hardware-configuration.nix
+│   ├── reddwarf/
+│   │   ├── configuration.nix
+│   │   └── hardware-configuration.nix
+│   ├── redgiant/
+│   │   ├── configuration.nix
+│   │   └── hardware-configuration.nix
+│   └── macbook/
+│       └── configuration.nix
+├── modules/
+│   ├── nixos/          # Linux-specific
+│   │   ├── nvidia.nix  # For umbra
+│   │   ├── kmonad.nix  # For laptops
+│   │   └── gnome.nix
+│   ├── darwin/         # macOS-specific
+│   │   └── homebrew.nix
+│   └── common/         # Shared modules
+│       ├── packages.nix
+│       └── development.nix
+├── home/
+│   ├── vik-linux.nix
+│   └── vik-darwin.nix
+├── overlays/
+│   └── default.nix
+└── secrets/           # Encrypted with agenix
+    └── secrets.nix
+#+end_example
+
+** Main Flake Configuration
+
+#+begin_src nix
+# flake.nix
+{
+  description = "Multi-platform Nix configuration";
+  
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.05";
+    
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    
+    darwin = {
+      url = "github:LnL7/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    
+    agenix.url = "github:ryantm/agenix";
+  };
+  
+  outputs = { self, nixpkgs, nixpkgs-stable, home-manager, darwin, agenix, ... }@inputs: 
+  let
+    systems = [ "x86_64-linux" "aarch64-darwin" ];
+    forAllSystems = nixpkgs.lib.genAttrs systems;
+  in {
+    # NixOS configurations
+    nixosConfigurations = {
+      umbra = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./hosts/umbra/configuration.nix
+          ./modules/nixos/nvidia.nix
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.users.vik = import ./home/vik-linux.nix;
+          }
+        ];
+      };
+      
+      reddwarf = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./hosts/reddwarf/configuration.nix
+          ./modules/nixos/kmonad.nix
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.users.vik = import ./home/vik-linux.nix;
+          }
+        ];
+      };
+    };
+    
+    # Darwin configurations
+    darwinConfigurations = {
+      macbook = darwin.lib.darwinSystem {
+        system = "aarch64-darwin";
+        modules = [
+          ./hosts/macbook/configuration.nix
+          home-manager.darwinModules.home-manager
+          {
+            home-manager.users.vik = import ./home/vik-darwin.nix;
+          }
+        ];
+      };
+    };
+    
+    # Development shells
+    devShells = forAllSystems (system: {
+      default = nixpkgs.legacyPackages.${system}.mkShell {
+        packages = with nixpkgs.legacyPackages.${system}; [
+          nixpkgs-fmt
+          nil # Nix LSP
+          agenix.packages.${system}.default
+        ];
+      };
+    });
+  };
+}
+#+end_src
+
+** Success Criteria
+- Flake validates and builds
+- Can build configurations for all machines
+- Shared modules work across platforms
+
+* Phase 4: NixOS Testing (2-3 weeks)
+
+*Goal*: Thoroughly test NixOS configuration in VMs
+
+** Testing Process
+
+*** Build VM for each host
+#+begin_src bash
+# Build and test each configuration
+nixos-rebuild build-vm --flake .#umbra
+./result/bin/run-*-vm
+
+nixos-rebuild build-vm --flake .#reddwarf
+./result/bin/run-*-vm
+#+end_src
+
+*** Test checklist per machine
+- [ ] Boot process completes
+- [ ] User can log in
+- [ ] GNOME desktop loads
+- [ ] All applications launch
+- [ ] Development environments work
+- [ ] Network connectivity
+- [ ] Hardware-specific features (if applicable in VM)
+
+*** Application testing
+- [ ] Emacs with full configuration
+- [ ] Firefox with customizations
+- [ ] Terminal emulator (Wezterm)
+- [ ] Development tools
+- [ ] Syncthing service
+
+*** Create migration scripts
+#+begin_src bash
+# Backup script for important data
+# Hardware configuration extraction
+# Secret migration tools
+#+end_src
+
+** Success Criteria
+- All configurations boot and run in VMs
+- No missing packages or services
+- Performance acceptable
+- Rollback tested
+
+* Phase 5: First Machine Migration (1-2 weeks)
+
+*Goal*: Migrate least critical machine (recommend: redgiant or reddwarf)
+
+** Pre-migration
+
+*** Full backup
+- [ ] Complete system backup
+- [ ] Document current partition layout
+- [ ] Export package list from current system
+- [ ] Backup ~/.config and important data
+
+*** Preparation
+- [ ] Download NixOS ISO
+- [ ] Create bootable USB
+- [ ] Print recovery instructions
+
+** Migration Steps
+
+*** Boot NixOS installer
+
+*** Partition disk (adjust as needed)
+#+begin_src bash
+# Example with UEFI
+parted /dev/nvme0n1 -- mklabel gpt
+parted /dev/nvme0n1 -- mkpart ESP fat32 1MB 512MB
+parted /dev/nvme0n1 -- mkpart primary 512MB 100%
+parted /dev/nvme0n1 -- set 1 esp on
+#+end_src
+
+*** Generate hardware configuration
+#+begin_src bash
+nixos-generate-config --root /mnt
+# Copy hardware-configuration.nix to your flake repo
+#+end_src
+
+*** Install from flake
+#+begin_src bash
+nixos-install --flake github:yourusername/nixos-config#reddwarf
+#+end_src
+
+*** Post-installation
+- [ ] Verify all hardware working
+- [ ] Test all critical applications
+- [ ] Check performance
+- [ ] Validate secrets/passwords
+
+** Dual-boot Option
+Consider keeping Fedora in dual-boot initially:
+- Resize existing partitions
+- Install NixOS alongside
+- Keep for 2-4 weeks as fallback
+
+** Success Criteria
+- System boots and runs normally
+- All hardware detected and working
+- User workflows uninterrupted
+- Can update system via flake
+
+* Phase 6: macOS Support (2-3 weeks)
+
+*Goal*: Add Darwin configuration for macOS machine
+
+** Setup nix-darwin
+
+*** Install on macOS
+#+begin_src bash
+# Install Nix first
+sh <(curl -L https://nixos.org/nix/install)
+
+# Install nix-darwin
+nix run nix-darwin -- switch --flake .#macbook
+#+end_src
+
+*** macOS-specific configuration
+#+begin_src nix
+# hosts/macbook/configuration.nix
+{ config, pkgs, ... }:
+{
+  # Auto-upgrade nix package
+  services.nix-daemon.enable = true;
+  
+  # Apps from Mac App Store
+  homebrew = {
+    enable = true;
+    casks = [
+      "firefox"
+      "wezterm"
+      "spotify"
+    ];
+    masApps = {
+      "Xcode" = 497799835;
+    };
+  };
+  
+  # macOS system preferences
+  system.defaults = {
+    dock.autohide = true;
+    finder.AppleShowAllExtensions = true;
+    NSGlobalDomain.AppleKeyboardUIMode = 3;
+  };
+}
+#+end_src
+
+*** Cross-platform home configuration
+#+begin_src nix
+# home/vik-darwin.nix
+{ config, pkgs, lib, ... }:
+{
+  imports = [
+    ./modules/common.nix  # Shared config
+  ];
+  
+  home.packages = with pkgs; [
+    # macOS-specific packages
+  ] ++ lib.optionals pkgs.stdenv.isDarwin [
+    # Darwin-only tools
+    mas  # Mac App Store CLI
+  ];
+}
+#+end_src
+
+** Success Criteria
+- Nix-darwin manages macOS system
+- Shared configurations work on both platforms
+- Homebrew integration working
+- Development environments consistent
+
+* Phase 7: Complete Migration (2-4 weeks)
+
+*Goal*: Migrate all remaining machines and sunset old system
+
+** Final Migrations
+
+*** Migrate umbra (main desktop)
+- Special attention to NVIDIA drivers
+- Validate performance-critical applications
+
+*** Migrate remaining machines
+- Apply lessons learned
+- Optimize configurations
+
+*** Cleanup and documentation
+- [ ] Archive Ruby/Ansible system
+- [ ] Document any manual steps
+- [ ] Create troubleshooting guide
+- [ ] Set up automated updates
+
+** Post-Migration Tasks
+
+*** Optimize flake
+- [ ] Add CI/CD with GitHub Actions
+- [ ] Implement automatic updates
+- [ ] Add pre-commit hooks
+
+*** Document workflows
+- [ ] How to add new packages
+- [ ] How to update system
+- [ ] How to add new machine
+- [ ] Emergency recovery
+
+*** Advanced features
+- [ ] Implement secure boot
+- [ ] Set up remote deployment
+- [ ] Add ISO generation for quick installs
+
+** Success Criteria
+- All machines running NixOS/nix-darwin
+- No dependency on old system
+- Documentation complete
+- Team/family can use system
+
+* Risk Mitigation
+
+** Rollback Strategies
+
+1. *Home Manager*: ~home-manager generations~ and rollback
+2. *NixOS*: Boot previous generation from GRUB
+3. *Data*: Regular backups to external/cloud storage
+4. *Configs*: Git repository with tags for each phase
+
+** Common Issues and Solutions
+
+| Issue                | Solution                                         |
+|----------------------+--------------------------------------------------|
+| Missing package      | Search nixpkgs, use overlay, or package yourself |
+| Hardware not working | Check NixOS hardware repo, kernel parameters     |
+| Slow rebuilds        | Use binary cache, optimize imports               |
+| Secret management    | Use agenix or sops-nix                           |
+
+* Resources
+
+** Documentation
+- [[https://nixos.org/manual/nixos/stable/][NixOS Manual]]
+- [[https://nix-community.github.io/home-manager/][Home Manager Manual]]
+- [[https://nixos.org/guides/nix-pills/][Nix Pills]] (learning resource)
+- [[https://github.com/NixOS/nixos-hardware][NixOS Hardware]]
+
+** Community
+- [[https://discourse.nixos.org/][NixOS Discourse]]
+- [[https://reddit.com/r/NixOS][NixOS Reddit]]
+- [[https://nixos.org/community/][NixOS Matrix/IRC]]
+
+** Example Configurations
+- [[https://github.com/hlissner/dotfiles][hlissner/dotfiles]] - Advanced example
+- [[https://github.com/mitchellh/nixos-config][mitchellh/nixos-config]] - Well-structured
+- [[https://github.com/Misterio77/nix-starter-configs][nix-starter-configs]] - Templates
+
+* Timeline Summary
+
+| Phase                 | Duration  | Key Outcome          |
+|-----------------------+-----------+----------------------|
+| 1. Learn & Experiment | 2-4 weeks | Nix proficiency      |
+| 2. Home Manager       | 4-6 weeks | Dotfiles migrated    |
+| 3. Flake Structure    | 2-3 weeks | Unified config       |
+| 4. Testing            | 2-3 weeks | Validated configs    |
+| 5. First Migration    | 1-2 weeks | One machine on NixOS |
+| 6. macOS Support      | 2-3 weeks | Darwin integrated    |
+| 7. Complete Migration | 2-4 weeks | All systems migrated |
+
+*Total Timeline*: 5-6 months
+
+* Decision Points
+
+After each phase, evaluate:
+1. Is the complexity manageable?
+2. Are the benefits worth the effort?
+3. Should we continue or pause?
+
+Remember: Each phase provides value even if you stop there. Home Manager alone significantly improves dotfile management without requiring NixOS.
