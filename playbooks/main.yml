@@ -12,7 +12,3 @@
     - name: Install virtmanager?
       include_tasks: tasks/virt.yml
       when: "profile == '1'"
-
-    - name: Install arduino?
-      include_tasks: tasks/arduino.yml
-      when: "variant == 'all'"
