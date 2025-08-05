@@ -6,7 +6,6 @@
   tasks:
     - include_tasks: tasks/packages.yml
     - include_tasks: tasks/gnome.yml
-    - include_tasks: tasks/emacs.yml
 
     - name: Install virtmanager?
       include_tasks: tasks/virt.yml

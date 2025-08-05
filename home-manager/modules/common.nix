@@ -36,6 +36,7 @@
     git                     # Version control
     gh                      # GitHub CLI
     git-credential-manager  # Cross-platform git credential helper
+    chemacs2                # Emacs profile switcher
     
     # System utilities
     pavucontrol    # PulseAudio volume control GUI
@@ -208,6 +209,9 @@
     ".config/wezterm/wezterm.lua".source = ../configs/wezterm.lua;
     ".config/user-dirs.dirs".source = ../configs/xdg/user-dirs.dirs;
     ".config/user-dirs.locale".source = ../configs/xdg/user-dirs.locale;
+    ".config/emacs/init.el".source = ../configs/emacs/init.el;
+    ".config/emacs/config.org".source = ../configs/emacs/config.org;
+    ".emacs-profiles.el".source = ../configs/emacs/.emacs-profiles.el;
   } // builtins.listToAttrs (map (script: {
     name = ".local/bin/${script}";
     value = {
