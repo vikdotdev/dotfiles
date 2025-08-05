@@ -9,10 +9,6 @@
     - include_tasks: tasks/gnome.yml
     - include_tasks: tasks/emacs.yml
 
-    - name: Install kmonad?
-      include_tasks: tasks/kmonad.yml
-      when: "profile == '2' or profile == '3'"
-
     - name: Install virtmanager?
       include_tasks: tasks/virt.yml
       when: "profile == '1'"
