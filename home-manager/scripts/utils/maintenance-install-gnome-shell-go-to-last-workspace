@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# Install gnome-shell-go-to-last-workspace extension
+
+set -euo pipefail
+
+EXTENSION_NAME="gnome-shell-go-to-last-workspace@github.com"
+REPO_URL="https://github.com/arjan/gnome-shell-go-to-last-workspace.git"
+REPO_PATH="$HOME/Repositories/gnome-shell-go-to-last-workspace"
+INSTALL_PATH="$HOME/.local/share/gnome-shell/extensions/$EXTENSION_NAME"
+METADATA_FILE="metadata.json"
+
+echo "Installing GNOME Shell extension: $EXTENSION_NAME"
+
+# Clone or update repository
+if [ ! -d "$REPO_PATH" ]; then
+    echo "Cloning repository..."
+    git clone --depth 50 "$REPO_URL" "$REPO_PATH"
+else
+    echo "Updating repository..."
+    cd "$REPO_PATH"
+    git pull
+fi
+
+# Check if we need to build/install
+NEEDS_BUILD=false
+
+if [ ! -f "$INSTALL_PATH/$METADATA_FILE" ]; then
+    echo "Extension not installed, building..."
+    NEEDS_BUILD=true
+elif [ ! -f "$REPO_PATH/$METADATA_FILE" ]; then
+    echo "Repository metadata missing, building..."
+    NEEDS_BUILD=true
+else
+    REPO_CHECKSUM=$(sha256sum "$REPO_PATH/$METADATA_FILE" | cut -d' ' -f1)
+    INSTALLED_CHECKSUM=$(sha256sum "$INSTALL_PATH/$METADATA_FILE" | cut -d' ' -f1)
+    
+    if [ "$REPO_CHECKSUM" != "$INSTALLED_CHECKSUM" ]; then
+        echo "Extension needs update, building..."
+        NEEDS_BUILD=true
+    else
+        echo "Extension is up to date"
+    fi
+fi
+
+if [ "$NEEDS_BUILD" = true ]; then
+    echo "Building extension..."
+    cd "$REPO_PATH"
+    make build
+    
+    echo "Installing extension..."
+    make install
+    
+    echo "Extension installed successfully"
+else
+    echo "No build needed"
+fi
+
+echo "Done"

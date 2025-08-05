@@ -212,6 +212,17 @@
     ".config/emacs/init.el".source = ../configs/emacs/init.el;
     ".config/emacs/config.org".source = ../configs/emacs/config.org;
     ".emacs-profiles.el".source = ../configs/emacs/.emacs-profiles.el;
+    
+    # GNOME configuration files
+    ".config/gtk-3.0/settings.ini".source = ../configs/gnome/settings3.ini;
+    ".config/gtk-3.0/gtk.css".source = ../configs/gnome/gtk3.css;
+    ".config/gtk-4.0/gtk.css".source = ../configs/gnome/gtk4.css;
+    ".config/autostart/windows.desktop".source = ../configs/gnome/windows.desktop;
+    ".local/share/pixmaps/windows.png".source = ../configs/gnome/windows.png;
+    ".config/dconf/user.ini".source = ../configs/gnome/dconf.ini;
+    
+    # Ruby configuration
+    ".pryrc".source = ../configs/ruby/.pryrc;
   } // builtins.listToAttrs (map (script: {
     name = ".local/bin/${script}";
     value = {
@@ -236,6 +247,7 @@
     "util-screenkey"
     "util-temp"
     "util-url"
+    "maintenance-install-gnome-shell-go-to-last-workspace"
   ]);
 
   # Firefox configuration

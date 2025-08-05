@@ -5,7 +5,6 @@
   remote_user: "{{ target_user }}"
   tasks:
     - include_tasks: tasks/packages.yml
-    - include_tasks: tasks/gnome.yml
 
     - name: Install virtmanager?
       include_tasks: tasks/virt.yml
