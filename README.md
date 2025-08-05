@@ -35,7 +35,7 @@ home-manager expire-generations "-7 days"
 
 ## Adding New Packages
 
-Edit `~/.config/home-manager/modules/common.nix` and add packages to the `home.packages` list:
+Edit `home-manager/modules/common.nix` and add packages to the `home.packages` list:
 
 ```nix
 home.packages = with pkgs; [
@@ -61,20 +61,20 @@ Your current profile is automatically detected by hostname.
 
 ## Configuration Files
 
-- `~/.config/home-manager/flake.nix` - Main configuration entry point
-- `~/.config/home-manager/modules/common.nix` - Shared settings across all profiles
-- `~/.config/home-manager/profiles/*.nix` - Profile-specific settings
-- `~/.config/home-manager/scripts/*.sh` - External scripts (like bash prompt)
+- `flake.nix` - Main Home Manager flake (at repo root)
+- `home-manager/modules/common.nix` - Shared settings across all profiles
+- `home-manager/profiles/*.nix` - Profile-specific settings  
+- `home-manager/scripts/*.sh` - External scripts (like bash prompt)
+- `~/.config/home-manager/flake.nix` - Importing flake (points to this repo)
 
 ## Daily Workflow
 
 ```bash
-# Update your dotfiles
-bin/dot           # Deploys changes from this repo to ~/.config/home-manager/
-home-manager switch  # Applies the changes
+# Apply dotfiles changes (reads directly from this repo)
+home-manager switch
 
-# Or do both at once
-bin/dot && home-manager switch
+# Update system packages/configs (non-Nix stuff)
+bin/dot install
 ```
 
 ## Development Environments

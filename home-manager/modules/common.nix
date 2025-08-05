@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 
 {
-  # Basic home configuration
+  # Home Manager basic settings
   home.username = "vik";
   home.homeDirectory = "/home/vik";
   home.stateVersion = "25.05";
@@ -9,21 +9,12 @@
   # Let Home Manager install and manage itself
   programs.home-manager.enable = true;
 
-  # Basic packages that don't need special configuration
+  # Packages installed to ~/.nix-profile/bin
   home.packages = with pkgs; [
-    # CLI tools - previously managed via Nix profiles, now via Home Manager
-    ripgrep
-    fd
-    bat
-    delta
-    tldr
-    ncdu
-    
-    # Development tools that vary per project are handled by dev shells
     # This is for tools that are always useful but don't need config
   ];
 
-  # PATH additions - common to all profiles
+  # PATH additions - added to ~/.profile
   home.sessionPath = [
     "$HOME/.local/bin"
     "$HOME/.config/emacs/bin"
@@ -39,7 +30,7 @@
     "$HOME/.local/share/android/emulator/bin64"
   ];
 
-  # Session variables - matching your existing .profile.erb
+  # Environment variables - added to ~/.profile
   home.sessionVariables = {
     EDITOR = "emacs";
     GIT_EDITOR = "$EDITOR";
@@ -64,9 +55,17 @@
     ANDROID_HOME = "$HOME/.local/share/android";
   };
 
-  # Basic programs with minimal config
+  # Program configurations
   programs = {
-    # Let Home Manager manage the shell
+    # GPG configuration (~/.gnupg/gpg.conf)
+    gpg = {
+      enable = true;
+      settings = {
+        # Add any gpg settings here if needed
+      };
+    };
+
+    # Bash configuration (~/.bashrc, ~/.bash_profile, ~/.profile)
     bash = {
       enable = true;
       enableCompletion = true;
@@ -139,4 +138,20 @@
 
   # Readline configuration (~/.inputrc)
   home.file.".inputrc".source = ../configs/inputrc;
+
+  # Services configuration
+  services = {
+    # GPG agent configuration (~/.gnupg/gpg-agent.conf + systemd service)
+    gpg-agent = {
+      enable = true;
+      defaultCacheTtl = 36000;
+      maxCacheTtl = 72000;
+      extraConfig = ''
+        allow-preset-passphrase
+        allow-loopback-pinentry
+        # This will invoke the prompt in the terminal
+        # pinentry-program /usr/bin/pinentry-curses
+      '';
+    };
+  };
 }
