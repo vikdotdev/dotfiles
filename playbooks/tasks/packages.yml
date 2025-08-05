@@ -6,16 +6,11 @@
     - "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_distribution_major_version }}.noarch.rpm"
     - "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_distribution_major_version }}.noarch.rpm"
 
-- name: Add wezterm copr
-  become: yes
-  community.general.copr:
-    name: wezfurlong/wezterm-nightly
 
 - name: Install core packages
   become: yes
   dnf:
     name:
-    - vlc
     - libtool
     - autoconf
     - automake
@@ -26,8 +21,6 @@
     - pkgconfig
     - patch
     - gettext
-    - firefox
-    - thunderbird
     - wget
     - unzip
     - curl
@@ -42,9 +35,7 @@
     - xdg-user-dirs
     - ImageMagick
     - renameutils
-    - bat
     - deluge
-    - gimp
     - git
     - git-credential-libsecret
     - git-delta
@@ -52,21 +43,11 @@
     - ruby
     - ruby-devel
     - jpegoptim
-    - wezterm
     - yt-dlp
     - youtube-dl
-    - syncthing
     - direnv
     - zig
     - texlive-scheme-full
-
-- name: Remove default packages
-  become: yes
-  dnf:
-    state: absent
-    name:
-    - gnome-terminal
-    - gnome-text-editor
 
 # - name: Start docker daemon service
 #   become: yes
@@ -74,13 +55,6 @@
 #     name: docker
 #     enabled: yes
 #     state: started
-
-- name: Start syncthing daemon service
-  ansible.builtin.systemd:
-    name: syncthing
-    enabled: yes
-    scope: user
-    state: started
 
 - name: Install valkey (redis) package
   become: yes
@@ -101,23 +75,3 @@
     name:
     - akmod-nvidia
   when: "profile == '1'"
-
-- name: Add the flathub flatpak repository remote to the user installation
-  community.general.flatpak_remote:
-    method: user
-    name: flathub
-    state: present
-    flatpakrepo_url: https://flathub.org/repo/flathub.flatpakrepo
-
-- name: Install flatpaks
-  community.general.flatpak:
-    method: user
-    name: "{{ item }}"
-  loop:
-    - com.spotify.Client
-    - org.telegram.desktop
-    - org.signal.Signal
-    - com.slack.Slack
-    - org.gnome.Solanum
-    - com.rafaelmardojai.Blanket
-    - com.rtosta.zapzap

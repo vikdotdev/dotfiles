@@ -11,7 +11,29 @@
 
   # Packages installed to ~/.nix-profile/bin
   home.packages = with pkgs; [
-    # This is for tools that are always useful but don't need config
+    # GUI applications - migrated from flatpak
+    spotify
+    telegram-desktop
+    signal-desktop
+    slack
+    discord
+    solanum        # Pomodoro timer (org.gnome.Solanum)
+    blanket        # Ambient sound app (com.rafaelmardojai.Blanket)
+    zapzap         # WhatsApp client (com.rtosta.zapzap)
+    stretchly      # Break reminder app
+    wezterm        # Terminal emulator
+    syncthing      # File synchronization
+    firefox        # Web browser
+    thunderbird    # Email client
+    gimp           # Image editor
+    vlc            # Media player
+    android-studio # Android development IDE
+    
+    # Fonts
+    iosevka        # Programming font
+    
+    # System utilities
+    pavucontrol    # PulseAudio volume control GUI
   ];
 
   # PATH additions - added to ~/.profile
@@ -21,13 +43,6 @@
     "$HOME/Repositories/dotfiles/bin"
     "$HOME/.fly/bin"
     "$HOME/.cargo/bin"
-    "$HOME/.local/share/Google/android-studio/bin"
-    "$HOME/.local/share/android/cmdline-tools/latest/bin"
-    "$HOME/.local/share/android/platform-tools/"
-    "$HOME/.local/share/android/tools"
-    "$HOME/.local/share/android/tools/bin"
-    "$HOME/.local/share/android/emulator"
-    "$HOME/.local/share/android/emulator/bin64"
   ];
 
   # Environment variables - added to ~/.profile
@@ -51,8 +66,6 @@
     
     # Other paths from your profile template
     FLYCTL_INSTALL = "$HOME/.fly";
-    ANDROID_INSTALLATION = "$HOME/.local/share/Google/android-studio";
-    ANDROID_HOME = "$HOME/.local/share/android";
   };
 
   # Program configurations
@@ -136,8 +149,48 @@
     };
   };
 
-  # Readline configuration (~/.inputrc)
-  home.file.".inputrc".source = ../configs/inputrc;
+
+  # Custom utility scripts (~/.local/bin/)
+  home.file = {
+    ".inputrc".source = ../configs/inputrc;
+    ".config/wezterm/wezterm.lua".source = ../configs/wezterm.lua;
+    ".config/user-dirs.dirs".source = ../configs/xdg/user-dirs.dirs;
+    ".config/user-dirs.locale".source = ../configs/xdg/user-dirs.locale;
+  } // builtins.listToAttrs (map (script: {
+    name = ".local/bin/${script}";
+    value = {
+      source = ../scripts/utils/${script};
+      executable = true;
+    };
+  }) [
+    "git-branch-files-changed"
+    "git-default-branch"
+    "git-deploy"
+    "git-log-changed"
+    "git-nuke"
+    "git-summary"
+    "llm"
+    "util"
+    "util-basic-auth"
+    "util-curl-n"
+    "util-find-replace"
+    "util-kill-rails"
+    "util-not-my-files"
+    "util-reboot-to-windows"
+    "util-screenkey"
+    "util-temp"
+    "util-url"
+  ]);
+
+  # Firefox configuration
+  programs.firefox = {
+    enable = true;
+    profiles.default = {
+      isDefault = true;
+      extraConfig = builtins.readFile ../configs/firefox/user.js;
+      userChrome = builtins.readFile ../configs/firefox/userChrome.css;
+    };
+  };
 
   # Services configuration
   services = {
@@ -152,6 +205,11 @@
         # This will invoke the prompt in the terminal
         # pinentry-program /usr/bin/pinentry-curses
       '';
+    };
+
+    # Syncthing file synchronization service
+    syncthing = {
+      enable = true;
     };
   };
 }
