@@ -15,7 +15,6 @@
   become: yes
   dnf:
     name:
-    - '@Multimedia'
     - vlc
     - libtool
     - autoconf
@@ -69,12 +68,12 @@
     - gnome-terminal
     - gnome-text-editor
 
-- name: Start docker daemon service
-  become: yes
-  ansible.builtin.systemd:
-    name: docker
-    enabled: yes
-    state: started
+# - name: Start docker daemon service
+#   become: yes
+#   ansible.builtin.systemd:
+#     name: docker
+#     enabled: yes
+#     state: started
 
 - name: Start syncthing daemon service
   ansible.builtin.systemd:

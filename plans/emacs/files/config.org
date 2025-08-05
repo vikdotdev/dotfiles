@@ -750,6 +750,8 @@ TODO These can be run as code blocks - fails for some reason when ran on start-u
 ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=52587#49
 (setq org-fontify-whole-block-delimiter-line nil)
 
+(setq org-attach-id-dir "~/Documents/notes/resources/attachments/")
+
 (add-hook 'org-mode-hook #'org-indent-mode)
 (add-hook 'org-mode-hook 'visual-line-mode) ;; smart word wrap
 #+end_src
@@ -841,7 +843,6 @@ Make formatted text appear with markers when hover over.
   :hook (org-mode . org-appear-mode)
   :custom
   (org-appear-autoemphasis t)       ;; Toggle emphasis markers
-  (org-appear-autolinks t)          ;; Toggle links
   (org-appear-autosubmarkers t)     ;; Toggle subscript/superscript markers
   (org-appear-autoentities t)       ;; Toggle Org entities
   (org-appear-autokeywords t)       ;; Toggle keywords in org-hidden-keywords
@@ -1086,6 +1087,16 @@ TODO This think-block thing was likely already fixed in the gptel package. This 
 (global-set-key (kbd "C-x l M") 'gptel-mode)
 (global-set-key (kbd "C-x l a") 'gptel-add)
 (global-set-key (kbd "C-x l r") 'gptel-rewrite)
+#+end_src
+
+#+begin_src elisp
+(setq claude-code-terminal-backend 'vterm)
+(use-package claude-code
+  :ensure t
+  :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest)
+  :config
+  (claude-code-mode)
+  :bind-keymap ("C-x l c" . claude-code-command-map))
 #+end_src
 * Coding
 ** Comments
@@ -1360,4 +1371,16 @@ Keybinds:
   (define-key dired-mode-map (kbd "e") 'eshell))
 
 (setq dired-listing-switches "-lah --group-directories-first")
+#+end_src
+
+View file under point in an external program by pressing =V=:
+#+begin_src elisp
+(defun my/dired-open-with-xdg ()
+  "Open the current file in dired using browse-url-xdg-open."
+  (interactive)
+  (let ((file (dired-get-file-for-visit)))
+    (browse-url-xdg-open file)))
+
+(with-eval-after-load 'dired
+  (define-key dired-mode-map (kbd "V") #'my/dired-open-with-xdg))
 #+end_src
