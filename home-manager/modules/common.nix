@@ -32,6 +32,11 @@
     # Fonts
     iosevka        # Programming font
     
+    # Development tools
+    git                     # Version control
+    gh                      # GitHub CLI
+    git-credential-manager  # Cross-platform git credential helper
+    
     # System utilities
     pavucontrol    # PulseAudio volume control GUI
   ];
@@ -70,6 +75,53 @@
 
   # Program configurations
   programs = {
+    # Git configuration (~/.gitconfig)
+    git = {
+      enable = true;
+      userName = "Viktor Habchak";
+      userEmail = "vikdotdev@gmail.com";
+      signing = {
+        key = "7392D21113383CBB";
+        # Uncommment to enable GPG signing
+        # signByDefault = true;
+      };
+      
+      aliases = {
+        ci = "commit";
+        st = "status";
+        br = "branch --show-current";
+        co = "checkout";
+        fe = "fetch";
+        di = "diff";
+        root = "rev-parse --show-toplevel";
+        logo = "log --oneline";
+        amend = "commit --amend --no-edit";
+      };
+      
+      extraConfig = {
+        core = {
+          autocrlf = "input";
+        };
+        commit = {
+          verbose = true;
+        };
+        github = {
+          user = "vikdotdev";
+        };
+        gpg = {
+          program = "gpg";
+        };
+        credential = {
+          helper = "${pkgs.git-credential-manager}/bin/git-credential-manager";
+        };
+        diff = {
+          gpg = {
+            textconv = "gpg --no-tty --decrypt";
+          };
+        };
+      };
+    };
+
     # GPG configuration (~/.gnupg/gpg.conf)
     gpg = {
       enable = true;
