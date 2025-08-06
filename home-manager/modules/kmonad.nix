@@ -4,6 +4,7 @@
   # KMonad package installation
   home.packages = with pkgs; [
     kmonad
+    # Try the current version first, can be updated if issues persist
     gnomeExtensions.kmonad-toggle
   ];
 
