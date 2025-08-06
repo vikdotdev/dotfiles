@@ -1,0 +1,255 @@
+#!/usr/bin/env bash
+
+set -e
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
+# Logging functions
+info() {
+    echo -e "${BLUE}[INFO]${NC} $1"
+}
+
+success() {
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
+
+warn() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
+
+error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+# Function to detect current profile
+detect_profile() {
+    local hostname=$(hostname)
+    case "$hostname" in
+        "umbra"|"reddwarf"|"redgiant")
+            echo "$hostname"
+            ;;
+        *)
+            error "Unknown hostname '$hostname'. Please specify profile with --profile"
+            exit 1
+            ;;
+    esac
+}
+
+# Function to get dotfiles directory
+get_dotfiles_dir() {
+    if [ -n "$EXT_XDG_DOTFILES_DIR" ]; then
+        echo "$EXT_XDG_DOTFILES_DIR"
+    else
+        # Fallback to script location
+        local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+        echo "$(cd "$script_dir/.." && pwd)"
+    fi
+}
+
+# Function to rebuild system
+rebuild_system() {
+    local dotfiles_dir="$1"
+    local profile="$2"
+    
+    info "🔧 Rebuilding NixOS system configuration for profile: ${PURPLE}$profile${NC}"
+    
+    if sudo nixos-rebuild switch --flake "$dotfiles_dir#$profile" --impure; then
+        success "✅ System configuration rebuilt successfully"
+    else
+        error "❌ Failed to rebuild system configuration"
+        exit 1
+    fi
+}
+
+# Function to rebuild home manager
+rebuild_home() {
+    local dotfiles_dir="$1"
+    local profile="$2"
+    local username=$(whoami)
+    
+    info "🏠 Rebuilding Home Manager configuration for ${PURPLE}$username@$profile${NC}"
+    
+    if home-manager switch --flake "$dotfiles_dir#$username@$profile"; then
+        success "✅ Home Manager configuration rebuilt successfully"
+    else
+        error "❌ Failed to rebuild Home Manager configuration"
+        exit 1
+    fi
+}
+
+# Function to update flake inputs
+update_flake() {
+    local dotfiles_dir="$1"
+    
+    info "📦 Updating flake inputs..."
+    
+    cd "$dotfiles_dir"
+    if nix flake update; then
+        success "✅ Flake inputs updated successfully"
+    else
+        error "❌ Failed to update flake inputs"
+        exit 1
+    fi
+}
+
+# Function to show system status
+show_status() {
+    local dotfiles_dir="$1"
+    local profile="$2"
+    local username=$(whoami)
+    
+    echo -e "${CYAN}=== NixOS System Status ===${NC}"
+    echo -e "${BLUE}Profile:${NC} $profile"
+    echo -e "${BLUE}Hostname:${NC} $(hostname)"
+    echo -e "${BLUE}Dotfiles:${NC} $dotfiles_dir"
+    echo -e "${BLUE}User:${NC} $username"
+    echo ""
+    
+    # Show current system generation
+    echo -e "${CYAN}Current System Generation:${NC}"
+    sudo nixos-rebuild list-generations | tail -1
+    echo ""
+    
+    # Show home manager generation
+    if command -v home-manager >/dev/null 2>&1; then
+        echo -e "${CYAN}Current Home Manager Generation:${NC}"
+        home-manager generations | head -1
+    fi
+}
+
+# Function to clean old generations
+cleanup() {
+    info "🧹 Cleaning up old generations..."
+    
+    # Clean system generations (keep last 3)
+    sudo nix-collect-garbage -d
+    sudo nixos-rebuild switch --flake "$(get_dotfiles_dir)#$(detect_profile)" --impure
+    
+    # Clean user generations
+    nix-collect-garbage -d
+    
+    success "✅ Cleanup completed"
+}
+
+# Show usage
+show_usage() {
+    echo -e "${CYAN}dot - NixOS & Home Manager Management Tool${NC}"
+    echo ""
+    echo "Usage: dot [COMMAND] [OPTIONS]"
+    echo ""
+    echo -e "${YELLOW}Commands:${NC}"
+    echo "  system, sys, s      Rebuild NixOS system configuration"
+    echo "  home, hm, h         Rebuild Home Manager configuration"  
+    echo "  both, all, a        Rebuild both system and home (default)"
+    echo "  update, up, u       Update flake inputs"
+    echo "  status, st          Show system status"
+    echo "  cleanup, clean, c   Clean old generations"
+    echo "  help, --help, -h    Show this help"
+    echo ""
+    echo -e "${YELLOW}Options:${NC}"
+    echo "  --profile, -p       Specify profile (umbra/reddwarf/redgiant)"
+    echo ""
+    echo -e "${YELLOW}Examples:${NC}"
+    echo "  dot                 # Rebuild home manager (default)"
+    echo "  dot system          # Rebuild only system"
+    echo "  dot both            # Rebuild both system and home"
+    echo "  dot update          # Update flake inputs"
+    echo "  dot status          # Show current status"
+    echo "  dot -p umbra system # Rebuild system for umbra profile"
+}
+
+# Main function
+main() {
+    local command="home"
+    local profile=""
+    
+    # Parse arguments
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            system|sys|s)
+                command="system"
+                shift
+                ;;
+            home|hm|h)
+                command="home"
+                shift
+                ;;
+            both|all|a)
+                command="both"
+                shift
+                ;;
+            update|up|u)
+                command="update"
+                shift
+                ;;
+            status|st)
+                command="status"
+                shift
+                ;;
+            cleanup|clean|c)
+                command="cleanup"
+                shift
+                ;;
+            --profile|-p)
+                profile="$2"
+                shift 2
+                ;;
+            help|--help|-h)
+                show_usage
+                exit 0
+                ;;
+            *)
+                error "Unknown command: $1"
+                show_usage
+                exit 1
+                ;;
+        esac
+    done
+    
+    # Get dotfiles directory
+    local dotfiles_dir=$(get_dotfiles_dir)
+    
+    # Detect or use specified profile
+    if [ -z "$profile" ]; then
+        profile=$(detect_profile)
+    fi
+    
+    # Validate profile
+    if [[ ! "$profile" =~ ^(umbra|reddwarf|redgiant)$ ]]; then
+        error "Invalid profile: $profile. Must be one of: umbra, reddwarf, redgiant"
+        exit 1
+    fi
+    
+    # Execute command
+    case $command in
+        system)
+            rebuild_system "$dotfiles_dir" "$profile"
+            ;;
+        home)
+            rebuild_home "$dotfiles_dir" "$profile"
+            ;;
+        both)
+            rebuild_system "$dotfiles_dir" "$profile"
+            rebuild_home "$dotfiles_dir" "$profile"
+            ;;
+        update)
+            update_flake "$dotfiles_dir"
+            ;;
+        status)
+            show_status "$dotfiles_dir" "$profile"
+            ;;
+        cleanup)
+            cleanup
+            ;;
+    esac
+}
+
+# Run main function
+main "$@"
