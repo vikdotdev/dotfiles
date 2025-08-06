@@ -25,7 +25,6 @@
           ./nixos/profiles/umbra.nix
           home-manager.nixosModules.home-manager
           {
-            home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.users.vik = {
               imports = [
@@ -46,7 +45,6 @@
           ./nixos/profiles/reddwarf.nix
           home-manager.nixosModules.home-manager
           {
-            home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.users.vik = {
               imports = [
@@ -67,7 +65,6 @@
           ./nixos/profiles/redgiant.nix
           home-manager.nixosModules.home-manager
           {
-            home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.users.vik = {
               imports = [
