@@ -52,8 +52,8 @@
   environment.gnome.excludePackages = with pkgs; [
     gnome-terminal    # Use wezterm instead
     gnome-console     # GNOME Console app (newer terminal)
-    xterm            # Don't want xterm
     gedit            # Text editor
+    gnome-text-editor # GNOME Text Editor (newer version)
     geary            # Email client
     epiphany         # GNOME Web browser
     gnome-tour       # Welcome tour
@@ -188,11 +188,18 @@
 
 
   # Enable SSH daemon
-  services.openssh.enable = true;
+  # TODO: This is for VM debugging - remove or secure before production use
+  services.openssh = {
+    enable = true;
+    settings = {
+      PasswordAuthentication = true;
+      PermitRootLogin = "no";
+    };
+  };
 
   # Firewall
   networking.firewall.enable = true;
-  networking.firewall.allowedTCPPorts = [ ];
+  networking.firewall.allowedTCPPorts = [ 22 ];  # SSH - TODO: Remove when not needed for VM debugging
   networking.firewall.allowedUDPPorts = [ ];
 
   # System state version - DON'T CHANGE

@@ -256,8 +256,21 @@
       MimeType=image/bmp;image/g3fax;image/gif;image/x-fits;image/x-pcx;image/x-portable-anymap;image/x-portable-bitmap;image/x-portable-graymap;image/x-portable-pixmap;image/x-psd;image/x-sgi;image/x-tga;image/x-xbitmap;image/x-xwindowdump;image/x-xcf;image/x-compressed-xcf;image/x-gimp-gbr;image/x-gimp-pat;image/x-gimp-gih;image/x-sun-raster;image/tiff;image/jpeg;image/x-psp;image/png;image/x-icon;image/x-xpixmap;image/svg+xml;image/x-wmf;image/jp2;image/jpeg2000;image/jpx;image/x-xcursor;
     '';
     
+    # Hide desktop entries for unwanted applications
     # Hide htop desktop entry by creating a hidden override
     ".local/share/applications/htop.desktop".text = ''
+      [Desktop Entry]
+      Hidden=true
+    '';
+    
+    # Hide xterm desktop entry
+    ".local/share/applications/xterm.desktop".text = ''
+      [Desktop Entry]
+      Hidden=true
+    '';
+    
+    # Hide GNOME Terminal desktop entry
+    ".local/share/applications/org.gnome.Terminal.desktop".text = ''
       [Desktop Entry]
       Hidden=true
     '';
