@@ -87,6 +87,11 @@
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+  
+  # Enable experimental Nix features
+  nix.settings = {
+    experimental-features = [ "nix-command" "flakes" ];
+  };
 
   # System packages (minimal set for system functionality)
   environment.systemPackages = with pkgs; [
