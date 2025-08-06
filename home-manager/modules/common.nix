@@ -30,6 +30,8 @@
     gimp           # Image editor
     vlc            # Media player
     android-studio # Android development IDE
+    obs-studio     # Screen recording and streaming
+    reaper         # Digital audio workstation
     
     # Fonts
     iosevka        # Programming font
@@ -219,6 +221,47 @@
     ".config/autostart/windows.desktop".source = ../configs/gnome/windows.desktop;
     ".local/share/pixmaps/windows.png".source = ../configs/gnome/windows.png;
     ".config/dconf/user.ini".source = ../configs/gnome/dconf.ini;
+    
+    # Custom desktop entries
+    ".local/share/applications/syncthing.desktop".text = ''
+      [Desktop Entry]
+      Name=Sync
+      Comment=File synchronization
+      Exec=syncthing-gtk
+      Icon=syncthing
+      Type=Application
+      Categories=Network;FileTransfer;
+      StartupNotify=true
+    '';
+    
+    ".local/share/applications/android-studio.desktop".text = ''
+      [Desktop Entry]
+      Name=Android Studio
+      Comment=Android development IDE
+      Exec=android-studio
+      Icon=android-studio
+      Type=Application
+      Categories=Development;IDE;
+      StartupNotify=true
+    '';
+    
+    ".local/share/applications/gimp.desktop".text = ''
+      [Desktop Entry]
+      Name=Image Editor
+      Comment=GNU Image Manipulation Program
+      Exec=gimp
+      Icon=gimp
+      Type=Application
+      Categories=Graphics;2DGraphics;RasterGraphics;
+      StartupNotify=true
+      MimeType=image/bmp;image/g3fax;image/gif;image/x-fits;image/x-pcx;image/x-portable-anymap;image/x-portable-bitmap;image/x-portable-graymap;image/x-portable-pixmap;image/x-psd;image/x-sgi;image/x-tga;image/x-xbitmap;image/x-xwindowdump;image/x-xcf;image/x-compressed-xcf;image/x-gimp-gbr;image/x-gimp-pat;image/x-gimp-gih;image/x-sun-raster;image/tiff;image/jpeg;image/x-psp;image/png;image/x-icon;image/x-xpixmap;image/svg+xml;image/x-wmf;image/jp2;image/jpeg2000;image/jpx;image/x-xcursor;
+    '';
+    
+    # Hide htop desktop entry by creating a hidden override
+    ".local/share/applications/htop.desktop".text = ''
+      [Desktop Entry]
+      Hidden=true
+    '';
     
     # Ruby configuration
     ".pryrc".source = ../configs/ruby/.pryrc;
