@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
 
@@ -57,17 +57,14 @@ check_nixos() {
 # Function to check if hardware-configuration.nix exists
 check_hardware_config() {
     local dotfiles_dir="$1"
-    if [ ! -f "$dotfiles_dir/nixos/hardware-configuration.nix" ]; then
-        warn "hardware-configuration.nix not found in dotfiles"
-        info "Copying system hardware configuration..."
-        
-        if [ -f /etc/nixos/hardware-configuration.nix ]; then
-            cp /etc/nixos/hardware-configuration.nix "$dotfiles_dir/nixos/"
-            success "Hardware configuration copied"
-        else
-            error "No hardware configuration found. Please run: sudo nixos-generate-config --dir $dotfiles_dir/nixos/"
-            exit 1
-        fi
+    
+    # Ensure hardware config exists in system location
+    if [ ! -f /etc/nixos/hardware-configuration.nix ]; then
+        warn "No hardware configuration found, generating..."
+        sudo nixos-generate-config --root /
+        success "Hardware configuration generated"
+    else
+        info "Using existing hardware configuration from /etc/nixos/"
     fi
 }
 
@@ -78,8 +75,8 @@ deploy_nixos() {
     
     info "Building NixOS configuration for profile: $profile"
     
-    # Build first to check for errors
-    if sudo nixos-rebuild build --flake "$dotfiles_dir#$profile"; then
+    # Use nixos-rebuild with --impure to allow access to /etc
+    if sudo nixos-rebuild build --flake "$dotfiles_dir#$profile" --impure; then
         success "NixOS configuration built successfully"
     else
         error "Failed to build NixOS configuration"
@@ -88,7 +85,7 @@ deploy_nixos() {
     
     # Apply the configuration
     info "Applying NixOS configuration..."
-    if sudo nixos-rebuild switch --flake "$dotfiles_dir#$profile"; then
+    if sudo nixos-rebuild switch --flake "$dotfiles_dir#$profile" --impure; then
         success "NixOS configuration applied successfully"
     else
         error "Failed to apply NixOS configuration"
@@ -134,16 +131,6 @@ setup_git() {
         git config user.email "vikdotdev@gmail.com"
     fi
     
-    # Add and commit hardware-configuration.nix if it's new
-    if [ -f nixos/hardware-configuration.nix ] && ! git ls-files --error-unmatch nixos/hardware-configuration.nix >/dev/null 2>&1; then
-        warn "Adding hardware-configuration.nix to git (this contains system-specific hardware info)"
-        git add nixos/hardware-configuration.nix
-        git commit -m "Add hardware configuration for $(hostname)
-
-🤖 Generated with [Claude Code](https://claude.ai/code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>"
-    fi
     
     popd >/dev/null
 }
@@ -184,6 +171,14 @@ main() {
     
     # Check if we're on NixOS
     check_nixos
+    
+    # Ensure git is available for repository operations
+    if ! command -v git >/dev/null 2>&1; then
+        error "Git is required but not available. Please install git first:"
+        error "  nix-env -iA nixos.git"
+        error "Or run this script with: nix-shell -p git --run './bin/setup-nixos'"
+        exit 1
+    fi
     
     # Get dotfiles directory
     local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

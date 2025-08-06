@@ -6,11 +6,19 @@ Declarative system and user environment configuration using [[https://nixos.org/
 * Installation
 ** NixOS
 #+begin_src bash
-# Clone repository and run setup
-git clone https://github.com/vikdotdev/dotfiles.git ~/Repositories/dotfiles
-cd ~/Repositories/dotfiles
-./bin/setup-nixos
+# One-command installation (fully automated)
+nix-shell -p git --run '
+  mkdir -p ~/Repositories &&
+  git clone -b nix-migration https://github.com/vikdotdev/dotfiles.git ~/Repositories/dotfiles &&
+  cd ~/Repositories/dotfiles &&
+  ./bin/setup-nixos
+'
 #+end_src
+
+The setup script automatically:
+- Copies/generates hardware configuration
+- Detects your machine profile from hostname
+- Deploys both NixOS system and Home Manager user configs
 * Machine Profiles
 - *umbra*: Desktop with NVIDIA drivers
 - *reddwarf*: Laptop with power management  

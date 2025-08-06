@@ -19,6 +19,8 @@
       umbra = nixpkgs.lib.nixosSystem {
         inherit system;
         modules = [
+          # Import hardware config from system location
+          /etc/nixos/hardware-configuration.nix
           ./nixos/configuration.nix
           ./nixos/profiles/umbra.nix
           home-manager.nixosModules.home-manager
@@ -38,6 +40,8 @@
       reddwarf = nixpkgs.lib.nixosSystem {
         inherit system;
         modules = [
+          # Import hardware config from system location
+          /etc/nixos/hardware-configuration.nix
           ./nixos/configuration.nix
           ./nixos/profiles/reddwarf.nix
           home-manager.nixosModules.home-manager
@@ -57,6 +61,8 @@
       redgiant = nixpkgs.lib.nixosSystem {
         inherit system;
         modules = [
+          # Import hardware config from system location
+          /etc/nixos/hardware-configuration.nix
           ./nixos/configuration.nix
           ./nixos/profiles/redgiant.nix
           home-manager.nixosModules.home-manager

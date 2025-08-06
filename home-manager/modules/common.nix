@@ -155,7 +155,6 @@
         grep = "grep --color=auto";
         diff = "diff --color=auto";
         e = "exit";
-        t = "tmux";
         o = "xdg-open";
         open = "xdg-open";
         ch = "chezmoi";

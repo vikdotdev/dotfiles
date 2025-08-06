@@ -7,15 +7,14 @@
 {
   imports = [
     # Include the results of the hardware scan.
-    ./hardware-configuration.nix
+    # Hardware config is passed via flake, not imported from file
   ];
 
   # Bootloader
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # Hostname
-  networking.hostName = "nixos"; # Define your hostname - will be changed per machine
+  # Hostname is set in profile-specific configurations
 
   # Enable networking
   networking.networkmanager.enable = true;
@@ -39,11 +38,11 @@
 
   # Enable the GNOME Desktop Environment with Wayland
   services.xserver.enable = true;
-  services.xserver.displayManager.gdm = {
+  services.displayManager.gdm = {
     enable = true;
     wayland = true;  # Enable Wayland for GDM
   };
-  services.xserver.desktopManager.gnome.enable = true;
+  services.desktopManager.gnome.enable = true;
 
   # Configure keymap (works for both X11 and Wayland)
   services.xserver.xkb = {
@@ -65,9 +64,8 @@
   # Enable CUPS to print documents
   services.printing.enable = true;
 
-  # Enable sound with pipewire
-  sound.enable = true;
-  hardware.pulseaudio.enable = false;
+  # Enable sound with pipewire (sound.enable is deprecated)
+  services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -117,7 +115,6 @@
     aspell
     aspellDicts.en
     xdg-user-dirs
-    urlview
     renameutils
     unzip
     texlivePackages.scheme-full
@@ -131,7 +128,6 @@
     
     # Download tools
     yt-dlp
-    youtube-dl
     deluge
     
     

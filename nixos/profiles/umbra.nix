@@ -14,8 +14,7 @@
     open = false;
     nvidiaSettings = true;
     package = config.boot.kernelPackages.nvidiaPackages.stable;
-    # Wayland support
-    wayland.enable = true;
+    # Wayland support (handled via environment variables in configuration.nix)
   };
 
   # NVIDIA-specific Wayland settings
@@ -33,9 +32,7 @@
     enable32Bit = true;
   };
 
-  # Profile-specific packages
-  environment.systemPackages = with pkgs; [
-    # NVIDIA-specific tools
-    nvtop
-  ];
+  # Profile-specific packages can be added here if needed
+  # environment.systemPackages = with pkgs; [
+  # ];
 }
