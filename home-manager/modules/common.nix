@@ -23,7 +23,6 @@
     stretchly      # Break reminder app
     wezterm        # Terminal emulator
     syncthing      # File synchronization
-    firefox        # Web browser
     thunderbird    # Email client
     gimp           # Image editor
     vlc            # Media player
@@ -33,7 +32,6 @@
     iosevka        # Programming font
     
     # Development tools
-    git                     # Version control
     gh                      # GitHub CLI
     git-credential-manager  # Cross-platform git credential helper
     chemacs2                # Emacs profile switcher
@@ -60,7 +58,7 @@
     BROWSER = "firefox";
     WEZTERM_SHELL_SKIP_ALL = "1";
     
-    # XDG directories based on config.yml - common to all profiles
+    # XDG directories - common to all profiles
     EXT_XDG_NOTES_DIR = "$HOME/Documents/notes";
     EXT_XDG_REPOS_DIR = "$HOME/Repositories";
     EXT_XDG_DOTFILES_DIR = "$HOME/Repositories/dotfiles";

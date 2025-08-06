@@ -1,0 +1,92 @@
+#+TITLE: NixOS & Home Manager Dotfiles
+#+AUTHOR: Viktor Habchak
+
+Declarative system and user environment configuration using [[https://nixos.org/][NixOS]] and [[https://github.com/nix-community/home-manager][Home Manager]].
+
+* Installation
+** NixOS
+#+begin_src bash
+# Clone repository and run setup
+git clone https://github.com/vikdotdev/dotfiles.git ~/Repositories/dotfiles
+cd ~/Repositories/dotfiles
+./bin/setup-nixos
+#+end_src
+* Machine Profiles
+- *umbra*: Desktop with NVIDIA drivers
+- *reddwarf*: Laptop with power management  
+- *redgiant*: Laptop with KMonad keyboard remapping
+
+Profile is auto-detected from hostname or can be specified: =./bin/setup-nixos reddwarf=
+* Daily Usage
+
+#+begin_src bash
+# Apply system changes (NixOS)
+sudo nixos-rebuild switch --flake .#umbra
+
+# Apply user changes (Home Manager)
+home-manager switch --flake .#vik@umbra
+
+# Update packages
+nix flake update && sudo nixos-rebuild switch --flake .#umbra
+#+end_src
+
+* Configuration Structure
+
+#+begin_example
+├── flake.nix                    # Main flake configuration
+├── nixos/
+│   ├── configuration.nix        # Base NixOS system config
+│   └── profiles/               # Machine-specific system configs
+├── home-manager/
+│   ├── modules/common.nix      # Shared user config
+│   ├── profiles/               # Machine-specific user configs
+│   └── configs/                # Application configurations
+└── bin/setup-nixos             # Installation script
+#+end_example
+
+* Adding Packages
+*System packages* (available to all users):
+Edit =nixos/configuration.nix= → =environment.systemPackages=
+
+*User packages* (your personal tools):
+Edit =home-manager/modules/common.nix= → =home.packages=
+* Development Environments
+#+begin_src bash
+# Project-specific shell with Node.js
+nix develop nixpkgs#nodejs_18
+
+# Automatic activation with direnv
+echo "use flake" > .envrc && direnv allow
+#+end_src
+
+* Troubleshooting
+** Build Issues
+#+begin_src bash
+# Verify flake syntax
+nix flake check
+
+# Detailed error output
+sudo nixos-rebuild switch --flake .#umbra --show-trace
+#+end_src
+** Hardware Configuration Missing
+#+begin_src bash
+# Generate hardware config (for new NixOS installations)
+sudo nixos-generate-config --dir nixos/
+#+end_src
+** System Recovery
+#+begin_src bash
+# Rollback system
+sudo nixos-rebuild switch --rollback
+
+# Cleanup old generations
+nix-collect-garbage -d
+#+end_src
+* Profile Switching
+#+begin_src bash
+# Switch to different profile
+sudo nixos-rebuild switch --flake .#reddwarf
+home-manager switch --flake .#vik@reddwarf
+
+# Reboot required for system-level changes
+sudo reboot
+#+end_src

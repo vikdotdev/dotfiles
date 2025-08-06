@@ -1,0 +1,246 @@
+#!/bin/bash
+
+set -e
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Logging functions
+info() {
+    echo -e "${BLUE}[INFO]${NC} $1"
+}
+
+success() {
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
+
+warn() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
+
+error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+# Function to detect machine profile
+detect_profile() {
+    local hostname=$(hostname)
+    case "$hostname" in
+        "umbra")
+            echo "umbra"
+            ;;
+        "reddwarf")
+            echo "reddwarf"
+            ;;
+        "redgiant")
+            echo "redgiant"
+            ;;
+        *)
+            warn "Unknown hostname '$hostname', defaulting to umbra profile"
+            echo "umbra"
+            ;;
+    esac
+}
+
+# Function to check if we're running on NixOS
+check_nixos() {
+    if [ ! -f /etc/nixos/configuration.nix ]; then
+        error "This script must be run on NixOS"
+        exit 1
+    fi
+}
+
+# Function to check if hardware-configuration.nix exists
+check_hardware_config() {
+    local dotfiles_dir="$1"
+    if [ ! -f "$dotfiles_dir/nixos/hardware-configuration.nix" ]; then
+        warn "hardware-configuration.nix not found in dotfiles"
+        info "Copying system hardware configuration..."
+        
+        if [ -f /etc/nixos/hardware-configuration.nix ]; then
+            cp /etc/nixos/hardware-configuration.nix "$dotfiles_dir/nixos/"
+            success "Hardware configuration copied"
+        else
+            error "No hardware configuration found. Please run: sudo nixos-generate-config --dir $dotfiles_dir/nixos/"
+            exit 1
+        fi
+    fi
+}
+
+# Function to deploy NixOS configuration
+deploy_nixos() {
+    local dotfiles_dir="$1"
+    local profile="$2"
+    
+    info "Building NixOS configuration for profile: $profile"
+    
+    # Build first to check for errors
+    if sudo nixos-rebuild build --flake "$dotfiles_dir#$profile"; then
+        success "NixOS configuration built successfully"
+    else
+        error "Failed to build NixOS configuration"
+        exit 1
+    fi
+    
+    # Apply the configuration
+    info "Applying NixOS configuration..."
+    if sudo nixos-rebuild switch --flake "$dotfiles_dir#$profile"; then
+        success "NixOS configuration applied successfully"
+    else
+        error "Failed to apply NixOS configuration"
+        exit 1
+    fi
+}
+
+# Function to deploy Home Manager configuration
+deploy_home_manager() {
+    local dotfiles_dir="$1"
+    local profile="$2"
+    local username=$(whoami)
+    
+    info "Installing Home Manager configuration for $username@$profile"
+    
+    # Check if Home Manager is available
+    if ! command -v home-manager >/dev/null 2>&1; then
+        info "Installing Home Manager..."
+        nix run nixpkgs#home-manager -- switch --flake "$dotfiles_dir#$username@$profile"
+    else
+        home-manager switch --flake "$dotfiles_dir#$username@$profile"
+    fi
+    
+    if [ $? -eq 0 ]; then
+        success "Home Manager configuration applied successfully"
+    else
+        error "Failed to apply Home Manager configuration"
+        exit 1
+    fi
+}
+
+# Function to setup git configuration
+setup_git() {
+    local dotfiles_dir="$1"
+    
+    info "Setting up git repository..."
+    
+    pushd "$dotfiles_dir" >/dev/null
+    
+    # Set git user if not already set
+    if ! git config user.name >/dev/null 2>&1; then
+        git config user.name "Viktor Habchak"
+        git config user.email "vikdotdev@gmail.com"
+    fi
+    
+    # Add and commit hardware-configuration.nix if it's new
+    if [ -f nixos/hardware-configuration.nix ] && ! git ls-files --error-unmatch nixos/hardware-configuration.nix >/dev/null 2>&1; then
+        warn "Adding hardware-configuration.nix to git (this contains system-specific hardware info)"
+        git add nixos/hardware-configuration.nix
+        git commit -m "Add hardware configuration for $(hostname)
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
+    fi
+    
+    popd >/dev/null
+}
+
+# Function to verify setup
+verify_setup() {
+    local profile="$1"
+    
+    info "Verifying NixOS setup..."
+    
+    # Check if system services are running
+    local services=("docker" "redis")
+    for service in "${services[@]}"; do
+        if systemctl is-active --quiet "$service"; then
+            success "$service service is running"
+        else
+            warn "$service service is not running"
+        fi
+    done
+    
+    # Check if GUI applications are available
+    info "Checking GUI applications..."
+    local gui_apps=("firefox" "spotify" "telegram-desktop")
+    for app in "${gui_apps[@]}"; do
+        if command -v "$app" >/dev/null 2>&1; then
+            success "$app is available"
+        else
+            warn "$app is not available in PATH"
+        fi
+    done
+    
+    success "Setup verification completed"
+}
+
+# Main function
+main() {
+    info "Starting NixOS setup..."
+    
+    # Check if we're on NixOS
+    check_nixos
+    
+    # Get dotfiles directory
+    local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    local dotfiles_dir="$(cd "$script_dir/.." && pwd)"
+    
+    info "Using dotfiles directory: $dotfiles_dir"
+    
+    # Detect profile
+    local profile=$(detect_profile)
+    info "Detected profile: $profile"
+    
+    # Allow user to override profile
+    if [ -n "$1" ]; then
+        profile="$1"
+        info "Using specified profile: $profile"
+    fi
+    
+    # Validate profile
+    if [[ ! "$profile" =~ ^(umbra|reddwarf|redgiant)$ ]]; then
+        error "Invalid profile: $profile. Must be one of: umbra, reddwarf, redgiant"
+        exit 1
+    fi
+    
+    # Check hardware configuration
+    check_hardware_config "$dotfiles_dir"
+    
+    # Setup git
+    setup_git "$dotfiles_dir"
+    
+    # Deploy NixOS configuration
+    deploy_nixos "$dotfiles_dir" "$profile"
+    
+    # Deploy Home Manager configuration
+    deploy_home_manager "$dotfiles_dir" "$profile"
+    
+    # Verify setup
+    verify_setup "$profile"
+    
+    success "NixOS setup completed successfully!"
+    info "You may want to reboot to ensure all changes take effect"
+    info "Run 'sudo reboot' when ready"
+}
+
+# Show usage if --help is passed
+if [[ "$1" == "--help" || "$1" == "-h" ]]; then
+    echo "Usage: $0 [PROFILE]"
+    echo ""
+    echo "Setup NixOS with dotfiles configuration"
+    echo ""
+    echo "Profiles:"
+    echo "  umbra    - Desktop with NVIDIA drivers (default)"
+    echo "  reddwarf - Laptop with power management"
+    echo "  redgiant - Laptop with kmonad keyboard mapping"
+    echo ""
+    echo "If no profile is specified, it will be auto-detected from hostname"
+    exit 0
+fi
+
+# Run main function
+main "$@"
