@@ -40,8 +40,9 @@ detect_profile() {
             echo "redgiant"
             ;;
         *)
-            warn "Unknown hostname '$hostname', defaulting to umbra profile"
-            echo "umbra"
+            error "Unknown hostname '$hostname'. Profile must be specified explicitly."
+            error "Usage: $0 [umbra|reddwarf|redgiant]"
+            exit 1
             ;;
     esac
 }
@@ -52,6 +53,91 @@ check_nixos() {
         error "This script must be run on NixOS"
         exit 1
     fi
+}
+
+# Function to parse command line arguments
+parse_arguments() {
+    DOTFILES_DIR=""
+    PROFILE=""
+    
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --location)
+                DOTFILES_DIR="$2"
+                shift 2
+                ;;
+            --profile)
+                PROFILE="$2"
+                shift 2
+                ;;
+            -h|--help)
+                show_usage
+                exit 0
+                ;;
+            *)
+                error "Unknown argument: $1"
+                show_usage
+                exit 1
+                ;;
+        esac
+    done
+    
+    if [ -z "$DOTFILES_DIR" ]; then
+        error "Dotfiles directory is required"
+        error "Use --location to specify where to clone the repository"
+        show_usage
+        exit 1
+    fi
+    
+    # Expand ~ to home directory
+    DOTFILES_DIR="${DOTFILES_DIR/#\~/$HOME}"
+}
+
+# Function to show usage
+show_usage() {
+    echo "Usage: $0 --location <PATH> [--profile <PROFILE>]"
+    echo ""
+    echo "Setup NixOS with dotfiles configuration"
+    echo ""
+    echo "Options:"
+    echo "  --location <PATH>    Path where dotfiles should be cloned (required)"
+    echo "  --profile <PROFILE>  Machine profile (optional if hostname matches)"
+    echo "  -h, --help          Show this help message"
+    echo ""
+    echo "Profiles:"
+    echo "  umbra    - Desktop with NVIDIA drivers"
+    echo "  reddwarf - Laptop with power management"
+    echo "  redgiant - Laptop with kmonad keyboard mapping"
+    echo ""
+    echo "Examples:"
+    echo "  $0 --location ~/Repositories/dotfiles --profile umbra"
+    echo "  $0 --location /home/user/dotfiles --profile reddwarf"
+    echo "  $0 --location ~/dotfiles  # Auto-detect profile from hostname"
+}
+
+# Function to setup dotfiles repository
+setup_dotfiles_repo() {
+    local dotfiles_dir="$1"
+    local parent_dir=$(dirname "$dotfiles_dir")
+    
+    # Check if directory already exists
+    if [ -d "$dotfiles_dir" ]; then
+        error "Directory already exists: $dotfiles_dir"
+        error "Please remove it or choose a different path"
+        exit 1
+    fi
+    
+    # Create parent directory if it doesn't exist
+    if [ ! -d "$parent_dir" ]; then
+        info "Creating directory: $parent_dir"
+        mkdir -p "$parent_dir"
+    fi
+    
+    # Clone repository
+    info "Cloning dotfiles repository to: $dotfiles_dir"
+    git clone -b nix-migration https://github.com/vikdotdev/dotfiles.git "$dotfiles_dir"
+    
+    success "Dotfiles repository cloned to: $dotfiles_dir"
 }
 
 # Function to check if hardware-configuration.nix exists
@@ -117,23 +203,6 @@ deploy_home_manager() {
     fi
 }
 
-# Function to setup git configuration
-setup_git() {
-    local dotfiles_dir="$1"
-    
-    info "Setting up git repository..."
-    
-    pushd "$dotfiles_dir" >/dev/null
-    
-    # Set git user if not already set
-    if ! git config user.name >/dev/null 2>&1; then
-        git config user.name "Viktor Habchak"
-        git config user.email "vikdotdev@gmail.com"
-    fi
-    
-    
-    popd >/dev/null
-}
 
 # Function to verify setup
 verify_setup() {
@@ -141,26 +210,19 @@ verify_setup() {
     
     info "Verifying NixOS setup..."
     
-    # Check if system services are running
-    local services=("docker" "redis")
-    for service in "${services[@]}"; do
-        if systemctl is-active --quiet "$service"; then
-            success "$service service is running"
-        else
-            warn "$service service is not running"
-        fi
-    done
+    # Check basic system functionality
+    if systemctl is-active --quiet NetworkManager; then
+        success "NetworkManager is running"
+    else
+        warn "NetworkManager is not running"
+    fi
     
-    # Check if GUI applications are available
-    info "Checking GUI applications..."
-    local gui_apps=("firefox" "spotify" "telegram-desktop")
-    for app in "${gui_apps[@]}"; do
-        if command -v "$app" >/dev/null 2>&1; then
-            success "$app is available"
-        else
-            warn "$app is not available in PATH"
-        fi
-    done
+    # Check if Home Manager environment is loaded
+    if [ -n "$HOME" ] && [ -f "$HOME/.nix-profile/bin/home-manager" ]; then
+        success "Home Manager is installed"
+    else
+        warn "Home Manager may not be properly installed"
+    fi
     
     success "Setup verification completed"
 }
@@ -169,31 +231,38 @@ verify_setup() {
 main() {
     info "Starting NixOS setup..."
     
+    # Parse command line arguments
+    parse_arguments "$@"
+    
     # Check if we're on NixOS
     check_nixos
     
     # Ensure git is available for repository operations
     if ! command -v git >/dev/null 2>&1; then
-        error "Git is required but not available. Please install git first:"
-        error "  nix-env -iA nixos.git"
-        error "Or run this script with: nix-shell -p git --run './bin/setup-nixos'"
-        exit 1
+        info "Git not found, downloading script and running with nix-shell..."
+        
+        # Download script to temporary file
+        local temp_script=$(mktemp)
+        curl -L https://raw.githubusercontent.com/vikdotdev/dotfiles/nix-migration/bin/setup-nixos -o "$temp_script"
+        chmod +x "$temp_script"
+        
+        # Run with nix-shell
+        exec nix-shell -p git --run "$temp_script $*"
     fi
     
-    # Get dotfiles directory
-    local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    local dotfiles_dir="$(cd "$script_dir/.." && pwd)"
+    info "Using dotfiles directory: $DOTFILES_DIR"
     
-    info "Using dotfiles directory: $dotfiles_dir"
+    # Setup dotfiles repository
+    setup_dotfiles_repo "$DOTFILES_DIR"
     
-    # Detect profile
-    local profile=$(detect_profile)
-    info "Detected profile: $profile"
-    
-    # Allow user to override profile
-    if [ -n "$1" ]; then
-        profile="$1"
+    # Get profile from argument or detect from hostname
+    local profile=""
+    if [ -n "$PROFILE" ]; then
+        profile="$PROFILE"
         info "Using specified profile: $profile"
+    else
+        profile=$(detect_profile)
+        info "Detected profile: $profile"
     fi
     
     # Validate profile
@@ -203,16 +272,13 @@ main() {
     fi
     
     # Check hardware configuration
-    check_hardware_config "$dotfiles_dir"
-    
-    # Setup git
-    setup_git "$dotfiles_dir"
+    check_hardware_config "$DOTFILES_DIR"
     
     # Deploy NixOS configuration
-    deploy_nixos "$dotfiles_dir" "$profile"
+    deploy_nixos "$DOTFILES_DIR" "$profile"
     
     # Deploy Home Manager configuration
-    deploy_home_manager "$dotfiles_dir" "$profile"
+    deploy_home_manager "$DOTFILES_DIR" "$profile"
     
     # Verify setup
     verify_setup "$profile"
@@ -222,20 +288,6 @@ main() {
     info "Run 'sudo reboot' when ready"
 }
 
-# Show usage if --help is passed
-if [[ "$1" == "--help" || "$1" == "-h" ]]; then
-    echo "Usage: $0 [PROFILE]"
-    echo ""
-    echo "Setup NixOS with dotfiles configuration"
-    echo ""
-    echo "Profiles:"
-    echo "  umbra    - Desktop with NVIDIA drivers (default)"
-    echo "  reddwarf - Laptop with power management"
-    echo "  redgiant - Laptop with kmonad keyboard mapping"
-    echo ""
-    echo "If no profile is specified, it will be auto-detected from hostname"
-    exit 0
-fi
 
 # Run main function
 main "$@"
