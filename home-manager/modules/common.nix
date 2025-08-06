@@ -200,7 +200,7 @@
         fi
         
         # Prompt setup with git functions - using external script to avoid escaping
-        source ${builtins.readFile ../scripts/prompt.sh}
+        ${builtins.readFile ../scripts/prompt.sh}
       '';
     };
   };
