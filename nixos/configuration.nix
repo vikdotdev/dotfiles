@@ -64,6 +64,7 @@
     totem               # Video player (use VLC instead)
     simple-scan         # Document scanner
     cheese              # GNOME Camera/webcam app
+    snapshot            # GNOME Camera app (newer version)
   ];
 
   # Configure keymap (works for both X11 and Wayland)
