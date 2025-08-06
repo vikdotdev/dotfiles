@@ -47,6 +47,22 @@
   
   # Enable GNOME Desktop Manager
   services.desktopManager.gnome.enable = true;
+  
+  # Exclude unwanted GNOME applications
+  environment.gnome.excludePackages = with pkgs; [
+    gnome-terminal    # Use wezterm instead
+    xterm            # Don't want xterm
+    gedit            # Text editor
+    geary            # Email client
+    epiphany         # GNOME Web browser
+    gnome-tour       # Welcome tour
+    yelp             # Help viewer
+    gnome-contacts   # Contacts app
+    gnome-music      # Music player
+    gnome-photos     # Photos app
+    totem            # Video player (use VLC instead)
+    simple-scan      # Document scanner
+  ];
 
   # Configure keymap (works for both X11 and Wayland)
   services.xserver.xkb = {
