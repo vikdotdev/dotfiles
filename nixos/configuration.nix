@@ -51,6 +51,7 @@
   # Exclude unwanted GNOME applications
   environment.gnome.excludePackages = with pkgs; [
     gnome-terminal    # Use wezterm instead
+    gnome-console     # GNOME Console app (newer terminal)
     xterm            # Don't want xterm
     gedit            # Text editor
     geary            # Email client
@@ -112,7 +113,6 @@
   # System packages (minimal set for system functionality)
   environment.systemPackages = with pkgs; [
     # Essential system tools
-    vim
     wget
     curl
     git

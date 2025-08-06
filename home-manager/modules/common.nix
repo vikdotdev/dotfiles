@@ -37,6 +37,7 @@
     # Development tools
     gh                      # GitHub CLI
     git-credential-manager  # Cross-platform git credential helper
+    emacs-pgtk              # Emacs with pure GTK (better Wayland support)
     chemacs2                # Emacs profile switcher
     
     # System utilities
