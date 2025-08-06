@@ -36,12 +36,16 @@
     LC_TIME = "en_GB.UTF-8";
   };
 
-  # Enable the GNOME Desktop Environment with Wayland
+  # Enable X11/Wayland support
   services.xserver.enable = true;
+  
+  # Enable GNOME Display Manager with Wayland
   services.displayManager.gdm = {
     enable = true;
-    wayland = true;  # Enable Wayland for GDM
+    wayland = true;
   };
+  
+  # Enable GNOME Desktop Manager
   services.desktopManager.gnome.enable = true;
 
   # Configure keymap (works for both X11 and Wayland)
@@ -130,6 +134,15 @@
     yt-dlp
     deluge
     
+    # Desktop Environment - GNOME
+    gnome.gdm
+    gnome.gnome-shell
+    gnome.gnome-session
+    gnome.gnome-settings-daemon
+    gnome.gnome-control-center
+    gnome.nautilus
+    gnome.gnome-terminal
+    gnome.mutter
     
     # Wayland utilities
     wl-clipboard
