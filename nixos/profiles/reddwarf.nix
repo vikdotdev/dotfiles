@@ -7,6 +7,9 @@
 
   # Laptop-specific settings
   services.thermald.enable = true;
+  
+  # Power management with TLP (disable conflicting power-profiles-daemon)
+  services.power-profiles-daemon.enable = false;
   services.tlp = {
     enable = true;
     settings = {
