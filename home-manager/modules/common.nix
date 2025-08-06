@@ -8,6 +8,9 @@
 
   # Let Home Manager install and manage itself
   programs.home-manager.enable = true;
+  
+  # Allow unfree packages in Home Manager
+  nixpkgs.config.allowUnfree = true;
 
   # Packages installed to ~/.nix-profile/bin
   home.packages = with pkgs; [
