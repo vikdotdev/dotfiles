@@ -4,6 +4,7 @@
   # KMonad package installation
   home.packages = with pkgs; [
     kmonad
+    gnomeExtensions.kmonad-toggle
   ];
 
   # KMonad keyboard configuration (~/.config/kmonad/laptop.kbd)

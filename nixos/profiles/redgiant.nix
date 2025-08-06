@@ -22,4 +22,16 @@
 
   # Enable touchpad support
   services.xserver.libinput.enable = true;
+
+  # KMonad support - uinput permissions
+  users.groups.uinput = {};
+  users.users.vik.extraGroups = [ "input" "uinput" ];
+  
+  # Load uinput module
+  boot.kernelModules = [ "uinput" ];
+  
+  # Udev rules for uinput device permissions
+  services.udev.extraRules = ''
+    KERNEL=="uinput", MODE="0660", GROUP="uinput", OPTIONS+="static_node=uinput"
+  '';
 }
