@@ -50,19 +50,20 @@
   
   # Exclude unwanted GNOME applications
   environment.gnome.excludePackages = with pkgs; [
-    gnome-terminal    # Use wezterm instead
-    gnome-console     # GNOME Console app (newer terminal)
-    gedit            # Text editor
-    gnome-text-editor # GNOME Text Editor (newer version)
-    geary            # Email client
-    epiphany         # GNOME Web browser
-    gnome-tour       # Welcome tour
-    yelp             # Help viewer
-    gnome-contacts   # Contacts app
-    gnome-music      # Music player
-    gnome-photos     # Photos app
-    totem            # Video player (use VLC instead)
-    simple-scan      # Document scanner
+    gnome-terminal      # Use wezterm/ghossty instead
+    gnome-console       # GNOME Console app (newer terminal)
+    gedit               # Text editor
+    gnome-text-editor   # GNOME Text Editor (newer version)
+    geary               # Email client
+    epiphany            # GNOME Web browser
+    gnome-tour          # Welcome tour
+    yelp                # Help viewer
+    gnome-contacts      # Contacts app
+    gnome-music         # Music player
+    gnome-photos        # Photos app
+    totem               # Video player (use VLC instead)
+    simple-scan         # Document scanner
+    cheese              # GNOME Camera/webcam app
   ];
 
   # Configure keymap (works for both X11 and Wayland)

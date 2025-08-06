@@ -20,11 +20,11 @@
     signal-desktop
     slack
     discord
-    solanum        # Pomodoro timer (org.gnome.Solanum)
+    gnome-solanum  # Pomodoro timer (org.gnome.Solanum)
     blanket        # Ambient sound app (com.rafaelmardojai.Blanket)
     zapzap         # WhatsApp client (com.rtosta.zapzap)
-    stretchly      # Break reminder app
     wezterm        # Terminal emulator
+    ghostty        # Fast terminal emulator
     syncthing      # File synchronization
     thunderbird    # Email client
     gimp           # Image editor
@@ -221,19 +221,12 @@
     ".config/autostart/windows.desktop".source = ../configs/gnome/windows.desktop;
     ".local/share/pixmaps/windows.png".source = ../configs/gnome/windows.png;
     
-    # Custom desktop entries
+    # Hide Syncthing desktop entries (use via command line only)
     ".local/share/applications/syncthing.desktop".text = ''
       [Desktop Entry]
-      Name=Syncthing
-      Comment=File synchronization
-      Exec=xdg-open http://localhost:8384
-      Icon=syncthing
-      Type=Application
-      Categories=Network;FileTransfer;
-      StartupNotify=true
+      Hidden=true
     '';
     
-    # Hide the default Syncthing Web UI desktop entry
     ".local/share/applications/syncthing-ui.desktop".text = ''
       [Desktop Entry]
       Hidden=true
@@ -279,6 +272,18 @@
     ".local/share/applications/org.gnome.Terminal.desktop".text = ''
       [Desktop Entry]
       Hidden=true
+    '';
+    
+    # Custom virt-manager desktop entry
+    ".local/share/applications/virt-manager.desktop".text = ''
+      [Desktop Entry]
+      Name=VM Manager
+      Comment=Virtual machine manager
+      Exec=virt-manager
+      Icon=virt-manager
+      Type=Application
+      Categories=System;
+      StartupNotify=true
     '';
     
     # Ruby configuration
