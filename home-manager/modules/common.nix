@@ -224,13 +224,19 @@
     # Custom desktop entries
     ".local/share/applications/syncthing.desktop".text = ''
       [Desktop Entry]
-      Name=Sync
+      Name=Syncthing
       Comment=File synchronization
-      Exec=syncthing-gtk
+      Exec=xdg-open http://localhost:8384
       Icon=syncthing
       Type=Application
       Categories=Network;FileTransfer;
       StartupNotify=true
+    '';
+    
+    # Hide the default Syncthing Web UI desktop entry
+    ".local/share/applications/syncthing-ui.desktop".text = ''
+      [Desktop Entry]
+      Hidden=true
     '';
     
     ".local/share/applications/android-studio.desktop".text = ''
