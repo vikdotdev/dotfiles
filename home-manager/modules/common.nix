@@ -274,6 +274,12 @@
       Hidden=true
     '';
     
+    # Hide Emacs Client desktop entry
+    ".local/share/applications/emacsclient.desktop".text = ''
+      [Desktop Entry]
+      Hidden=true
+    '';
+    
     # Custom virt-manager desktop entry
     ".local/share/applications/virt-manager.desktop".text = ''
       [Desktop Entry]
