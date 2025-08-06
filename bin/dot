@@ -76,11 +76,22 @@ rebuild_home() {
     
     info "🏠 Rebuilding Home Manager configuration for ${PURPLE}$username@$profile${NC}"
     
-    if home-manager switch --flake "$dotfiles_dir#$username@$profile"; then
-        success "✅ Home Manager configuration rebuilt successfully"
+    # Check if Home Manager is available, use nix run if not
+    if command -v home-manager >/dev/null 2>&1; then
+        if home-manager switch --flake "$dotfiles_dir#$username@$profile"; then
+            success "✅ Home Manager configuration rebuilt successfully"
+        else
+            error "❌ Failed to rebuild Home Manager configuration"
+            exit 1
+        fi
     else
-        error "❌ Failed to rebuild Home Manager configuration"
-        exit 1
+        info "Home Manager not found, using nix run..."
+        if nix run nixpkgs#home-manager -- switch --flake "$dotfiles_dir#$username@$profile"; then
+            success "✅ Home Manager configuration rebuilt successfully"
+        else
+            error "❌ Failed to rebuild Home Manager configuration"
+            exit 1
+        fi
     fi
 }
 
