@@ -135,14 +135,14 @@
     deluge
     
     # Desktop Environment - GNOME
-    gnome.gdm
-    gnome.gnome-shell
-    gnome.gnome-session
-    gnome.gnome-settings-daemon
-    gnome.gnome-control-center
-    gnome.nautilus
-    gnome.gnome-terminal
-    gnome.mutter
+    gdm
+    gnome-shell
+    gnome-session
+    gnome-settings-daemon
+    gnome-control-center
+    nautilus
+    gnome-terminal
+    mutter
     
     # Wayland utilities
     wl-clipboard
