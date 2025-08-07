@@ -69,7 +69,6 @@
     "util-not-my-files"
     "util-reboot-to-windows"
     "util-screenkey"
-    "util-temp"
   ]);
 
 }
