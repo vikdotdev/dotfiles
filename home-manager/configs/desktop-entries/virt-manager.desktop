@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=VM Manager
+Comment=Virtual machine manager
+Exec=virt-manager
+Icon=virt-manager
+Type=Application
+Categories=System;
+StartupNotify=true

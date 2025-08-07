@@ -68,16 +68,7 @@
     ".emacs-profiles.el".source = ../../configs/emacs/.emacs-profiles.el;
     
     # Custom Android Studio desktop entry
-    ".local/share/applications/android-studio.desktop".text = ''
-      [Desktop Entry]
-      Name=Android Studio
-      Comment=Android development IDE
-      Exec=android-studio
-      Icon=android-studio
-      Type=Application
-      Categories=Development;IDE;
-      StartupNotify=true
-    '';
+    ".local/share/applications/android-studio.desktop".source = ../../configs/desktop-entries/android-studio.desktop;
   } // builtins.listToAttrs (map (script: {
     name = ".local/bin/${script}";
     value = {

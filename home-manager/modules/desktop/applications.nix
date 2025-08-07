@@ -1,12 +1,5 @@
 { config, pkgs, ... }:
 
-let
-  # Desktop entry template for hiding applications
-  hiddenDesktopEntry = ''
-    [Desktop Entry]
-    Hidden=true
-  '';
-in
 {
   # GUI Applications
   home.packages = with pkgs; [
@@ -31,6 +24,9 @@ in
     obs-studio     # Screen recording and streaming
     reaper         # Digital audio workstation
     
+    # Download Tools
+    yt-dlp         # YouTube downloader
+    deluge         # BitTorrent client
     
     # Terminal Emulators
     wezterm        # Terminal emulator
@@ -42,33 +38,23 @@ in
     ".config/wezterm/wezterm.lua".source = ../../configs/wezterm.lua;
     
     # Hide Syncthing desktop entries (use via command line only)
-    ".local/share/applications/syncthing.desktop".text = hiddenDesktopEntry;
-    ".local/share/applications/syncthing-ui.desktop".text = hiddenDesktopEntry;
+    ".local/share/applications/syncthing.desktop".source = ../../configs/desktop-entries/hidden.desktop;
+    ".local/share/applications/syncthing-ui.desktop".source = ../../configs/desktop-entries/hidden.desktop;
     
     
-    # Custom GIMP desktop entry
-    ".local/share/applications/gimp.desktop".text = ''
-      [Desktop Entry]
-      Name=Image Editor
-      Comment=GNU Image Manipulation Program
-      Exec=gimp
-      Icon=gimp
-      Type=Application
-      Categories=Graphics;2DGraphics;RasterGraphics;
-      StartupNotify=true
-      MimeType=image/bmp;image/g3fax;image/gif;image/x-fits;image/x-pcx;image/x-portable-anymap;image/x-portable-bitmap;image/x-portable-graymap;image/x-portable-pixmap;image/x-psd;image/x-sgi;image/x-tga;image/x-xbitmap;image/x-xwindowdump;image/x-xcf;image/x-compressed-xcf;image/x-gimp-gbr;image/x-gimp-pat;image/x-gimp-gih;image/x-sun-raster;image/tiff;image/jpeg;image/x-psp;image/png;image/x-icon;image/x-xpixmap;image/svg+xml;image/x-wmf;image/jp2;image/jpeg2000;image/jpx;image/x-xcursor;
-    '';
+    # Custom application desktop entries
+    ".local/share/applications/gimp.desktop".source = ../../configs/desktop-entries/gimp.desktop;
     
-    # Custom virt-manager desktop entry
-    ".local/share/applications/virt-manager.desktop".text = ''
-      [Desktop Entry]
-      Name=VM Manager
-      Comment=Virtual machine manager
-      Exec=virt-manager
-      Icon=virt-manager
-      Type=Application
-      Categories=System;
-      StartupNotify=true
-    '';
+    ".local/share/applications/virt-manager.desktop".source = ../../configs/desktop-entries/virt-manager.desktop;
+  };
+
+  # Firefox configuration
+  programs.firefox = {
+    enable = true;
+    profiles.default = {
+      isDefault = true;
+      extraConfig = builtins.readFile ../../configs/firefox/user.js;
+      userChrome = builtins.readFile ../../configs/firefox/userChrome.css;
+    };
   };
 }

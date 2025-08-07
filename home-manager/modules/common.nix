@@ -1,18 +1,12 @@
 { config, pkgs, ... }:
 
-let
-  # Desktop entry template for hiding applications
-  hiddenDesktopEntry = ''
-    [Desktop Entry]
-    Hidden=true
-  '';
-in
 {
   imports = [
     ./desktop/gnome.nix
     ./desktop/applications.nix
     ./development/tools.nix
     ./shell/bash.nix
+    ./gpg.nix
   ];
   # Home Manager basic settings
   home.username = "vik";
@@ -61,13 +55,6 @@ in
   # Program configurations
   programs = {
 
-    # GPG configuration (~/.gnupg/gpg.conf)
-    gpg = {
-      enable = true;
-      settings = {
-        # Add any gpg settings here if needed
-      };
-    };
 
   };
 
@@ -98,31 +85,10 @@ in
     "util-temp"
   ]);
 
-  # Firefox configuration
-  programs.firefox = {
-    enable = true;
-    profiles.default = {
-      isDefault = true;
-      extraConfig = builtins.readFile ../configs/firefox/user.js;
-      userChrome = builtins.readFile ../configs/firefox/userChrome.css;
-    };
-  };
 
 
   # Services configuration
   services = {
-    # GPG agent configuration (~/.gnupg/gpg-agent.conf + systemd service)
-    gpg-agent = {
-      enable = true;
-      defaultCacheTtl = 36000;
-      maxCacheTtl = 72000;
-      extraConfig = ''
-        allow-preset-passphrase
-        allow-loopback-pinentry
-        # This will invoke the prompt in the terminal
-        # pinentry-program /usr/bin/pinentry-curses
-      '';
-    };
 
     # Syncthing file synchronization service
     syncthing = {

@@ -1,12 +1,5 @@
 { config, pkgs, ... }:
 
-let
-  # Desktop entry template for hiding applications
-  hiddenDesktopEntry = ''
-    [Desktop Entry]
-    Hidden=true
-  '';
-in
 {
   # GNOME-specific packages
   home.packages = with pkgs; [
@@ -26,10 +19,10 @@ in
     ".local/share/pixmaps/windows.png".source = ../../configs/gnome/windows.png;
     
     # Hide desktop entries for unwanted applications
-    ".local/share/applications/htop.desktop".text = hiddenDesktopEntry;
-    ".local/share/applications/xterm.desktop".text = hiddenDesktopEntry;
-    ".local/share/applications/org.gnome.Terminal.desktop".text = hiddenDesktopEntry;
-    ".local/share/applications/emacsclient.desktop".text = hiddenDesktopEntry;
+    ".local/share/applications/htop.desktop".source = ../../configs/desktop-entries/hidden.desktop;
+    ".local/share/applications/xterm.desktop".source = ../../configs/desktop-entries/hidden.desktop;
+    ".local/share/applications/org.gnome.Terminal.desktop".source = ../../configs/desktop-entries/hidden.desktop;
+    ".local/share/applications/emacsclient.desktop".source = ../../configs/desktop-entries/hidden.desktop;
   };
 
   # GNOME dconf settings

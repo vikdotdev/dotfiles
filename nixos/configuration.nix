@@ -8,6 +8,8 @@
   imports = [
     # Include the results of the hardware scan.
     # Hardware config is passed via flake, not imported from file
+    ./modules/desktop/gnome.nix
+    ./modules/development/tools.nix
   ];
 
   # Bootloader
@@ -36,53 +38,6 @@
     LC_TIME = "en_GB.UTF-8";
   };
 
-  # Enable X11/Wayland support
-  services.xserver.enable = true;
-  
-  # Enable GNOME Display Manager with Wayland
-  services.displayManager.gdm = {
-    enable = true;
-    wayland = true;
-  };
-  
-  # Enable GNOME Desktop Manager
-  services.desktopManager.gnome.enable = true;
-  
-  # Exclude unwanted GNOME applications
-  environment.gnome.excludePackages = with pkgs; [
-    gnome-terminal      # Use wezterm/ghossty instead
-    gnome-console       # GNOME Console app (newer terminal)
-    gedit               # Text editor
-    gnome-text-editor   # GNOME Text Editor (newer version)
-    geary               # Email client
-    epiphany            # GNOME Web browser
-    gnome-tour          # Welcome tour
-    yelp                # Help viewer
-    gnome-contacts      # Contacts app
-    gnome-music         # Music player
-    gnome-photos        # Photos app
-    totem               # Video player (use VLC instead)
-    simple-scan         # Document scanner
-    cheese              # GNOME Camera/webcam app
-    snapshot            # GNOME Camera app (newer version)
-  ];
-
-  # Configure keymap (works for both X11 and Wayland)
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
-  };
-
-  # Wayland-specific settings
-  environment.sessionVariables = {
-    # Force Wayland for specific applications
-    NIXOS_OZONE_WL = "1"; # For Electron apps
-    MOZ_ENABLE_WAYLAND = "1"; # For Firefox
-    QT_QPA_PLATFORM = "wayland"; # For Qt apps
-    SDL_VIDEODRIVER = "wayland"; # For SDL apps
-    CLUTTER_BACKEND = "wayland"; # For Clutter apps
-    GDK_BACKEND = "wayland"; # For GTK apps
-  };
 
   # Enable CUPS to print documents
   services.printing.enable = true;
@@ -101,7 +56,7 @@
   users.users.vik = {
     isNormalUser = true;
     description = "Viktor Habchak";
-    extraGroups = [ "networkmanager" "wheel" "docker" ];
+    extraGroups = [ "networkmanager" "wheel" ];
   };
 
   # Allow unfree packages
@@ -118,25 +73,11 @@
     wget
     curl
     git
-    
-    # System administration
     htop
     ncdu
     tldr
     ripgrep
     fd
-    
-    # Development essentials
-    gcc
-    gnumake
-    cmake
-    autoconf
-    automake
-    libtool
-    pkg-config
-    patch
-    gettext
-    clang
     
     # System libraries
     aspell
@@ -149,44 +90,10 @@
     # Shell environment
     direnv
     
-    # Media and development tools
-    imagemagick
-    jpegoptim
-    
-    # Download tools
-    yt-dlp
-    deluge
-    
-    # Desktop Environment - GNOME
-    gdm
-    gnome-shell
-    gnome-session
-    gnome-settings-daemon
-    gnome-control-center
-    nautilus
-    gnome-terminal
-    mutter
-    
-    # Wayland utilities
-    wl-clipboard
-    wayland-utils
-    xwayland
-    
     # Virtualization
     virt-manager
   ];
 
-  # Enable Docker
-  virtualisation.docker = {
-    enable = true;
-    enableOnBoot = true;
-  };
-
-  # Enable Redis (Valkey)
-  services.redis.servers."" = {
-    enable = true;
-    port = 6379;
-  };
 
 
   # Enable SSH daemon
@@ -205,5 +112,5 @@
   networking.firewall.allowedUDPPorts = [ ];
 
   # System state version - DON'T CHANGE
-  system.stateVersion = "24.05"; # Did you read the comment?
+  system.stateVersion = "24.05";
 }

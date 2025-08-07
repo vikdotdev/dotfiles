@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Android Studio
+Comment=Android development IDE
+Exec=android-studio
+Icon=android-studio
+Type=Application
+Categories=Development;IDE;
+StartupNotify=true
