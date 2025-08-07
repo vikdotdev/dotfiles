@@ -12,7 +12,7 @@
   };
   
   # Enable GNOME Desktop Manager
-  services.desktopManager.gnome.enable = true;
+  services.xserver.desktopManager.gnome.enable = true;
   
   # Exclude unwanted GNOME applications
   environment.gnome.excludePackages = with pkgs; [
