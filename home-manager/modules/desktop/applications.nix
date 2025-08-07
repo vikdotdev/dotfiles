@@ -21,7 +21,13 @@
     gimp           # Image editor
     vlc            # Media player
     obs-studio     # Screen recording and streaming
+    
+    # Audio Production
     reaper         # Digital audio workstation
+    jack2          # JACK Audio Connection Kit
+    qjackctl       # JACK control GUI
+    yabridge       # VST bridge for Linux
+    carla          # Audio plugin host
     
     # Download Tools
     yt-dlp         # YouTube downloader
