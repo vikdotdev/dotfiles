@@ -4,8 +4,10 @@
   imports = [
     ./desktop/gnome.nix
     ./desktop/applications.nix
+    ./desktop/syncthing.nix
     ./development/tools.nix
     ./shell/bash.nix
+    ./fonts.nix
     ./gpg.nix
   ];
   # Home Manager basic settings
@@ -21,12 +23,6 @@
 
   # Packages installed to ~/.nix-profile/bin
   home.packages = with pkgs; [
-    
-    # Fonts
-    iosevka        # Programming font
-    
-    
-    # System utilities
   ];
 
   # PATH additions - added to ~/.profile
@@ -54,20 +50,11 @@
 
   # Program configurations
   programs = {
-
-
   };
 
 
   # Custom utility scripts (~/.local/bin/)
   home.file = {
-    
-    
-    
-    
-    
-    
-    
     # Ruby configuration
     ".pryrc".source = ../configs/ruby/.pryrc;
   } // builtins.listToAttrs (map (script: {
@@ -85,14 +72,4 @@
     "util-temp"
   ]);
 
-
-
-  # Services configuration
-  services = {
-
-    # Syncthing file synchronization service
-    syncthing = {
-      enable = true;
-    };
-  };
 }

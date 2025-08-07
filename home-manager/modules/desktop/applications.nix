@@ -15,7 +15,6 @@
     # Productivity & Utilities
     blanket        # Ambient sound app
     smile          # Slideshow maker
-    syncthing      # File synchronization
     gnome-solanum  # Pomodoro timer
     
     # Media & Graphics
@@ -37,9 +36,6 @@
   home.file = {
     ".config/wezterm/wezterm.lua".source = ../../configs/wezterm.lua;
     
-    # Hide Syncthing desktop entries (use via command line only)
-    ".local/share/applications/syncthing.desktop".source = ../../configs/desktop-entries/hidden.desktop;
-    ".local/share/applications/syncthing-ui.desktop".source = ../../configs/desktop-entries/hidden.desktop;
     
     
     # Custom application desktop entries

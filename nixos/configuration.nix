@@ -112,5 +112,5 @@
   networking.firewall.allowedUDPPorts = [ ];
 
   # System state version - DON'T CHANGE
-  system.stateVersion = "24.05";
+  system.stateVersion = "25.05";
 }
