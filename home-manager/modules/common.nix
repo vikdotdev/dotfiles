@@ -10,6 +10,8 @@ in
 {
   imports = [
     ./desktop/gnome.nix
+    ./desktop/applications.nix
+    ./development/tools.nix
   ];
   # Home Manager basic settings
   home.username = "vik";
@@ -24,33 +26,10 @@ in
 
   # Packages installed to ~/.nix-profile/bin
   home.packages = with pkgs; [
-    # GUI applications - migrated from flatpak
-    spotify
-    telegram-desktop
-    signal-desktop
-    slack
-    discord
-    blanket        # Ambient sound app
-    zapzap         # WhatsApp client
-    wezterm        # Terminal emulator
-    ghostty        # Fast terminal emulator
-    syncthing      # File synchronization
-    thunderbird    # Email client
-    gimp           # Image editor
-    vlc            # Media player
-    android-studio # Android development IDE
-    obs-studio     # Screen recording and streaming
-    reaper         # Digital audio workstation
-    smile          # Emoji picker
     
     # Fonts
     iosevka        # Programming font
     
-    # Development tools
-    gh                      # GitHub CLI
-    git-credential-manager  # Cross-platform git credential helper
-    emacs-pgtk              # Emacs with pure GTK (better Wayland support)
-    chemacs2                # Emacs profile switcher
     
     # System utilities
   ];
@@ -80,52 +59,6 @@ in
 
   # Program configurations
   programs = {
-    # Git configuration (~/.gitconfig)
-    git = {
-      enable = true;
-      userName = "Viktor Habchak";
-      userEmail = "vikdotdev@gmail.com";
-      signing = {
-        key = "7392D21113383CBB";
-        # Uncommment to enable GPG signing
-        # signByDefault = true;
-      };
-      
-      aliases = {
-        ci = "commit";
-        st = "status";
-        br = "branch --show-current";
-        co = "checkout";
-        fe = "fetch";
-        di = "diff";
-        root = "rev-parse --show-toplevel";
-        logo = "log --oneline";
-        amend = "commit --amend --no-edit";
-      };
-      
-      extraConfig = {
-        core = {
-          autocrlf = "input";
-        };
-        commit = {
-          verbose = true;
-        };
-        github = {
-          user = "vikdotdev";
-        };
-        gpg = {
-          program = "gpg";
-        };
-        credential = {
-          helper = "${pkgs.git-credential-manager}/bin/git-credential-manager";
-        };
-        diff = {
-          gpg = {
-            textconv = "gpg --no-tty --decrypt";
-          };
-        };
-      };
-    };
 
     # GPG configuration (~/.gnupg/gpg.conf)
     gpg = {
@@ -207,52 +140,12 @@ in
   # Custom utility scripts (~/.local/bin/)
   home.file = {
     ".inputrc".source = ../configs/inputrc;
-    ".config/wezterm/wezterm.lua".source = ../configs/wezterm.lua;
-    ".config/emacs/init.el".source = ../configs/emacs/init.el;
-    ".config/emacs/config.org".source = ../configs/emacs/config.org;
-    ".emacs-profiles.el".source = ../configs/emacs/.emacs-profiles.el;
     
     
-    # Hide Syncthing desktop entries (use via command line only)
-    ".local/share/applications/syncthing.desktop".text = hiddenDesktopEntry;
-    
-    ".local/share/applications/syncthing-ui.desktop".text = hiddenDesktopEntry;
-    
-    ".local/share/applications/android-studio.desktop".text = ''
-      [Desktop Entry]
-      Name=Android Studio
-      Comment=Android development IDE
-      Exec=android-studio
-      Icon=android-studio
-      Type=Application
-      Categories=Development;IDE;
-      StartupNotify=true
-    '';
-    
-    ".local/share/applications/gimp.desktop".text = ''
-      [Desktop Entry]
-      Name=Image Editor
-      Comment=GNU Image Manipulation Program
-      Exec=gimp
-      Icon=gimp
-      Type=Application
-      Categories=Graphics;2DGraphics;RasterGraphics;
-      StartupNotify=true
-      MimeType=image/bmp;image/g3fax;image/gif;image/x-fits;image/x-pcx;image/x-portable-anymap;image/x-portable-bitmap;image/x-portable-graymap;image/x-portable-pixmap;image/x-psd;image/x-sgi;image/x-tga;image/x-xbitmap;image/x-xwindowdump;image/x-xcf;image/x-compressed-xcf;image/x-gimp-gbr;image/x-gimp-pat;image/x-gimp-gih;image/x-sun-raster;image/tiff;image/jpeg;image/x-psp;image/png;image/x-icon;image/x-xpixmap;image/svg+xml;image/x-wmf;image/jp2;image/jpeg2000;image/jpx;image/x-xcursor;
-    '';
     
     
-    # Custom virt-manager desktop entry
-    ".local/share/applications/virt-manager.desktop".text = ''
-      [Desktop Entry]
-      Name=VM Manager
-      Comment=Virtual machine manager
-      Exec=virt-manager
-      Icon=virt-manager
-      Type=Application
-      Categories=System;
-      StartupNotify=true
-    '';
+    
+    
     
     # Ruby configuration
     ".pryrc".source = ../configs/ruby/.pryrc;
@@ -263,12 +156,6 @@ in
       executable = true;
     };
   }) [
-    "git-branch-files-changed"
-    "git-default-branch"
-    "git-deploy"
-    "git-log-changed"
-    "git-nuke"
-    "git-summary"
     "llm"
     "util-find-replace"
     "util-not-my-files"

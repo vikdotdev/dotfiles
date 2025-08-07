@@ -14,8 +14,7 @@ in
     gnomeExtensions.go-to-last-workspace
     
     # GNOME utilities
-    pavucontrol    # PulseAudio volume control GUI
-    gnome-solanum  # Pomodoro timer
+    pavucontrol    # PulseAudio volume control GUI (GNOME audio management)
   ];
 
   # GNOME configuration files
