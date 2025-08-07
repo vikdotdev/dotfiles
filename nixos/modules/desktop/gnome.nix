@@ -6,7 +6,7 @@
   services.xserver.enable = true;
   
   # Enable GNOME Display Manager with Wayland
-  services.displayManager.gdm = {
+  services.xserver.displayManager.gdm = {
     enable = true;
     wayland = true;
   };
