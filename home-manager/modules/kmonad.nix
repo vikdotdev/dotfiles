@@ -9,18 +9,16 @@
   # KMonad keyboard configuration (~/.config/kmonad/laptop.kbd)
   home.file.".config/kmonad/laptop.kbd".source = ../configs/kmonad/laptop.kbd;
 
-  # KMonad systemd user service
-  systemd.user.services.kmonad = {
-    Unit = {
-      Description = "Launch KMonad";
-    };
-    Service = {
-      Type = "simple";
-      StandardOutput = "journal";
-      ExecStart = "${pkgs.kmonad}/bin/kmonad %h/.config/kmonad/laptop.kbd";
-    };
-  };
-
-  # Enable the service but don't start it automatically
-  systemd.user.startServices = false;
+  # KMonad systemd user service. Not currently used as kmonad-toggle extension takes
+  # care of (auto)-starting and toggling it.
+  # systemd.user.services.kmonad = {
+  #   Unit = {
+  #     Description = "Launch KMonad";
+  #   };
+  #   Service = {
+  #     Type = "simple";
+  #     StandardOutput = "journal";
+  #     ExecStart = "${pkgs.kmonad}/bin/kmonad %h/.config/kmonad/laptop.kbd";
+  #   };
+  # };
 }
