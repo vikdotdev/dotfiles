@@ -1,5 +1,12 @@
 { config, pkgs, ... }:
 
+let
+  # Desktop entry template for hiding applications
+  hiddenDesktopEntry = ''
+    [Desktop Entry]
+    Hidden=true
+  '';
+in
 {
   # Home Manager basic settings
   home.username = "vik";
@@ -20,9 +27,9 @@
     signal-desktop
     slack
     discord
-    gnome-solanum  # Pomodoro timer (org.gnome.Solanum)
-    blanket        # Ambient sound app (com.rafaelmardojai.Blanket)
-    zapzap         # WhatsApp client (com.rtosta.zapzap)
+    gnome-solanum  # Pomodoro timer
+    blanket        # Ambient sound app
+    zapzap         # WhatsApp client
     wezterm        # Terminal emulator
     ghostty        # Fast terminal emulator
     syncthing      # File synchronization
@@ -32,6 +39,7 @@
     android-studio # Android development IDE
     obs-studio     # Screen recording and streaming
     reaper         # Digital audio workstation
+    smile          # Emoji picker
     
     # Fonts
     iosevka        # Programming font
@@ -44,6 +52,9 @@
     
     # System utilities
     pavucontrol    # PulseAudio volume control GUI
+    
+    # GNOME Extensions
+    gnomeExtensions.go-to-last-workspace
   ];
 
   # PATH additions - added to ~/.profile
@@ -51,8 +62,6 @@
     "$HOME/.local/bin"
     "$HOME/.config/emacs/bin"
     "$HOME/Repositories/dotfiles/bin"
-    "$HOME/.fly/bin"
-    "$HOME/.cargo/bin"
   ];
 
   # Environment variables - added to ~/.profile
@@ -69,13 +78,6 @@
     EXT_XDG_REPOS_DIR = "$HOME/Repositories";
     EXT_XDG_DOTFILES_DIR = "$HOME/Repositories/dotfiles";
     EXT_XDG_WALLPAPER_DIR = "$(xdg-user-dir PICTURES)/wallpapers/";
-    
-    # Go paths
-    GOBIN = "$HOME/.local/bin";
-    GOPATH = "$HOME/.local/share/go";
-    
-    # Other paths from your profile template
-    FLYCTL_INSTALL = "$HOME/.fly";
   };
 
   # Program configurations
@@ -157,13 +159,11 @@
         ls = "ls -hN --color=auto --group-directories-first";
         ll = "ls -l";
         la = "ls -A";
-        l = "ls -CF";
         grep = "grep --color=auto";
         diff = "diff --color=auto";
         e = "exit";
         o = "xdg-open";
         open = "xdg-open";
-        ch = "chezmoi";
         psql = "PAGER='less -S' command psql";
       };
       
@@ -222,15 +222,9 @@
     ".local/share/pixmaps/windows.png".source = ../configs/gnome/windows.png;
     
     # Hide Syncthing desktop entries (use via command line only)
-    ".local/share/applications/syncthing.desktop".text = ''
-      [Desktop Entry]
-      Hidden=true
-    '';
+    ".local/share/applications/syncthing.desktop".text = hiddenDesktopEntry;
     
-    ".local/share/applications/syncthing-ui.desktop".text = ''
-      [Desktop Entry]
-      Hidden=true
-    '';
+    ".local/share/applications/syncthing-ui.desktop".text = hiddenDesktopEntry;
     
     ".local/share/applications/android-studio.desktop".text = ''
       [Desktop Entry]
@@ -256,29 +250,10 @@
     '';
     
     # Hide desktop entries for unwanted applications
-    # Hide htop desktop entry by creating a hidden override
-    ".local/share/applications/htop.desktop".text = ''
-      [Desktop Entry]
-      Hidden=true
-    '';
-    
-    # Hide xterm desktop entry
-    ".local/share/applications/xterm.desktop".text = ''
-      [Desktop Entry]
-      Hidden=true
-    '';
-    
-    # Hide GNOME Terminal desktop entry
-    ".local/share/applications/org.gnome.Terminal.desktop".text = ''
-      [Desktop Entry]
-      Hidden=true
-    '';
-    
-    # Hide Emacs Client desktop entry
-    ".local/share/applications/emacsclient.desktop".text = ''
-      [Desktop Entry]
-      Hidden=true
-    '';
+    ".local/share/applications/htop.desktop".text = hiddenDesktopEntry;
+    ".local/share/applications/xterm.desktop".text = hiddenDesktopEntry;
+    ".local/share/applications/org.gnome.Terminal.desktop".text = hiddenDesktopEntry;
+    ".local/share/applications/emacsclient.desktop".text = hiddenDesktopEntry;
     
     # Custom virt-manager desktop entry
     ".local/share/applications/virt-manager.desktop".text = ''
@@ -308,17 +283,11 @@
     "git-nuke"
     "git-summary"
     "llm"
-    "util"
-    "util-basic-auth"
-    "util-curl-n"
     "util-find-replace"
-    "util-kill-rails"
     "util-not-my-files"
     "util-reboot-to-windows"
     "util-screenkey"
     "util-temp"
-    "util-url"
-    "maintenance-install-gnome-shell-go-to-last-workspace"
   ]);
 
   # Firefox configuration

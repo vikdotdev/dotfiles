@@ -1,11 +1,23 @@
 { config, pkgs, ... }:
 
+let
+  # Override kmonad-toggle to use a specific version
+  kmonad-toggle-v11 = pkgs.gnomeExtensions.kmonad-toggle.overrideAttrs (oldAttrs: rec {
+    version = "11";
+    src = pkgs.fetchFromGitHub {
+      owner = "jurf";
+      repo = "gnome-kmonad-toggle";
+      rev = "v${version}";
+      # You'll need to update this hash after trying to build
+      sha256 = pkgs.lib.fakeSha256;
+    };
+  });
+in
 {
   # KMonad package installation
   home.packages = with pkgs; [
     kmonad
-    # Try the current version first, can be updated if issues persist
-    gnomeExtensions.kmonad-toggle
+    kmonad-toggle-v11
   ];
 
   # KMonad keyboard configuration (~/.config/kmonad/laptop.kbd)
