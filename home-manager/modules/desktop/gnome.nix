@@ -5,6 +5,7 @@
   home.packages = with pkgs; [
     # GNOME Extensions
     gnomeExtensions.go-to-last-workspace
+    gnomeExtensions.kmonad-toggle
     
     # GNOME utilities
     pavucontrol    # PulseAudio volume control GUI (GNOME audio management)
