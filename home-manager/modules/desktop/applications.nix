@@ -32,6 +32,7 @@
     # Download Tools
     yt-dlp         # YouTube downloader
     deluge         # BitTorrent client
+    impression     # USB drive creator
     
     # Terminal Emulators
     wezterm        # Terminal emulator

@@ -413,7 +413,7 @@ Different machines get different values.
 
 (defvar vik/default-font-size
   (cond
-   ((string= (getenv "DOT_PROFILE") "1") 110)
+   ((string= (getenv "DOT_PROFILE") "1") 90)
    ((string= (getenv "DOT_PROFILE") "2") 150)
    ((string= (getenv "DOT_PROFILE") "3") 150)
    (t 150)))

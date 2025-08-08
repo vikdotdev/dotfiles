@@ -28,6 +28,10 @@ error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
+cmd() {
+    echo -e "${CYAN}[CMD]${NC} $1"
+}
+
 # Function to detect current profile
 detect_profile() {
     local hostname=$(hostname)
@@ -72,26 +76,28 @@ rebuild_system() {
 rebuild_home() {
     local dotfiles_dir="$1"
     local profile="$2"
+    shift 2  # Remove first two args, leave the rest for home-manager
+    local hm_args=("$@")
     local username=$(whoami)
     
     info "🏠 Rebuilding Home Manager configuration for ${PURPLE}$username@$profile${NC}"
     
-    # Check if Home Manager is available, use nix run if not
+    # Build command array
+    local hm_cmd=()
     if command -v home-manager >/dev/null 2>&1; then
-        if home-manager switch --flake "$dotfiles_dir#$username@$profile"; then
-            success "✅ Home Manager configuration rebuilt successfully"
-        else
-            error "❌ Failed to rebuild Home Manager configuration"
-            exit 1
-        fi
+        hm_cmd=("home-manager" "switch" "--flake" "$dotfiles_dir#$username@$profile" "${hm_args[@]}")
     else
         info "Home Manager not found, using nix run..."
-        if nix run nixpkgs#home-manager -- switch --flake "$dotfiles_dir#$username@$profile"; then
-            success "✅ Home Manager configuration rebuilt successfully"
-        else
-            error "❌ Failed to rebuild Home Manager configuration"
-            exit 1
-        fi
+        hm_cmd=("nix" "run" "nixpkgs#home-manager" "--" "switch" "--flake" "$dotfiles_dir#$username@$profile" "${hm_args[@]}")
+    fi
+    
+    # Show and execute command
+    cmd "${hm_cmd[*]}"
+    if "${hm_cmd[@]}"; then
+        success "✅ Home Manager configuration rebuilt successfully"
+    else
+        error "❌ Failed to rebuild Home Manager configuration"
+        exit 1
     fi
 }
 
@@ -198,19 +204,21 @@ show_usage() {
     echo "  --profile, -p       Specify profile (umbra/reddwarf/redgiant)"
     echo ""
     echo -e "${YELLOW}Examples:${NC}"
-    echo "  dot                 # Rebuild home manager (default)"
-    echo "  dot system          # Rebuild only system"
-    echo "  dot both            # Rebuild both system and home"
-    echo "  dot pull            # Pull latest changes from git"
-    echo "  dot update          # Update flake inputs"
-    echo "  dot status          # Show current status"
-    echo "  dot -p umbra system # Rebuild system for umbra profile"
+    echo "  dot                    # Rebuild home manager (default)"
+    echo "  dot system             # Rebuild only system"
+    echo "  dot both               # Rebuild both system and home"
+    echo "  dot home -b backup     # Rebuild home with backup for conflicts"
+    echo "  dot pull               # Pull latest changes from git"
+    echo "  dot update             # Update flake inputs"
+    echo "  dot status             # Show current status"
+    echo "  dot -p umbra system    # Rebuild system for umbra profile"
 }
 
 # Main function
 main() {
     local command="home"
     local profile=""
+    local extra_args=()
     
     # Parse arguments
     while [[ $# -gt 0 ]]; do
@@ -222,6 +230,9 @@ main() {
             home|hm|h)
                 command="home"
                 shift
+                # Collect remaining args for home-manager
+                extra_args=("$@")
+                break
                 ;;
             both|all|a)
                 command="both"
@@ -279,11 +290,11 @@ main() {
             rebuild_system "$dotfiles_dir" "$profile"
             ;;
         home)
-            rebuild_home "$dotfiles_dir" "$profile"
+            rebuild_home "$dotfiles_dir" "$profile" "${extra_args[@]}"
             ;;
         both)
             rebuild_system "$dotfiles_dir" "$profile"
-            rebuild_home "$dotfiles_dir" "$profile"
+            rebuild_home "$dotfiles_dir" "$profile" "${extra_args[@]}"
             ;;
         pull)
             pull_git "$dotfiles_dir"
