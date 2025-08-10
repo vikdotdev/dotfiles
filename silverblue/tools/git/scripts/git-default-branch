@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+
+require 'ostruct'
+require 'optparse'
+
+config = OpenStruct.new(remote: 'origin')
+
+parser = OptionParser.new do |opts|
+  opts.banner = <<~BANNER
+    Show default branch for a chosen remote.
+  BANNER
+
+  opts.on('-rREMOTE', '--remote=REMOTE', 'Default: origin') do |remote|
+    config.remote = remote
+  end
+
+  opts.on_tail('--help', 'Print help') do
+    puts opts
+    exit
+  end
+end
+
+parser.parse!
+
+remotes = `git remote -v`.split(/\R|\t/).filter.each_with_index { |_, i| i.even? }.uniq
+
+unless remotes.include?(config.remote)
+  puts "Remote #{config.remote} does not exist."
+  exit(false)
+end
+
+puts `git remote show #{config.remote}`.match(/HEAD branch: (.+)/)[1]

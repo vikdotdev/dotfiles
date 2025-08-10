@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$(dirname "$SCRIPT_DIR")")"
+
+source "$DOT_HOME/lib/colors.sh"
+source "$DOT_HOME/lib/constants.sh"
+source "$DOT_HOME/lib/utils.sh"
+source "$DOT_HOME/lib/logging.sh"
+
+MODULE="android_studio"
+init_module_logging "$MODULE"
+
+log_header "Installing Android Studio"
+
+# Install Android Studio via Flatpak
+log_step "Installing Android Studio via Flatpak"
+install_flatpak "com.google.AndroidStudio"
+
+log_success "Android Studio installation completed"
+finalize_module_logging "success"

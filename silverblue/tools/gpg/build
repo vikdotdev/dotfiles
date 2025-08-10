@@ -1,0 +1,39 @@
+#!/bin/bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$(dirname "$(dirname "$SCRIPT_DIR")")")"
+
+source "$DOT_HOME/lib/colors.sh"
+source "$DOT_HOME/lib/constants.sh"
+source "$DOT_HOME/lib/utils.sh"
+source "$DOT_HOME/lib/logging.sh"
+
+MODULE="gpg"
+init_module_logging "$MODULE"
+
+log_header "Building GPG Configuration"
+
+log_step "Installing GPG agent configuration"
+
+# Create GPG directory if it doesn't exist
+mkdir -p "$HOME/.gnupg"
+
+# Set proper permissions for GPG directory
+chmod 700 "$HOME/.gnupg"
+
+# Copy GPG agent configuration
+if [[ -f "$SCRIPT_DIR/config/gpg-agent.conf" ]]; then
+    copy_file "$SCRIPT_DIR/config/gpg-agent.conf" "$HOME/.gnupg/gpg-agent.conf"
+    chmod 600 "$HOME/.gnupg/gpg-agent.conf"
+    
+    # Restart GPG agent to pick up new config
+    if command_exists gpgconf; then
+        log_info "Reloading GPG agent configuration"
+        gpgconf --reload gpg-agent || log_warning "Failed to reload GPG agent"
+    fi
+fi
+
+log_success "GPG configuration build completed"
+finalize_module_logging "success"

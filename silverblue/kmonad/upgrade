@@ -1,0 +1,69 @@
+#!/bin/bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$(dirname "$SCRIPT_DIR")")"
+
+source "$DOT_HOME/lib/colors.sh"
+source "$DOT_HOME/lib/constants.sh"
+source "$DOT_HOME/lib/utils.sh"
+source "$DOT_HOME/lib/logging.sh"
+source "$DOT_HOME/lib/config.sh"
+
+MODULE="kmonad"
+init_module_logging "$MODULE"
+
+log_header "Upgrading KMonad"
+
+# Check if module should run on current profile
+if check_profile_and_skip "kmonad"; then
+    exit 0
+fi
+
+KMONAD_DIR="$REPOS_DIR/kmonad"
+
+if [[ ! -d "$KMONAD_DIR" ]]; then
+    log_error "KMonad repository not found. Run 'dot install kmonad' first."
+    exit 1
+fi
+
+# Log current git information for rollback
+log_git_info "$KMONAD_DIR" "kmonad"
+
+# Update repository
+log_step "Updating KMonad repository"
+(cd "$KMONAD_DIR" && log_command git fetch origin)
+
+# Check if there are updates
+CURRENT_COMMIT=$(cd "$KMONAD_DIR" && git rev-parse HEAD)
+REMOTE_COMMIT=$(cd "$KMONAD_DIR" && git rev-parse origin/master)
+
+if [[ "$CURRENT_COMMIT" == "$REMOTE_COMMIT" ]]; then
+    log_info "KMonad repository is already up to date"
+    log_success "No rebuild needed"
+    finalize_logging "success"
+    exit 0
+fi
+
+log_info "Updates available, pulling changes"
+(cd "$KMONAD_DIR" && log_command git pull origin master)
+
+# Log new git information
+log_git_info "$KMONAD_DIR" "kmonad-updated"
+
+# Rebuild only if changes occurred
+log_step "Rebuilding KMonad due to changes"
+(cd "$KMONAD_DIR" && log_command stack install)
+
+# Restart service if running
+log_step "Restarting KMonad service if running"
+if systemctl --user is-active --quiet kmonad; then
+    log_info "Restarting KMonad service"
+    systemctl --user restart kmonad
+else
+    log_info "KMonad service is not running"
+fi
+
+log_success "KMonad upgrade completed"
+finalize_module_logging "success"

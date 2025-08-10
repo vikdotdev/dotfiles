@@ -1,0 +1,30 @@
+g#!/bin/bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$(dirname "$SCRIPT_DIR")")"
+
+source "$DOT_HOME/lib/colors.sh"
+source "$DOT_HOME/lib/constants.sh"
+source "$DOT_HOME/lib/utils.sh"
+source "$DOT_HOME/lib/logging.sh"
+
+MODULE="tools"
+init_module_logging "$MODULE"
+
+log_header "Building Tools Configuration"
+
+# Build sub-modules if they exist
+if [[ -x "$SCRIPT_DIR/emacs/build" ]]; then
+    log_step "Building Emacs configuration"
+    "$SCRIPT_DIR/emacs/build"
+fi
+
+if [[ -x "$SCRIPT_DIR/android_studio/build" ]]; then
+    log_step "Building Android Studio configuration"
+    "$SCRIPT_DIR/android_studio/build"
+fi
+
+log_success "Tools configuration completed"
+finalize_module_logging "success"

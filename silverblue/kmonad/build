@@ -1,0 +1,100 @@
+#!/bin/bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$(dirname "$SCRIPT_DIR")")"
+
+source "$DOT_HOME/lib/colors.sh"
+source "$DOT_HOME/lib/constants.sh"
+source "$DOT_HOME/lib/utils.sh"
+source "$DOT_HOME/lib/logging.sh"
+source "$DOT_HOME/lib/config.sh"
+
+MODULE="kmonad"
+init_module_logging "$MODULE"
+
+log_header "Building KMonad"
+
+# Check if module should run on current profile
+if check_profile_and_skip "kmonad"; then
+    exit 0
+fi
+
+KMONAD_DIR="$REPOS_DIR/kmonad"
+KMONAD_EXECUTABLE="$HOME/.local/bin/kmonad"
+
+# Build KMonad if not already built
+if [[ ! -f "$KMONAD_EXECUTABLE" ]]; then
+    log_step "Building KMonad with Stack"
+    if [[ ! -d "$KMONAD_DIR" ]]; then
+        log_error "KMonad repository not found. Run 'dot install kmonad' first."
+        exit 1
+    fi
+    
+    log_info "This may take a while (first build can take 30+ minutes)"
+    log_command_with_timeout() {
+        timeout 3600 "$@"  # 1 hour timeout
+    }
+    
+    (cd "$KMONAD_DIR" && log_command_with_timeout stack install)
+    
+    if [[ -f "$KMONAD_EXECUTABLE" ]]; then
+        log_success "KMonad built successfully"
+    else
+        log_error "KMonad build failed"
+        exit 1
+    fi
+else
+    log_info "KMonad already built"
+fi
+
+# Deploy configuration files
+log_step "Deploying KMonad configuration"
+
+CONFIG_DIR="$HOME/.config/kmonad"
+mkdir -p "$CONFIG_DIR"
+
+# Get profile to determine which config to use
+PROFILE=$(get_profile)
+
+# Copy appropriate configuration file
+if [[ "$PROFILE" == "$LAPTOP_PROFILE" && -f "$SCRIPT_DIR/config/laptop.kbd" ]]; then
+    log_info "Deploying laptop keyboard configuration"
+    cp "$SCRIPT_DIR/config/laptop.kbd" "$CONFIG_DIR/config.kbd"
+else
+    log_warning "No specific keyboard configuration found for profile: $PROFILE"
+    # You could create a default configuration here
+fi
+
+# Deploy systemd service
+log_step "Deploying systemd service"
+
+SYSTEMD_USER_DIR="$HOME/.config/systemd/user"
+mkdir -p "$SYSTEMD_USER_DIR"
+
+if [[ -f "$SCRIPT_DIR/config/kmonad.service" ]]; then
+    # Generate the service file content
+    TEMP_SERVICE=$(mktemp)
+    sed "s|/home/[^/]*/\.local/bin/kmonad|$KMONAD_EXECUTABLE|g; s|/home/[^/]*/\.config/kmonad/[^/]*\.kbd|$CONFIG_DIR/config.kbd|g" \
+        "$SCRIPT_DIR/config/kmonad.service" > "$TEMP_SERVICE"
+    
+    # Check if service file needs updating
+    if [[ ! -f "$SYSTEMD_USER_DIR/kmonad.service" ]] || ! cmp -s "$TEMP_SERVICE" "$SYSTEMD_USER_DIR/kmonad.service"; then
+        cp "$TEMP_SERVICE" "$SYSTEMD_USER_DIR/kmonad.service"
+        log_info "Updated KMonad service file"
+        
+        log_info "Reloading systemd user daemon"
+        systemctl --user daemon-reload
+    else
+        log_info "KMonad service file is already up to date"
+    fi
+    
+    rm -f "$TEMP_SERVICE"
+    log_info "KMonad service is ready. Enable it with: systemctl --user enable --now kmonad"
+else
+    log_warning "KMonad service file not found"
+fi
+
+log_success "KMonad build completed"
+finalize_module_logging "success"

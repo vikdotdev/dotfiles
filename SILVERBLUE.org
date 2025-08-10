@@ -1,0 +1,90 @@
+* Migration
+I want to migrate to fedora silverblue. I also want to change my ansible setup to something based on plain bash without external dependencies. Try to keep functions in lib/ and re-use them by sourcing. For example, extract things that are needed for coloured output. Be moderately verbose when outputting what the script does. Constants like often used paths can also be extracted and sourced.
+
+** Desired folder structure
+Formulate a plan and go item by item on what you see in playbooks/ and plans/. The folder structure should be like this:
+#+begin_src 
+- bin/
+  - dot
+  - install-silverblue
+- lib/
+  - ... all the reusable bash script utilities ...
+- silverblue/
+  - kmonad/
+    - install
+    - upgrade
+    - build
+  - shell/
+    - build
+  - fonts/
+    - install
+  - gnome/
+    - install # for installing extensions
+    - upgrade # for upgrading extensions
+    - build
+  - tools/
+    - install
+    - build
+  - android_studio/
+    - install
+  - emacs/
+    - build
+  - nvidia/
+    - install
+  - desktop/ # for various desktop GUI apps
+    - install
+...
+#+end_src
+
+Folder will always have =install= and/or =build=, and/or ==upgrade= script. Install script will only be responsible for installing packages, build - for building files and configs and putting them into appropriate locations (similar on how bin/dot utility is doing it now), upgrade - script to updating the package (things that are build from source).
+
+All the operations should write a detailed log file to someplace. Upgrade should include git commits of the package for easy manual rollback in case it breaks.
+
+=install-silverblue= should write installation file somewhere in home folder which would indicate that =silverblue= is what is installed on the system.
+* CLI
+=bin/dot= command should be something like the following:
+dot install all
+dot install # all by default
+dot build
+dot # build by default
+dot build tools/emacs # silverblue detected automatically from installation file
+dot help
+dot doctor
+
+It should never be run as sudo, but can ask for sudo.
+
+=dot= should not be useable until installation has run.
+* Idempotency
+Ideally, scripts should be idempotent and don't run costly/redundant operations if they are not needed.
+* Profiles
+Now there should only be two profiles - "desktop" and "laptop". With possibility of adding another profile in the future.
+* Apps
+** Desktop
+Apps that should be installed via flatpak:
+- Android studio
+- Spotify
+- Thunderbird
+- Signal
+- Slack
+- Solanum
+- Blanket
+- zapzap
+- Impression
+- Emacs
+- Ghostty
+** Developer tools
+- git
+- wget
+- curl
+- unzip
+- ripgrep
+- fd-find
+- imagemagic
+- gh
+- git-credential-libsecret
+- yt-dlp
+- direnv
+- texlive-scheme-full
+** Other
+- Syncthing
+- Nvidia drivers?

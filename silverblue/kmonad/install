@@ -1,0 +1,95 @@
+#!/bin/bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$(dirname "$SCRIPT_DIR")")"
+
+source "$DOT_HOME/lib/colors.sh"
+source "$DOT_HOME/lib/constants.sh"
+source "$DOT_HOME/lib/utils.sh"
+source "$DOT_HOME/lib/logging.sh"
+source "$DOT_HOME/lib/config.sh"
+
+MODULE="kmonad"
+init_module_logging "$MODULE"
+
+log_header "Installing KMonad"
+
+# Check if module should run on current profile
+if check_profile_and_skip "kmonad"; then
+    exit 0
+fi
+
+# Install stack (Haskell build tool)
+log_step "Installing Stack (Haskell build tool)"
+if ! package_installed "stack"; then
+    install_packages "stack"
+else
+    log_info "Stack already installed"
+fi
+
+# Create repository directory
+KMONAD_DIR="$REPOS_DIR/kmonad"
+
+log_step "Setting up KMonad repository"
+mkdir -p "$REPOS_DIR"
+
+if [[ ! -d "$KMONAD_DIR" ]]; then
+    log_info "Cloning KMonad repository"
+    log_command git clone --depth 50 https://github.com/kmonad/kmonad.git "$KMONAD_DIR"
+else
+    log_info "KMonad repository already exists"
+fi
+
+# Setup system permissions
+log_step "Setting up system permissions for KMonad"
+
+# Ensure uinput and input groups exist
+ensure_sudo
+log_info "Creating required groups"
+sudo groupadd -f input
+sudo groupadd -f uinput
+
+# Add user to groups
+log_info "Checking user group membership"
+USER_GROUPS=$(groups "$USER" 2>/dev/null || echo "")
+
+if ! echo "$USER_GROUPS" | grep -q "\binput\b"; then
+    log_info "Adding user $USER to input group"
+    sudo usermod -a -G input "$USER"
+else
+    log_info "User $USER already in input group"
+fi
+
+if ! echo "$USER_GROUPS" | grep -q "\buinput\b"; then
+    log_info "Adding user $USER to uinput group"  
+    sudo usermod -a -G uinput "$USER"
+else
+    log_info "User $USER already in uinput group"
+fi
+
+# Create uinput module loading configuration
+log_info "Configuring uinput module"
+if [[ ! -f /etc/modules-load.d/uinput.conf ]] || ! grep -q "^uinput$" /etc/modules-load.d/uinput.conf; then
+    echo "uinput" | sudo tee /etc/modules-load.d/uinput.conf > /dev/null
+    log_info "Created uinput module configuration"
+else
+    log_info "uinput module configuration already exists"
+fi
+
+# Create udev rules
+log_info "Creating udev rules"
+UDEV_RULE='KERNEL=="uinput", MODE="0660", GROUP="uinput", OPTIONS+="static_node=uinput"'
+if [[ ! -f /etc/udev/rules.d/90-uinput.rules ]] || ! grep -qF "$UDEV_RULE" /etc/udev/rules.d/90-uinput.rules; then
+    echo "$UDEV_RULE" | sudo tee /etc/udev/rules.d/90-uinput.rules > /dev/null
+    log_info "Created udev rules"
+else
+    log_info "udev rules already exist"
+fi
+
+log_warning "You may need to log out and back in for group changes to take effect"
+log_warning "You may also need to reboot for uinput module changes to take effect"
+
+log_success "KMonad installation completed"
+finalize_module_logging "success"

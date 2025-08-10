@@ -1,0 +1,94 @@
+#!/bin/bash
+
+set -euo pipefail
+
+# Get script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$SCRIPT_DIR")"
+
+# Source utilities
+source "$DOT_HOME/lib/colors.sh"
+source "$DOT_HOME/lib/constants.sh"
+source "$DOT_HOME/lib/utils.sh"
+source "$DOT_HOME/lib/logging.sh"
+
+# Initialize
+init_logging "install-silverblue"
+
+# Don't run as root
+if is_root; then
+    log_error "Don't run install-silverblue as root/sudo. It will ask for sudo when needed."
+    exit 1
+fi
+
+log_header "Fedora Silverblue Installation Setup"
+
+# Check if we're on Silverblue
+if ! command_exists rpm-ostree; then
+    log_error "This script is designed for Fedora Silverblue systems"
+    exit 1
+fi
+
+# Profile selection
+log_step "Selecting system profile"
+echo
+echo "Available profiles:"
+echo "1) Desktop - Nvidia drivers"
+echo "2) Laptop - Intel/AMD based laptop"
+echo
+read -p "Select profile (1-2): " profile_choice
+
+case $profile_choice in
+    1)
+        PROFILE="$DESKTOP_PROFILE"
+        ;;
+    2)
+        PROFILE="$LAPTOP_PROFILE"
+        ;;
+    *)
+        log_error "Invalid profile selection"
+        exit 1
+        ;;
+esac
+
+log_info "Selected profile: $PROFILE"
+set_profile "$PROFILE"
+
+# Basic system setup
+log_step "Setting up basic system requirements"
+
+# Enable RPM Fusion repositories
+log_info "Adding RPM Fusion repositories"
+ensure_sudo
+if ! rpm -q rpmfusion-free-release >/dev/null 2>&1; then
+    log_command sudo rpm-ostree install \
+        "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-${FEDORA_VERSION}.noarch.rpm" \
+        "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${FEDORA_VERSION}.noarch.rpm"
+    REBOOT_REQUIRED=true
+fi
+
+# Add Flathub repository
+log_info "Setting up Flathub repository"
+if ! flatpak remote-list --system 2>/dev/null | grep -q flathub; then
+    log_command sudo flatpak remote-add --system --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+fi
+
+# Mark system as installed
+mark_system_installed "silverblue"
+log_success "System marked as Silverblue installation"
+
+if [[ ${REBOOT_REQUIRED:-false} == true ]]; then
+    log_warning "Reboot is required to complete repository setup"
+    echo
+    echo "After reboot, you can continue with:"
+    echo "  dot install"
+    echo "  dot build"
+else
+    log_success "Basic setup complete!"
+    echo
+    echo "You can now run:"
+    echo "  dot install    # Install all packages and applications"
+    echo "  dot build      # Build and configure dotfiles"
+fi
+
+finalize_logging "success"
