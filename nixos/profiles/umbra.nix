@@ -32,6 +32,18 @@
     enable32Bit = true;
   };
 
+  # KMonad support - uinput permissions
+  users.groups.uinput = {};
+  users.users.vik.extraGroups = [ "input" "uinput" ];
+  
+  # Load uinput module
+  boot.kernelModules = [ "uinput" ];
+  
+  # Udev rules for uinput device permissions
+  services.udev.extraRules = ''
+    KERNEL=="uinput", MODE="0660", GROUP="uinput", OPTIONS+="static_node=uinput"
+  '';
+
   # Profile-specific packages can be added here if needed
   # environment.systemPackages = with pkgs; [
   # ];
