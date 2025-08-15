@@ -37,13 +37,13 @@ if [[ -n "$DEFAULT_PROFILE" ]]; then
     
     # Copy user.js (Firefox preferences)
     if [[ -f "$SCRIPT_DIR/config/user.js" ]]; then
-        copy_file "$SCRIPT_DIR/config/user.js" "$PROFILE_PATH/user.js"
+        cp "$SCRIPT_DIR/config/user.js" "$PROFILE_PATH/user.js"
     fi
     
     # Create chrome directory and copy userChrome.css
     if [[ -f "$SCRIPT_DIR/config/userChrome.css" ]]; then
         mkdir -p "$PROFILE_PATH/chrome"
-        copy_file "$SCRIPT_DIR/config/userChrome.css" "$PROFILE_PATH/chrome/userChrome.css"
+        cp "$SCRIPT_DIR/config/userChrome.css" "$PROFILE_PATH/chrome/userChrome.css"
     fi
     
     log_success "Firefox configuration installed"

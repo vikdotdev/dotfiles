@@ -22,7 +22,7 @@ chmod 700 "$HOME/.gnupg"
 
 # Copy GPG agent configuration
 if [[ -f "$SCRIPT_DIR/config/gpg-agent.conf" ]]; then
-    copy_file "$SCRIPT_DIR/config/gpg-agent.conf" "$HOME/.gnupg/gpg-agent.conf"
+    cp "$SCRIPT_DIR/config/gpg-agent.conf" "$HOME/.gnupg/gpg-agent.conf"
     chmod 600 "$HOME/.gnupg/gpg-agent.conf"
     
     # Restart GPG agent to pick up new config

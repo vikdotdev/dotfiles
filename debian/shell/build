@@ -20,35 +20,35 @@ log_step "Installing bash configuration"
 
 # Copy bash configuration files
 if [[ -f "$SCRIPT_DIR/config/.bashrc" ]]; then
-    copy_file "$SCRIPT_DIR/config/.bashrc" "$HOME/.bashrc"
+    cp "$SCRIPT_DIR/config/.bashrc" "$HOME/.bashrc"
     log_info "Deployed .bashrc"
 fi
 
 if [[ -f "$SCRIPT_DIR/config/.profile" ]]; then
-    copy_file "$SCRIPT_DIR/config/.profile" "$HOME/.profile"
+    cp "$SCRIPT_DIR/config/.profile" "$HOME/.profile"
     log_info "Deployed .profile"
 fi
 
 if [[ -f "$SCRIPT_DIR/config/.bash_profile" ]]; then
-    copy_file "$SCRIPT_DIR/config/.bash_profile" "$HOME/.bash_profile"
+    cp "$SCRIPT_DIR/config/.bash_profile" "$HOME/.bash_profile"
     log_info "Deployed .bash_profile"
 fi
 
 # Pry configuration
 if [[ -f "$SCRIPT_DIR/config/.pryrc" ]]; then
-    copy_file "$SCRIPT_DIR/config/.pryrc" "$HOME/.pryrc"
+    cp "$SCRIPT_DIR/config/.pryrc" "$HOME/.pryrc"
     log_info "Deployed .pryrc"
 fi
 
 # IRB configuration
 if [[ -f "$SCRIPT_DIR/config/.irbrc" ]]; then
-    copy_file "$SCRIPT_DIR/config/.irbrc" "$HOME/.irbrc"
+    cp "$SCRIPT_DIR/config/.irbrc" "$HOME/.irbrc"
     log_info "Deployed .irbrc"
 fi
 
 # Readline configuration
 if [[ -f "$SCRIPT_DIR/config/.inputrc" ]]; then
-    copy_file "$SCRIPT_DIR/config/.inputrc" "$HOME/.inputrc"
+    cp "$SCRIPT_DIR/config/.inputrc" "$HOME/.inputrc"
     log_info "Deployed .inputrc"
 fi
 

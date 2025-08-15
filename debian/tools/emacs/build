@@ -19,12 +19,12 @@ EMACS_CONFIG_DIR="$HOME/.config/emacs"
 mkdir -p "$EMACS_CONFIG_DIR"
 
 if [[ -f "$SCRIPT_DIR/config/init.el" ]]; then
-    copy_file "$SCRIPT_DIR/config/init.el" "$EMACS_CONFIG_DIR/init.el"
+    cp "$SCRIPT_DIR/config/init.el" "$EMACS_CONFIG_DIR/init.el"
     log_info "Deployed init.el"
 fi
 
 if [[ -f "$SCRIPT_DIR/config/config.org" ]]; then
-    copy_file "$SCRIPT_DIR/config/config.org" "$EMACS_CONFIG_DIR/config.org"
+    cp "$SCRIPT_DIR/config/config.org" "$EMACS_CONFIG_DIR/config.org"
     log_info "Deployed config.org"
 fi
 

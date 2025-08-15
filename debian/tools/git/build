@@ -16,7 +16,7 @@ log_step "Installing Git configuration"
 
 # Copy .gitconfig file
 if [[ -f "$SCRIPT_DIR/config/.gitconfig" ]]; then
-    copy_file "$SCRIPT_DIR/config/.gitconfig" "$HOME/.gitconfig"
+    cp "$SCRIPT_DIR/config/.gitconfig" "$HOME/.gitconfig"
     log_success "Git configuration installed"
 else
     log_warning "Git configuration file not found"
@@ -32,7 +32,7 @@ if [[ -d "$SCRIPT_DIR/scripts" ]]; then
     for script in "$SCRIPT_DIR/scripts"/*; do
         if [[ -f "$script" ]]; then
             script_name=$(basename "$script")
-            copy_file "$script" "$HOME/.local/bin/$script_name"
+            cp "$script" "$HOME/.local/bin/$script_name"
             chmod +x "$HOME/.local/bin/$script_name"
             log_info "Installed script: $script_name"
         fi
