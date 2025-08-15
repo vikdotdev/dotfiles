@@ -13,24 +13,70 @@ init_module_logging "$MODULE"
 log_header "Building Firefox Configuration"
 
 FIREFOX_PROFILE_DIR="$HOME/.mozilla/firefox"
-DEFAULT_PROFILE=""
+DOTFILES_PROFILE_NAME="vik-dotfiles"
+PROFILE_PATH=""
 
-# Find default profile
-if [[ -d "$FIREFOX_PROFILE_DIR" ]]; then
-    # Look for profiles.ini to find default profile
+# Ensure Firefox profile directory exists
+mkdir -p "$FIREFOX_PROFILE_DIR"
+
+# Create or find dotfiles profile
+if [[ -f "$FIREFOX_PROFILE_DIR/profiles.ini" ]] && grep -q "Name=$DOTFILES_PROFILE_NAME" "$FIREFOX_PROFILE_DIR/profiles.ini"; then
+    # Dotfiles profile already exists, get its path
+    PROFILE_PATH=$(awk -v name="$DOTFILES_PROFILE_NAME" '
+        /^\[Profile[0-9]+\]/ { section=$0 }
+        /^Name=/ && $0 == "Name=" name { found=section }
+        /^Path=/ && found { gsub(/^Path=/, ""); print; exit }
+    ' "$FIREFOX_PROFILE_DIR/profiles.ini")
+    PROFILE_PATH="$FIREFOX_PROFILE_DIR/$PROFILE_PATH"
+    log_info "Found existing dotfiles profile: $PROFILE_PATH"
+else
+    # Create new dotfiles profile
+    log_info "Creating new Firefox profile: $DOTFILES_PROFILE_NAME"
+    
+    # Generate random profile directory name
+    PROFILE_DIR="$(openssl rand -hex 4).$DOTFILES_PROFILE_NAME"
+    PROFILE_PATH="$FIREFOX_PROFILE_DIR/$PROFILE_DIR"
+    mkdir -p "$PROFILE_PATH"
+    
+    # Find next profile number
+    PROFILE_NUM=0
     if [[ -f "$FIREFOX_PROFILE_DIR/profiles.ini" ]]; then
-        DEFAULT_PROFILE=$(grep -A2 "\[Profile0\]" "$FIREFOX_PROFILE_DIR/profiles.ini" | grep "Path=" | cut -d'=' -f2)
+        PROFILE_NUM=$(grep -o '\[Profile[0-9]*\]' "$FIREFOX_PROFILE_DIR/profiles.ini" | grep -o '[0-9]*' | sort -n | tail -1)
+        PROFILE_NUM=$((PROFILE_NUM + 1))
     fi
     
-    # Fallback: find any profile directory
-    if [[ -z "$DEFAULT_PROFILE" ]]; then
-        DEFAULT_PROFILE=$(find "$FIREFOX_PROFILE_DIR" -maxdepth 1 -name "*.default*" -type d -printf "%f\n" | head -1)
+    # Create or update profiles.ini
+    if [[ ! -f "$FIREFOX_PROFILE_DIR/profiles.ini" ]]; then
+        cat > "$FIREFOX_PROFILE_DIR/profiles.ini" << EOF
+[General]
+StartWithLastProfile=1
+Version=2
+
+[Profile$PROFILE_NUM]
+Name=$DOTFILES_PROFILE_NAME
+IsRelative=1
+Path=$PROFILE_DIR
+Default=1
+EOF
+    else
+        # Append new profile to existing profiles.ini
+        echo "" >> "$FIREFOX_PROFILE_DIR/profiles.ini"
+        echo "[Profile$PROFILE_NUM]" >> "$FIREFOX_PROFILE_DIR/profiles.ini"
+        echo "Name=$DOTFILES_PROFILE_NAME" >> "$FIREFOX_PROFILE_DIR/profiles.ini"
+        echo "IsRelative=1" >> "$FIREFOX_PROFILE_DIR/profiles.ini"
+        echo "Path=$PROFILE_DIR" >> "$FIREFOX_PROFILE_DIR/profiles.ini"
+        echo "Default=1" >> "$FIREFOX_PROFILE_DIR/profiles.ini"
+        
+        # Remove Default=1 from other profiles
+        sed -i '/^\[Profile[0-9]*\]/,/^\[/ { /^Default=1$/d }' "$FIREFOX_PROFILE_DIR/profiles.ini"
+        # Add Default=1 back to our profile
+        sed -i "/^Name=$DOTFILES_PROFILE_NAME$/a Default=1" "$FIREFOX_PROFILE_DIR/profiles.ini"
     fi
+    
+    log_success "Created dotfiles profile: $PROFILE_DIR"
 fi
 
-if [[ -n "$DEFAULT_PROFILE" ]]; then
-    PROFILE_PATH="$FIREFOX_PROFILE_DIR/$DEFAULT_PROFILE"
-    log_info "Found Firefox profile: $DEFAULT_PROFILE"
+if [[ -n "$PROFILE_PATH" && -d "$PROFILE_PATH" ]]; then
     
     log_step "Installing Firefox configuration files"
     
