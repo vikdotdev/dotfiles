@@ -23,7 +23,6 @@ DESKTOP_APPS=(
     "com.rafaelmardojai.Blanket"                # Blanket (Background sounds)
     "com.rtosta.zapzap"                         # ZapZap (WhatsApp)
     "io.gitlab.adhami3310.Impression"           # Impression (USB writer)
-    "org.gnu.emacs"                             # Emacs
     "com.mattjakeman.ExtensionManager"          # Extension Manager
 )
 

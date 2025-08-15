@@ -25,39 +25,5 @@ fi
 # Deploy custom CSS and themes
 log_step "Deploying GTK themes"
 
-GTK_CONFIG_DIR="$HOME/.config/gtk-3.0"
-GTK4_CONFIG_DIR="$HOME/.config/gtk-4.0"
-mkdir -p "$GTK_CONFIG_DIR" "$GTK4_CONFIG_DIR"
-
-if [[ -f "$SCRIPT_DIR/config/gtk3.css" ]]; then
-    dest_file="$GTK_CONFIG_DIR/gtk.css"
-    if [[ ! -f "$dest_file" ]] || ! cmp -s "$SCRIPT_DIR/config/gtk3.css" "$dest_file"; then
-        cp "$SCRIPT_DIR/config/gtk3.css" "$dest_file"
-        log_info "Deployed GTK3 custom CSS"
-    else
-        log_info "GTK3 custom CSS is already up to date"
-    fi
-fi
-
-if [[ -f "$SCRIPT_DIR/config/gtk4.css" ]]; then
-    dest_file="$GTK4_CONFIG_DIR/gtk.css"
-    if [[ ! -f "$dest_file" ]] || ! cmp -s "$SCRIPT_DIR/config/gtk4.css" "$dest_file"; then
-        cp "$SCRIPT_DIR/config/gtk4.css" "$dest_file"
-        log_info "Deployed GTK4 custom CSS"
-    else
-        log_info "GTK4 custom CSS is already up to date"
-    fi
-fi
-
-if [[ -f "$SCRIPT_DIR/config/settings3.ini" ]]; then
-    dest_file="$GTK_CONFIG_DIR/settings.ini"
-    if [[ ! -f "$dest_file" ]] || ! cmp -s "$SCRIPT_DIR/config/settings3.ini" "$dest_file"; then
-        cp "$SCRIPT_DIR/config/settings3.ini" "$dest_file"
-        log_info "Deployed GTK3 settings"
-    else
-        log_info "GTK3 settings are already up to date"
-    fi
-fi
-
 log_success "GNOME configuration completed"
 finalize_module_logging "success"
