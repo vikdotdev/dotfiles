@@ -17,7 +17,6 @@ log_header "Installing Desktop Applications (Flatpak-only)"
 DESKTOP_APPS=(
     "com.spotify.Client"                        # Spotify
     "org.mozilla.Thunderbird"                   # Thunderbird
-    "org.signal.Signal"                         # Signal
     "com.slack.Slack"                           # Slack
     "org.gnome.Solanum"                         # Solanum (Pomodoro timer)
     "com.rafaelmardojai.Blanket"                # Blanket (Background sounds)
@@ -34,5 +33,58 @@ for app in "${DESKTOP_APPS[@]}"; do
 done
 
 log_success "Desktop applications installation completed"
+
+# Remove unwanted default packages
+log_step "Removing unwanted default packages"
+REMOVE_PACKAGES=(
+    "gnome-text-editor"
+    "evolution"
+    "evolution-data-server"
+    "yelp"
+)
+
+# Check which packages are actually installed before trying to remove
+for pkg in "${REMOVE_PACKAGES[@]}"; do
+    if package_installed "$pkg"; then
+        log_info "Removing $pkg"
+        remove_packages "$pkg"
+    else
+        log_info "$pkg not installed, skipping removal"
+    fi
+done
+
+# Remove LibreOffice entirely
+log_step "Removing LibreOffice packages"
+if dpkg -l | grep -q "^ii.*libreoffice"; then
+    log_info "Removing LibreOffice packages"
+    sudo apt remove --purge -y libreoffice-*
+else
+    log_info "LibreOffice not installed, skipping removal"
+fi
+
+# Hide desktop entries for packages we want to keep but not show
+log_step "Hiding unwanted desktop entries"
+HIDE_DESKTOP_ENTRIES=(
+    "imagemagick"
+    "texinfo" 
+    "texdoctk"
+)
+
+for entry in "${HIDE_DESKTOP_ENTRIES[@]}"; do
+    # Find desktop files that might match
+    for desktop_file in /usr/share/applications/*${entry}*.desktop; do
+        if [[ -f "$desktop_file" ]]; then
+            local_desktop_file="$HOME/.local/share/applications/$(basename "$desktop_file")"
+            mkdir -p "$HOME/.local/share/applications"
+            
+            # Copy to local and add Hidden=true
+            cp "$desktop_file" "$local_desktop_file"
+            if ! grep -q "^Hidden=" "$local_desktop_file"; then
+                echo "Hidden=true" >> "$local_desktop_file"
+                log_info "Hidden desktop entry: $(basename "$desktop_file")"
+            fi
+        fi
+    done
+done
 
 finalize_module_logging "success"
