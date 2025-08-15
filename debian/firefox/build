@@ -12,8 +12,7 @@ init_module_logging "$MODULE"
 
 log_header "Building Firefox Configuration"
 
-# Firefox profile directory (Flatpak path for Silverblue)
-FIREFOX_PROFILE_DIR="$HOME/.var/app/org.mozilla.firefox/.mozilla/firefox"
+FIREFOX_PROFILE_DIR="$HOME/.mozilla/firefox"
 DEFAULT_PROFILE=""
 
 # Find default profile
