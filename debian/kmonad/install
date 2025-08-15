@@ -38,10 +38,12 @@ sudo groupadd -f uinput
 # Add user to groups
 log_info "Checking user group membership"
 USER_GROUPS=$(groups "$USER" 2>/dev/null || echo "")
+GROUPS_CHANGED=false
 
 if ! echo "$USER_GROUPS" | grep -q "\binput\b"; then
     log_info "Adding user $USER to input group"
     sudo usermod -a -G input "$USER"
+    GROUPS_CHANGED=true
 else
     log_info "User $USER already in input group"
 fi
@@ -49,6 +51,7 @@ fi
 if ! echo "$USER_GROUPS" | grep -q "\buinput\b"; then
     log_info "Adding user $USER to uinput group"  
     sudo usermod -a -G uinput "$USER"
+    GROUPS_CHANGED=true
 else
     log_info "User $USER already in uinput group"
 fi
@@ -72,8 +75,15 @@ else
     log_info "udev rules already exist"
 fi
 
-log_warning "You may need to log out and back in for group changes to take effect"
-log_warning "You may also need to reboot for uinput module changes to take effect"
+# Only show warnings if group changes were made
+if [[ "$GROUPS_CHANGED" == "true" ]]; then
+    log_warning "You need to log out and back in for group changes to take effect"
+    # Check if uinput module is loaded
+    if ! lsmod | grep -q uinput; then
+        log_warning "You may need to reboot for uinput module to load automatically"
+        log_info "Or run: sudo modprobe uinput"
+    fi
+fi
 
 log_success "KMonad installation completed"
 finalize_module_logging "success"

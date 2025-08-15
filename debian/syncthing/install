@@ -42,7 +42,7 @@ if package_installed "syncthing"; then
     
     log_info "Syncthing web interface available at: http://localhost:8384"
 else
-    log_info "Syncthing package not installed, skipping service configuration"
+    log_warning "Syncthing package was not installed, skipping service configuration"
 fi
 
 log_success "Syncthing installation completed"
