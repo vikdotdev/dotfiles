@@ -1,18 +1,13 @@
 #!/bin/bash
 
-# Utility functions
-
-# Check if command exists
 command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
-# Check if running as root
 is_root() {
     [[ $EUID -eq 0 ]]
 }
 
-# Ask for sudo if not root
 ensure_sudo() {
     if ! sudo -n true 2>/dev/null; then
         log_info "This operation requires sudo privileges"
@@ -20,9 +15,6 @@ ensure_sudo() {
     fi
 }
 
-
-
-# Download file with retry
 download_file() {
     local url="$1"
     local dest="$2"
@@ -39,55 +31,11 @@ download_file() {
     return 1
 }
 
-# Check if package is installed (dnf/rpm-ostree)
-package_installed() {
-    local package="$1"
-    if $IS_SILVERBLUE; then
-        rpm-ostree status --json | grep -q "\"$package\""
-    else
-        rpm -q "$package" >/dev/null 2>&1
-    fi
-}
-
-# Check if flatpak is installed
 flatpak_installed() {
     local app="$1"
     flatpak list --app --system 2>/dev/null | grep -q "$app"
 }
 
-# Install packages based on system type
-install_packages() {
-    local packages=("$@")
-    
-    if $IS_SILVERBLUE; then
-        log_info "Installing packages with rpm-ostree: ${packages[*]}"
-        ensure_sudo
-        sudo rpm-ostree install "${packages[@]}"
-        log_warning "Reboot required to complete package installation"
-    else
-        log_info "Installing packages with dnf: ${packages[*]}"
-        ensure_sudo
-        sudo dnf install -y "${packages[@]}"
-    fi
-}
-
-# Remove packages based on system type
-remove_packages() {
-    local packages=("$@")
-    
-    if $IS_SILVERBLUE; then
-        log_info "Removing packages with rpm-ostree: ${packages[*]}"
-        ensure_sudo
-        sudo rpm-ostree override remove "${packages[@]}"
-        log_warning "Reboot required to complete package removal"
-    else
-        log_info "Removing packages with dnf: ${packages[*]}"
-        ensure_sudo
-        sudo dnf remove -y "${packages[@]}"
-    fi
-}
-
-# Install flatpak
 install_flatpak() {
     local app="$1"
     
@@ -98,5 +46,35 @@ install_flatpak() {
     
     log_info "Installing flatpak: $app"
     ensure_sudo
-    sudo flatpak install -y --system flathub "$app"
+    if sudo flatpak install --system --noninteractive flathub "$app"; then
+        log_success "Flatpak $app installed"
+        return 0
+    else
+        log_error "Failed to install flatpak $app"
+        return 1
+    fi
+}
+
+log_command() {
+    local cmd=("$@")
+    log_info "Executing: ${cmd[*]}"
+    if "${cmd[@]}"; then
+        return 0
+    else
+        local ret=$?
+        log_error "Command failed with exit code $ret"
+        return $ret
+    fi
+}
+
+ensure_dir() {
+    local dir="$1"
+    if [[ ! -d "$dir" ]]; then
+        mkdir -p "$dir"
+        log_info "Created directory: $dir"
+    fi
+}
+
+is_interactive() {
+    [[ -t 0 ]]
 }

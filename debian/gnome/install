@@ -1,0 +1,66 @@
+#!/bin/bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$(dirname "$SCRIPT_DIR")")"
+
+source "$DOT_HOME/lib/debian/include.sh"
+
+MODULE="gnome"
+init_module_logging "$MODULE"
+
+log_header "Installing GNOME Extensions and Tools"
+
+# Function to install GNOME extension from GitHub
+install_gnome_extension() {
+    local extension_name="$1"
+    local repo_url="$2"
+    local repo_name=$(basename "$repo_url" .git)
+    
+    log_step "Installing $extension_name extension"
+    
+    local repo_path="$REPOS_DIR/$repo_name"
+    local install_path="$HOME/.local/share/gnome-shell/extensions/$extension_name"
+    
+    if [[ -d "$install_path" ]]; then
+        log_info "Extension $extension_name already installed, skipping"
+        return
+    fi
+    
+    mkdir -p "$REPOS_DIR"
+    
+    log_info "Cloning $repo_url"
+    git clone --depth 50 "$repo_url" "$repo_path"
+    
+    cd "$repo_path"
+    log_info "Building and installing $extension_name"
+    make build
+    make install
+    log_success "Extension $extension_name installed successfully"
+}
+
+# Install GNOME extensions
+install_gnome_extension "gnome-shell-go-to-last-workspace@github.com" "https://github.com/arjan/gnome-shell-go-to-last-workspace.git"
+install_gnome_extension "highlight-focus@mipmip.github.com" "https://github.com/mipmip/gnome-shell-extensions-highlight-focus.git"
+install_gnome_extension "kmonad-toggle@jurf.github.com" "https://github.com/jurf/gnome-kmonad-toggle.git"
+
+# Remove unwanted default packages
+log_step "Removing unwanted default packages"
+REMOVE_PACKAGES=(
+    "gnome-terminal"
+    "gnome-text-editor"
+)
+
+# Check which packages are actually installed before trying to remove
+for pkg in "${REMOVE_PACKAGES[@]}"; do
+    if package_installed "$pkg"; then
+        log_info "Removing $pkg"
+        remove_packages "$pkg"
+    else
+        log_info "$pkg not installed, skipping removal"
+    fi
+done
+
+log_success "GNOME setup completed"
+finalize_module_logging "success"

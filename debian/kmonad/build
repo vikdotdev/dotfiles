@@ -1,0 +1,70 @@
+#!/bin/bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$(dirname "$SCRIPT_DIR")")"
+
+source "$DOT_HOME/lib/debian/include.sh"
+
+MODULE="kmonad"
+init_module_logging "$MODULE"
+
+log_header "Building KMonad"
+
+KMONAD_EXECUTABLE="$HOME/.local/bin/kmonad"
+
+# Check if KMonad is installed
+if [[ ! -f "$KMONAD_EXECUTABLE" ]]; then
+    log_warning "KMonad not installed, skipping configuration deployment"
+    log_info "Run 'dot install kmonad' to install KMonad first"
+    log_success "KMonad build skipped"
+    finalize_module_logging "success"
+    exit 0
+fi
+
+# Deploy configuration files
+log_step "Deploying KMonad configuration"
+
+CONFIG_DIR="$HOME/.config/kmonad"
+mkdir -p "$CONFIG_DIR"
+
+# Deploy keyboard configuration
+if [[ -f "$SCRIPT_DIR/config/laptop.kbd" ]]; then
+    log_info "Deploying keyboard configuration"
+    cp "$SCRIPT_DIR/config/laptop.kbd" "$CONFIG_DIR/config.kbd"
+else
+    log_warning "No keyboard configuration found"
+fi
+
+# Deploy systemd service
+log_step "Deploying systemd service"
+
+SYSTEMD_USER_DIR="$HOME/.config/systemd/user"
+mkdir -p "$SYSTEMD_USER_DIR"
+
+if [[ -f "$SCRIPT_DIR/config/kmonad.service" ]]; then
+    # Generate the service file content
+    TEMP_SERVICE=$(mktemp)
+    sed "s|/home/[^/]*/\.local/bin/kmonad|$KMONAD_EXECUTABLE|g; s|/home/[^/]*/\.config/kmonad/[^/]*\.kbd|$CONFIG_DIR/config.kbd|g" \
+        "$SCRIPT_DIR/config/kmonad.service" > "$TEMP_SERVICE"
+    
+    # Check if service file needs updating
+    if [[ ! -f "$SYSTEMD_USER_DIR/kmonad.service" ]] || ! cmp -s "$TEMP_SERVICE" "$SYSTEMD_USER_DIR/kmonad.service"; then
+        cp "$TEMP_SERVICE" "$SYSTEMD_USER_DIR/kmonad.service"
+        log_info "Updated KMonad service file"
+        
+        log_info "Reloading systemd user daemon"
+        systemctl --user daemon-reload
+    else
+        log_info "KMonad service file is already up to date"
+    fi
+    
+    rm -f "$TEMP_SERVICE"
+    log_info "KMonad service is ready. Enable it with: systemctl --user enable --now kmonad"
+else
+    log_warning "KMonad service file not found"
+fi
+
+log_success "KMonad build completed"
+finalize_module_logging "success"

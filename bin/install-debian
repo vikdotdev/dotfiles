@@ -1,0 +1,121 @@
+#!/bin/bash
+
+set -euo pipefail
+
+# Get script directory (for local execution)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)" 2>/dev/null || SCRIPT_DIR=""
+DOT_HOME="${SCRIPT_DIR:+$(dirname "$SCRIPT_DIR")}"
+
+# Source utilities - fetch from GitHub if running remotely, use local if available
+if [[ -n "$DOT_HOME" && -f "$DOT_HOME/lib/debian/include.sh" ]]; then
+    # Local execution - use local lib
+    source "$DOT_HOME/lib/debian/include.sh"
+else
+    # Remote execution - fetch and source all required lib files
+    BASE_URL="https://raw.githubusercontent.com/vikdotdev/dotfiles/silverblue/lib"
+    source <(curl -fsSL "$BASE_URL/colors.sh")
+    source <(curl -fsSL "$BASE_URL/logging.sh") 
+    source <(curl -fsSL "$BASE_URL/constants.sh")
+    source <(curl -fsSL "$BASE_URL/utils.sh")
+    source <(curl -fsSL "$BASE_URL/debian/constants.sh")
+    source <(curl -fsSL "$BASE_URL/debian/utils.sh")
+fi
+
+# Initialize
+init_logging "install-debian"
+
+# Don't run as root
+if is_root; then
+    log_error "Don't run install-debian as root/sudo. It will ask for sudo when needed."
+    exit 1
+fi
+
+log_header "Debian Installation Setup"
+
+# Check if we're on Debian-based system
+if ! command_exists apt; then
+    log_error "This script is designed for Debian-based systems"
+    exit 1
+fi
+
+# Basic system setup
+log_step "Setting up basic system requirements"
+
+# Update package lists
+log_info "Updating package lists"
+ensure_sudo
+log_command sudo apt update
+
+# Install essential build tools and utilities ONLY
+# Keep this minimal - only what's absolutely needed for the system to function
+log_info "Installing minimal essential packages"
+ESSENTIAL_PACKAGES=(
+    "curl"
+    "wget"
+    "git"
+    "build-essential"
+    "apt-transport-https"
+    "ca-certificates"
+    "gnupg"
+    "lsb-release"
+)
+
+log_command sudo apt install -y "${ESSENTIAL_PACKAGES[@]}"
+
+# Setup Flatpak if not already installed
+log_step "Setting up Flatpak for application management"
+if ! command_exists flatpak; then
+    log_info "Installing Flatpak"
+    log_command sudo apt install -y flatpak
+    
+    # Add GNOME Software Flatpak plugin if using GNOME
+    if [[ "${XDG_CURRENT_DESKTOP:-}" == *"GNOME"* ]]; then
+        log_info "Installing GNOME Software Flatpak plugin"
+        log_command sudo apt install -y gnome-software-plugin-flatpak
+    fi
+else
+    log_info "Flatpak already installed"
+fi
+
+# Add Flathub repository
+log_info "Setting up Flathub repository"
+if ! flatpak remote-list --system 2>/dev/null | grep -q flathub; then
+    log_command sudo flatpak remote-add --system --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+    log_success "Flathub repository added"
+else
+    log_info "Flathub repository already configured"
+fi
+
+# Clone dotfiles repository
+log_step "Setting up dotfiles repository"
+DOTFILES_DIR="$HOME/Repositories/dotfiles"
+
+if [[ ! -d "$DOTFILES_DIR" ]]; then
+    log_info "Creating Repositories directory"
+    mkdir -p "$HOME/Repositories"
+    
+    log_info "Cloning dotfiles repository (silverblue branch)"
+    git clone -b silverblue https://github.com/vikdotdev/dotfiles.git "$DOTFILES_DIR"
+else
+    log_info "Dotfiles repository already exists"
+fi
+
+# Mark system as installed  
+mark_system_installed "debian"
+log_success "System marked as Debian installation"
+
+# Run dot install to install all packages and applications
+log_step "Running dot install to set up all packages and applications"
+cd "$DOTFILES_DIR"
+./bin/dot install
+
+# Run dot build to configure all dotfiles
+log_step "Running dot build to configure all dotfiles"
+./bin/dot build
+
+log_success "Debian setup complete!"
+echo
+echo "All packages installed and dotfiles configured!"
+echo "You may need to log out and back in for some changes to take effect."
+
+finalize_logging "success"

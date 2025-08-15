@@ -1,0 +1,61 @@
+#!/bin/bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$(dirname "$SCRIPT_DIR")")"
+
+source "$DOT_HOME/lib/debian/include.sh"
+
+MODULE="gnome"
+init_module_logging "$MODULE"
+
+log_header "Upgrading GNOME Extensions"
+
+# Function to upgrade GNOME extension
+upgrade_gnome_extension() {
+    local extension_name="$1"
+    local repo_name="$2"
+    
+    log_step "Upgrading $extension_name extension"
+    
+    local repo_path="$REPOS_DIR/$repo_name"
+    local install_path="$HOME/.local/share/gnome-shell/extensions/$extension_name"
+    
+    if [[ ! -d "$install_path" ]]; then
+        log_info "Extension $extension_name not installed, skipping upgrade"
+        return
+    elif [[ ! -d "$repo_path" ]]; then
+        log_error "Repository not found at $repo_path, cannot upgrade"
+        return
+    fi
+    
+    log_info "Updating $repo_name repository"
+    cd "$repo_path"
+    git pull
+    
+    # Check if extension needs to be rebuilt/reinstalled using metadata.json comparison
+    local needs_upgrade=false
+    if [[ ! -f "$install_path/metadata.json" ]]; then
+        needs_upgrade=true
+    elif [[ -f "metadata.json" ]] && ! cmp -s "metadata.json" "$install_path/metadata.json"; then
+        needs_upgrade=true
+    fi
+    
+    if $needs_upgrade; then
+        log_info "Building and installing updated $extension_name"
+        make build
+        make install
+        log_success "Extension $extension_name upgraded successfully"
+    else
+        log_info "Extension $extension_name already up to date"
+    fi
+}
+
+# Upgrade all GNOME extensions
+upgrade_gnome_extension "gnome-shell-go-to-last-workspace@github.com" "gnome-shell-go-to-last-workspace"
+upgrade_gnome_extension "highlight-focus@mipmip.github.com" "gnome-shell-extensions-highlight-focus"
+upgrade_gnome_extension "kmonad-toggle@jurf.github.com" "gnome-kmonad-toggle"
+
+log_success "GNOME upgrade completed"
+finalize_module_logging "success"

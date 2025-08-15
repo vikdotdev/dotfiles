@@ -1,0 +1,43 @@
+#!/bin/bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$(dirname "$(dirname "$SCRIPT_DIR")")")"
+
+source "$DOT_HOME/lib/debian/include.sh"
+
+MODULE="git"
+init_module_logging "$MODULE"
+
+log_header "Building Git Configuration"
+
+log_step "Installing Git configuration"
+
+# Copy .gitconfig file
+if [[ -f "$SCRIPT_DIR/config/.gitconfig" ]]; then
+    copy_file "$SCRIPT_DIR/config/.gitconfig" "$HOME/.gitconfig"
+    log_success "Git configuration installed"
+else
+    log_warning "Git configuration file not found"
+fi
+
+log_step "Installing git scripts"
+
+# Create scripts directory
+mkdir -p "$HOME/.local/bin"
+
+# Copy git utility scripts
+if [[ -d "$SCRIPT_DIR/scripts" ]]; then
+    for script in "$SCRIPT_DIR/scripts"/*; do
+        if [[ -f "$script" ]]; then
+            script_name=$(basename "$script")
+            copy_file "$script" "$HOME/.local/bin/$script_name"
+            chmod +x "$HOME/.local/bin/$script_name"
+            log_info "Installed script: $script_name"
+        fi
+    done
+fi
+
+log_success "Git configuration build completed"
+finalize_module_logging "success"

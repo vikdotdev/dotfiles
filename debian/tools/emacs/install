@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$(dirname "$(dirname "$SCRIPT_DIR")")")"
+
+source "$DOT_HOME/lib/debian/include.sh"
+
+MODULE="emacs"
+init_module_logging "$MODULE"
+
+log_header "Installing Emacs"
+
+log_step "Installing Emacs and dependencies"
+PACKAGES=(
+    "emacs"
+    "imagemagick"
+    "texlive-full"
+)
+
+install_packages "${PACKAGES[@]}"
+
+log_success "Emacs installation completed"
+finalize_module_logging "success"
