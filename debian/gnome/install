@@ -30,13 +30,44 @@ install_gnome_extension() {
     
     mkdir -p "$REPOS_DIR"
     
-    log_info "Cloning $repo_url"
-    git clone --depth 50 "$repo_url" "$repo_path"
+    if [[ ! -d "$repo_path" ]]; then
+        log_info "Cloning $repo_url"
+        git clone --depth 50 "$repo_url" "$repo_path"
+    else
+        log_info "Repository already exists at $repo_path"
+    fi
     
     cd "$repo_path"
     log_info "Building and installing $extension_name"
-    make build
-    make install
+    
+    # Check what build system is available
+    if [[ -f "Makefile" ]]; then
+        make build && make install
+    elif [[ -f "pack.sh" ]]; then
+        chmod +x pack.sh
+        ./pack.sh
+        # For pack.sh, usually need to manually copy to extensions dir
+        if [[ -f "${extension_name}.shell-extension.zip" ]]; then
+            mkdir -p "$install_path"
+            unzip -q "${extension_name}.shell-extension.zip" -d "$install_path"
+        fi
+    elif [[ -f "install.sh" ]]; then
+        chmod +x install.sh
+        ./install.sh
+    else
+        # Manual installation - copy source files directly
+        log_info "No build system found, copying files manually"
+        mkdir -p "$install_path"
+        
+        # Copy all files except .git and common build artifacts
+        find . -maxdepth 1 -type f \( ! -name ".git*" ! -name "*.md" ! -name "LICENSE*" \) -exec cp {} "$install_path/" \;
+        
+        # Ensure we have the required metadata.json
+        if [[ ! -f "$install_path/metadata.json" ]]; then
+            log_warning "No metadata.json found, extension may not work"
+        fi
+    fi
+    
     log_success "Extension $extension_name installed successfully"
 }
 

@@ -2,24 +2,37 @@
 
 set -euo pipefail
 
-# Get script directory (for local execution)
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)" 2>/dev/null || SCRIPT_DIR=""
-DOT_HOME="${SCRIPT_DIR:+$(dirname "$SCRIPT_DIR")}"
-
-# Source utilities - fetch from GitHub if running remotely, use local if available
-if [[ -n "$DOT_HOME" && -f "$DOT_HOME/lib/debian/include.sh" ]]; then
-    # Local execution - use local lib
-    source "$DOT_HOME/lib/debian/include.sh"
-else
-    # Remote execution - fetch and source all required lib files
-    BASE_URL="https://raw.githubusercontent.com/vikdotdev/dotfiles/silverblue/lib"
-    source <(curl -fsSL "$BASE_URL/colors.sh")
-    source <(curl -fsSL "$BASE_URL/logging.sh") 
-    source <(curl -fsSL "$BASE_URL/constants.sh")
-    source <(curl -fsSL "$BASE_URL/utils.sh")
-    source <(curl -fsSL "$BASE_URL/debian/constants.sh")
-    source <(curl -fsSL "$BASE_URL/debian/utils.sh")
+# Check if running with --local flag (already cloned and running locally)
+if [[ "${1:-}" != "--local" ]]; then
+    # Remote execution - clone repo and re-exec locally
+    echo "[INFO] Cloning dotfiles and running local setup..."
+    
+    DOTFILES_DIR="$HOME/Repositories/dotfiles"
+    
+    if [[ ! -d "$DOTFILES_DIR" ]]; then
+        echo "[INFO] Creating Repositories directory"
+        mkdir -p "$HOME/Repositories"
+        
+        echo "[INFO] Cloning dotfiles repository (silverblue branch)"
+        git clone -b silverblue https://github.com/vikdotdev/dotfiles.git "$DOTFILES_DIR"
+    else
+        echo "[INFO] Dotfiles repository already exists, pulling latest changes"
+        cd "$DOTFILES_DIR"
+        git pull origin silverblue
+    fi
+    
+    # Re-exec the local script with --local flag
+    echo "[INFO] Running local install script..."
+    chmod +x "$DOTFILES_DIR/bin/install-debian"
+    exec "$DOTFILES_DIR/bin/install-debian" --local
 fi
+
+# Local execution from here on
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$SCRIPT_DIR")"
+
+# Source local utilities
+source "$DOT_HOME/lib/debian/include.sh"
 
 # Initialize
 init_logging "install-debian"
@@ -86,32 +99,17 @@ else
     log_info "Flathub repository already configured"
 fi
 
-# Clone dotfiles repository
-log_step "Setting up dotfiles repository"
-DOTFILES_DIR="$HOME/Repositories/dotfiles"
-
-if [[ ! -d "$DOTFILES_DIR" ]]; then
-    log_info "Creating Repositories directory"
-    mkdir -p "$HOME/Repositories"
-    
-    log_info "Cloning dotfiles repository (silverblue branch)"
-    git clone -b silverblue https://github.com/vikdotdev/dotfiles.git "$DOTFILES_DIR"
-else
-    log_info "Dotfiles repository already exists"
-fi
-
 # Mark system as installed  
 mark_system_installed "debian"
 log_success "System marked as Debian installation"
 
 # Run dot install to install all packages and applications
 log_step "Running dot install to set up all packages and applications"
-cd "$DOTFILES_DIR"
-./bin/dot install
+"$DOT_HOME/bin/dot" install
 
 # Run dot build to configure all dotfiles
 log_step "Running dot build to configure all dotfiles"
-./bin/dot build
+"$DOT_HOME/bin/dot" build
 
 log_success "Debian setup complete!"
 echo

@@ -26,7 +26,7 @@ upgrade_gnome_extension() {
         log_info "Extension $extension_name not installed, skipping upgrade"
         return
     elif [[ ! -d "$repo_path" ]]; then
-        log_error "Repository not found at $repo_path, cannot upgrade"
+        log_warning "Repository not found at $repo_path, extension may not have been installed via this script"
         return
     fi
     
