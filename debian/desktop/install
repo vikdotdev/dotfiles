@@ -20,7 +20,7 @@ DESKTOP_APPS=(
     "org.signal.Signal"                         # Signal
     "com.slack.Slack"                           # Slack
     "org.gnome.Solanum"                         # Solanum (Pomodoro timer)
-    "com.rafaelmardojas.Blanket"                # Blanket (Background sounds)
+    "com.rafaelmardojai.Blanket"                # Blanket (Background sounds)
     "com.rtosta.zapzap"                         # ZapZap (WhatsApp)
     "io.gitlab.adhami3310.Impression"           # Impression (USB writer)
     "org.gnu.emacs"                             # Emacs
