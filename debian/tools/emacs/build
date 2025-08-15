@@ -15,7 +15,7 @@ log_header "Building Emacs Configuration"
 # Deploy Emacs configuration
 log_step "Deploying Emacs configuration"
 
-EMACS_CONFIG_DIR="$HOME/.config/emacs"
+EMACS_CONFIG_DIR="$HOME/.emacs.d"
 mkdir -p "$EMACS_CONFIG_DIR"
 
 if [[ -f "$SCRIPT_DIR/config/init.el" ]]; then

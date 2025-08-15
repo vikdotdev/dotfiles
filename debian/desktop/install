@@ -18,6 +18,8 @@ DESKTOP_APPS=(
     "com.spotify.Client"                        # Spotify
     "org.mozilla.Thunderbird"                   # Thunderbird
     "com.slack.Slack"                           # Slack
+    "com.discordapp.Discord"                    # Discord
+    "org.telegram.desktop"                      # Telegram
     "org.gnome.Solanum"                         # Solanum (Pomodoro timer)
     "com.rafaelmardojai.Blanket"                # Blanket (Background sounds)
     "com.rtosta.zapzap"                         # ZapZap (WhatsApp)
