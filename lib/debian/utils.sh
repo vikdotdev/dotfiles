@@ -4,7 +4,9 @@
 
 package_installed() {
     local package="$1"
-    dpkg -l 2>/dev/null | grep -q "^ii.*$package"
+    # Try multiple methods to check if package is installed
+    dpkg -l "$package" 2>/dev/null | grep -q "^ii" || \
+    dpkg-query -W -f='${Status}' "$package" 2>/dev/null | grep -q "install ok installed"
 }
 
 install_packages() {
