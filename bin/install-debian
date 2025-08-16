@@ -13,7 +13,7 @@ if [[ "${1:-}" != "--local" ]]; then
         echo "[INFO] Creating Repositories directory"
         mkdir -p "$HOME/Repositories"
         
-        echo "[INFO] Cloning dotfiles repository
+        echo "[INFO] Cloning dotfiles repository"
         git clone https://github.com/vikdotdev/dotfiles.git "$DOTFILES_DIR"
     else
         echo "[INFO] Dotfiles repository already exists, pulling latest changes"
