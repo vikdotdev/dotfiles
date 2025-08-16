@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# Debian-specific doctor checks
+# This file provides additional system checks for Debian
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$SCRIPT_DIR")"
+
+source "$DOT_HOME/lib/debian/include.sh"
+
+# Debian-specific health checks
+debian_doctor_checks() {
+    local issues=0
+    
+    log_step "Debian System Checks"
+    
+    # Check if we're actually on Debian
+    if ! is_debian; then
+        log_error "Not running on a Debian-based system"
+        ((issues++))
+    else
+        log_success "Running on Debian (version: $(get_debian_version))"
+    fi
+    
+    # Check apt sources
+    if [[ ! -f /etc/apt/sources.list ]]; then
+        log_error "APT sources.list not found"
+        ((issues++))
+    else
+        log_success "APT sources configured"
+    fi
+    
+    # Check for essential packages
+    local essential_packages=("curl" "wget" "git")
+    for pkg in "${essential_packages[@]}"; do
+        if package_installed "$pkg"; then
+            log_success "Essential package installed: $pkg"
+        else
+            log_warning "Essential package missing: $pkg"
+            ((issues++))
+        fi
+    done
+    
+    # Check package cache
+    if [[ ! -d /var/lib/apt/lists ]] || [[ -z "$(ls -A /var/lib/apt/lists)" ]]; then
+        log_warning "APT package cache is empty (run 'apt update')"
+        ((issues++))
+    else
+        log_success "APT package cache exists"
+    fi
+    
+    return $issues
+}
+
+# Run if called directly
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    debian_doctor_checks
+    exit $?
+fi

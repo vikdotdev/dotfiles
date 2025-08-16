@@ -1,50 +1,355 @@
-#!/usr/bin/env ruby
+#!/bin/bash
 
-require 'bundler/inline'
+set -euo pipefail
 
-gemfile do
-  source 'https://rubygems.org'
+# Get script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$SCRIPT_DIR")"
 
-  gem 'thor'
-  gem 'require_all'
-  gem 'tty-prompt'
-end
+# Source utilities
+source "$DOT_HOME/lib/colors.sh"
+source "$DOT_HOME/lib/constants.sh"
+source "$DOT_HOME/lib/utils.sh"
+source "$DOT_HOME/lib/logging.sh"
 
-require_rel '../lib/commands'
+# Show usage
+usage() {
+    local installed_system="unknown"
+    if is_system_installed; then
+        installed_system=$(head -n1 "$INSTALLATION_MARKER")
+    fi
 
-module Dotfiles
-  class CLI < Thor
-    desc 'build', 'build dotfiles preserving theme'
-    option :theme, aliases: '-t', desc: 'Theme [dark, light]'
-    def build
-      theme = options[:theme]
+    cat << EOF
+dot - Dotfiles management tool for $installed_system
 
-      Build.new(theme: theme).run
-    end
+USAGE:
+    dot [COMMAND] [ARGS...]
 
-    VARIANT_ALL = :all
-    VARIANT_BASE = :base
+COMMANDS:
+    install [MODULE]    Install packages and applications
+                        Modules: all (default)
 
-    desc 'install VARIANT', <<~DESC
-    Install packages. Provide variant of either 'base' or 'all'. Defaults to 'all'.
-    DESC
-    option :user, aliases: '-u', desc: 'target username'
-    option :host, aliases: '-h', desc: 'host, default to localhost'
-    def install(variant = VARIANT_BASE)
-      user = options[:user] || ENV['USER']
-      host = options[:host] || :localhost
+    build [MODULE]      Build and deploy configuration files
+                        Modules: all (default)
 
-      puts "Running ansible install against #{user}@#{host}"
+    upgrade [MODULE]    Upgrade source-built packages
+                        Modules: all (default)
 
-      Install.new(host, user, variant).run
-    end
+    doctor             Check system health and requirements
+    help               Show this help message
 
-    def self.exit_on_failure?
-      true
-    end
+EXAMPLES:
+    dot                             # Same as 'dot build'
+    dot install                     # Install all packages
+    dot install <package>           # Install specific package
+    dot install --list              # List available packages for install
+    dot build <path/package>        # Build specific package
+    dot build --list                # List available packages for build
+    dot upgrade                     # Upgrade all source-built packages
+    dot upgrade package             # Upgrade specific source-built packages
+    dot upgrade --list              # List available packages for upgrade
 
-    default_task :build
-  end
-end
+EOF
+}
 
-Dotfiles::CLI.start
+# Check if system is set up
+check_system_setup() {
+    if ! is_system_installed; then
+        log_error "System not initialized. Please run one of the install scripts at bin/install-* first"
+        exit 1
+    fi
+}
+
+# Get system directory path
+get_system_dir() {
+    local installed_system=$(head -n1 "$INSTALLATION_MARKER")
+    echo "$DOT_HOME/$installed_system"
+}
+
+# Check system setup for --list operations
+check_system_for_list() {
+    if ! is_system_installed; then
+        log_error "System not initialized. Please run one of the install scripts at bin/install-* first"
+        exit 1
+    fi
+}
+
+# Get available modules for a given command
+get_available_modules() {
+    local command="$1"
+    local modules=()
+    
+    # Get the installed system type
+    local installed_system=$(head -n1 "$INSTALLATION_MARKER")
+    local system_dir="$DOT_HOME/$installed_system"
+    
+    # Check if system directory exists
+    if [[ ! -d "$system_dir" ]]; then
+        return
+    fi
+    
+    # Find all modules with the given command script
+    while IFS= read -r -d '' script; do
+        local module_path=$(dirname "$script")
+        local module_name=$(basename "$module_path")
+        
+        # Handle submodules (like tools/emacs)
+        local parent_dir=$(dirname "$module_path")
+        if [[ "$(basename "$parent_dir")" != "$installed_system" ]]; then
+            local parent_name=$(basename "$parent_dir")
+            module_name="$parent_name/$module_name"
+        fi
+        
+        modules+=("$module_name")
+    done < <(find "$system_dir" -name "$command" -type f -executable -print0)
+    
+    printf '%s\n' "${modules[@]}" | sort
+}
+
+# Run install command
+cmd_install() {
+    local module="${1:-all}"
+    
+    # Handle --list option
+    if [[ "$module" == "--list" ]]; then
+        check_system_for_list
+        echo "Available modules for install:"
+        get_available_modules "install"
+        return 0
+    fi
+    
+    check_system_setup
+    init_logging "install"
+    
+    log_header "Installing: $module"
+    
+    if [[ "$module" == "all" ]]; then
+        log_info "Installing all modules"
+        
+        # Get all available install scripts
+        local available_modules
+        mapfile -t available_modules < <(get_available_modules "install")
+        
+        for mod in "${available_modules[@]}"; do
+            log_step "Running install for module: $mod"
+            "$(get_system_dir)/$mod/install"
+        done
+    else
+        # Install specific module
+        if [[ -x "$(get_system_dir)/$module/install" ]]; then
+            "$(get_system_dir)/$module/install"
+        else
+            log_error "Module $module does not have an install script"
+            exit 1
+        fi
+    fi
+    
+    finalize_logging "success"
+}
+
+# Run build command
+cmd_build() {
+    local module="${1:-all}"
+    
+    # Handle --list option
+    if [[ "$module" == "--list" ]]; then
+        check_system_for_list
+        echo "Available modules for build:"
+        get_available_modules "build"
+        return 0
+    fi
+    
+    check_system_setup
+    init_logging "build"
+    
+    log_header "Building: $module"
+    
+    if [[ "$module" == "all" ]]; then
+        log_info "Building all modules"
+        
+        # Get all available build scripts
+        local available_modules
+        mapfile -t available_modules < <(get_available_modules "build")
+        
+        for mod in "${available_modules[@]}"; do
+            log_step "Running build for module: $mod"
+            "$(get_system_dir)/$mod/build"
+        done
+    else
+        # Build specific module
+        if [[ -x "$(get_system_dir)/$module/build" ]]; then
+            "$(get_system_dir)/$module/build"
+        else
+            log_error "Module $module does not have a build script"
+            exit 1
+        fi
+    fi
+    
+    finalize_logging "success"
+}
+
+# Run upgrade command
+cmd_upgrade() {
+    local module="${1:-all}"
+    
+    # Handle --list option
+    if [[ "$module" == "--list" ]]; then
+        check_system_for_list
+        echo "Available modules for upgrade:"
+        get_available_modules "upgrade"
+        return 0
+    fi
+    
+    check_system_setup
+    init_logging "upgrade"
+    
+    log_header "Upgrading: $module"
+    
+    if [[ "$module" == "all" ]]; then
+        log_info "Upgrading all modules"
+        
+        # Get all available upgrade scripts
+        local available_modules
+        mapfile -t available_modules < <(get_available_modules "upgrade")
+        
+        if [[ ${#available_modules[@]} -eq 0 ]]; then
+            log_info "No modules have upgrade scripts"
+            finalize_logging "success"
+            return
+        fi
+        
+        for mod in "${available_modules[@]}"; do
+            log_step "Running upgrade for module: $mod"
+            "$(get_system_dir)/$mod/upgrade"
+        done
+    else
+        # Upgrade specific module
+        if [[ -x "$(get_system_dir)/$module/upgrade" ]]; then
+            "$(get_system_dir)/$module/upgrade"
+        else
+            log_error "Module $module does not have an upgrade script"
+            exit 1
+        fi
+    fi
+    
+    finalize_logging "success"
+}
+
+# Doctor command - check system health
+cmd_doctor() {
+    init_logging "doctor"
+    
+    log_header "System Doctor"
+    
+    local issues=0
+    
+    # Check basic system
+    if ! is_system_installed; then
+        log_error "System not initialized. Run an install script first (bin/install-*)"
+        ((issues++))
+    else
+        local installed_system=$(get_installed_system)
+        log_success "System is initialized: $installed_system"
+        
+        # Check if the system directory exists
+        local system_dir="$DOT_HOME/$installed_system"
+        if [[ ! -d "$system_dir" ]]; then
+            log_error "System directory not found: $system_dir"
+            ((issues++))
+        else
+            log_success "System directory exists: $system_dir"
+        fi
+    fi
+    
+    
+    # Check required directories
+    if [[ ! -d "$LOG_DIR" ]]; then
+        log_warning "Log directory missing: $LOG_DIR"
+        ((issues++))
+    else
+        log_success "Log directory exists"
+    fi
+    
+    # Check flatpak setup (if available)
+    if command_exists flatpak; then
+        if ! flatpak remote-list --system 2>/dev/null | grep -q flathub; then
+            log_warning "Flathub repository not configured (install apps may fail)"
+            ((issues++))
+        else
+            log_success "Flathub repository configured"
+        fi
+    else
+        log_info "Flatpak not available on this system"
+    fi
+    
+    # Run OS-specific checks if available
+    if is_system_installed; then
+        local installed_system=$(get_installed_system)
+        local system_doctor="$DOT_HOME/$installed_system/doctor"
+        
+        if [[ -x "$system_doctor" ]]; then
+            log_step "Running $installed_system-specific checks"
+            if "$system_doctor" >/dev/null 2>&1; then
+                log_success "OS-specific checks passed"
+            else
+                local os_issues=$?
+                log_warning "OS-specific checks found $os_issues issue(s)"
+                ((issues += os_issues))
+            fi
+        fi
+    fi
+    
+    # Summary
+    echo
+    if [[ $issues -eq 0 ]]; then
+        log_success "No issues found!"
+    else
+        log_warning "Found $issues issue(s)"
+    fi
+    
+    finalize_logging "success"
+}
+
+# Main command dispatcher
+main() {
+    # Don't run as root
+    if is_root; then
+        log_error "Don't run dot as root/sudo. It will ask for sudo when needed."
+        exit 1
+    fi
+    
+    if [[ $# -eq 0 ]]; then
+        cmd_build
+        return
+    fi
+    
+    local command="$1"
+    shift
+    
+    case "$command" in
+        install)
+            cmd_install "$@"
+            ;;
+        build)
+            cmd_build "$@"
+            ;;
+        upgrade)
+            cmd_upgrade "$@"
+            ;;
+        doctor)
+            cmd_doctor
+            ;;
+        help|--help|-h)
+            usage
+            ;;
+        *)
+            log_error "Unknown command: $command"
+            echo
+            usage
+            exit 1
+            ;;
+    esac
+}
+
+# Run main function
+main "$@"

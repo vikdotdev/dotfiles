@@ -1,0 +1,49 @@
+#!/bin/bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$(dirname "$SCRIPT_DIR")")"
+
+source "$DOT_HOME/lib/debian/include.sh"
+
+MODULE="syncthing"
+init_module_logging "$MODULE"
+
+log_header "Installing Syncthing"
+
+# Install Syncthing package
+PACKAGES=(
+    "syncthing"
+)
+
+log_step "Installing Syncthing package"
+install_packages "${PACKAGES[@]}"
+
+# Configure Syncthing service
+log_step "Configuring Syncthing service"
+if package_installed "syncthing"; then
+    log_info "Enabling Syncthing user service"
+    
+    # Enable and start syncthing user service
+    if systemctl --user is-enabled syncthing >/dev/null 2>&1; then
+        log_info "Syncthing service already enabled"
+    else
+        log_command systemctl --user enable syncthing
+        log_success "Syncthing service enabled"
+    fi
+    
+    if systemctl --user is-active syncthing >/dev/null 2>&1; then
+        log_info "Syncthing service already running"
+    else
+        log_command systemctl --user enable --now syncthing
+        log_success "Syncthing service started"
+    fi
+    
+    log_info "Syncthing web interface available at: http://localhost:8384"
+else
+    log_warning "Syncthing package was not installed, skipping service configuration"
+fi
+
+log_success "Syncthing installation completed"
+finalize_module_logging "success"

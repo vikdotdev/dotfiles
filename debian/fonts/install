@@ -1,0 +1,68 @@
+#!/bin/bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$(dirname "$SCRIPT_DIR")")"
+
+source "$DOT_HOME/lib/debian/include.sh"
+
+MODULE="fonts"
+init_module_logging "$MODULE"
+
+log_header "Installing Fonts"
+
+# Create fonts directory
+FONTS_DIR="$HOME/.local/share/fonts"
+log_step "Creating fonts directory"
+mkdir -p "$FONTS_DIR"
+
+# Iosevka fonts
+log_step "Installing Iosevka fonts"
+IOSEVKA_VERSION="30.1.1"
+
+if ! find "$FONTS_DIR" -name "Iosevka-*.ttf" | head -1 | grep -q .; then
+    log_info "Downloading Iosevka font package"
+    TEMP_DIR=$(mktemp -d)
+    
+    if download_file "https://github.com/be5invis/Iosevka/releases/download/v${IOSEVKA_VERSION}/PkgTTF-Iosevka-${IOSEVKA_VERSION}.zip" "$TEMP_DIR/iosevka.zip"; then
+        log_info "Extracting Iosevka fonts"
+        log_command unzip -q "$TEMP_DIR/iosevka.zip" -d "$FONTS_DIR"
+        log_success "Iosevka fonts installed"
+    else
+        log_error "Failed to download Iosevka fonts"
+        exit 1
+    fi
+    
+    rm -rf "$TEMP_DIR"
+else
+    log_info "Iosevka fonts already installed"
+fi
+
+# Iosevka Etoile fonts
+log_step "Installing Iosevka Etoile fonts"
+
+if ! find "$FONTS_DIR" -name "IosevkaEtoile-*.ttf" | head -1 | grep -q .; then
+    log_info "Downloading Iosevka Etoile font package"
+    TEMP_DIR=$(mktemp -d)
+    
+    if download_file "https://github.com/be5invis/Iosevka/releases/download/v${IOSEVKA_VERSION}/PkgTTF-IosevkaEtoile-${IOSEVKA_VERSION}.zip" "$TEMP_DIR/iosevka-etoile.zip"; then
+        log_info "Extracting Iosevka Etoile fonts"
+        log_command unzip -q "$TEMP_DIR/iosevka-etoile.zip" -d "$FONTS_DIR"
+        log_success "Iosevka Etoile fonts installed"
+    else
+        log_error "Failed to download Iosevka Etoile fonts"
+        exit 1
+    fi
+    
+    rm -rf "$TEMP_DIR"
+else
+    log_info "Iosevka Etoile fonts already installed"
+fi
+
+# Update font cache
+log_step "Updating font cache"
+log_command fc-cache -f
+
+log_success "Font installation completed"
+finalize_module_logging "success"

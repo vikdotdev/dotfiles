@@ -1,0 +1,51 @@
+#!/bin/bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$(dirname "$SCRIPT_DIR")")"
+
+source "$DOT_HOME/lib/debian/include.sh"
+
+MODULE="tools"
+init_module_logging "$MODULE"
+
+log_header "Installing Minimal Developer Tools"
+
+# Here put well-maintained packages that rarely change.
+MINIMAL_PACKAGES=(
+    # Essential utilities
+    "curl"
+    "wget" 
+    "unzip"
+    "zip"
+    
+    # Search tools
+    "ripgrep"      # Fast grep alternative
+    "fd-find"      # Fast find alternative
+    
+    # Build essentials (only if needed)
+    "build-essential"
+    "pkg-config"
+    
+    # Text processing
+    "jq"           # JSON processor
+    "pandoc"       # Document converter
+    
+    # System tools
+    "tree"
+    "ncdu"         # Disk usage analyzer
+
+    # Programming languages (for global scripts & emacs code block execution only)
+    "ruby"
+)
+
+log_step "Installing minimal developer tools from Debian stable"
+install_packages "${MINIMAL_PACKAGES[@]}"
+
+# Tools that might not be in stable or need special handling
+
+log_success "Minimal developer tools installation completed"
+log_info "For anything else, use manual installation or language-specific tools (pip, npm, etc)"
+
+finalize_module_logging "success"

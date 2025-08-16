@@ -1,0 +1,49 @@
+#!/bin/bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$(dirname "$(dirname "$SCRIPT_DIR")")")"
+
+source "$DOT_HOME/lib/debian/include.sh"
+
+MODULE="1password"
+init_module_logging "$MODULE"
+
+log_header "Installing 1Password"
+
+# Check if 1Password is already installed
+if package_installed "1password"; then
+    log_info "1Password is already installed"
+    log_success "1Password installation completed"
+    finalize_module_logging "success"
+    exit 0
+fi
+
+# Install required dependency
+log_step "Installing dependencies"
+install_packages "debsig-verify"
+
+# Add 1Password GPG key
+log_step "Adding 1Password GPG key"
+curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg
+
+# Add 1Password apt repository
+log_step "Adding 1Password repository"
+echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main' | sudo tee /etc/apt/sources.list.d/1password.list
+
+# Add debsig-verify policy
+log_step "Setting up package verification"
+sudo mkdir -p /etc/debsig/policies/AC2D62742012EA22/
+curl -sS https://downloads.1password.com/linux/debian/debsig/1password.pol | sudo tee /etc/debsig/policies/AC2D62742012EA22/1password.pol
+
+sudo mkdir -p /usr/share/debsig/keyrings/AC2D62742012EA22
+curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output /usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg
+
+# Update package lists and install 1Password
+log_step "Installing 1Password"
+update_package_lists
+install_packages "1password"
+
+log_success "1Password installation completed"
+finalize_module_logging "success"
