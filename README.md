@@ -26,6 +26,16 @@ bash <(curl -L https://raw.githubusercontent.com/vikdotdev/dotfiles/master/bin/i
 ### Compatibility
 Tested on Debian 13 Trixie.
 
+### Post-installation manual steps
+#### Install `kmonad-toggle`
+In extension manager manually install `kmonad-toggle` extension. In "Custom command" field put:
+```ruby
+kmonad /home/<username>/.config/kmonad/config.kbd
+```
+
+#### Install `gnome-shell-go-to-last-workspace`
+That's it, it's already configured by build scripts.
+
 # Machine specific config
 ## `.profile.local`
 Create a `~/.profile.local` file to store machine specific environment variables. 
