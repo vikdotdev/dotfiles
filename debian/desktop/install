@@ -25,6 +25,7 @@ DESKTOP_APPS=(
     "io.gitlab.adhami3310.Impression"           # Impression (USB writer)
     "com.mattjakeman.ExtensionManager"          # Extension Manager
     "io.github.zen_browser.zen"                 # Zen Browser
+    "com.github.tchx84.Flatseal"                # Flatseal (Flatpak permissions manager)
 )
 
 log_step "Installing desktop applications via Flatpak"
