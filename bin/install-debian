@@ -13,12 +13,12 @@ if [[ "${1:-}" != "--local" ]]; then
         echo "[INFO] Creating Repositories directory"
         mkdir -p "$HOME/Repositories"
         
-        echo "[INFO] Cloning dotfiles repository (silverblue branch)"
-        git clone -b silverblue https://github.com/vikdotdev/dotfiles.git "$DOTFILES_DIR"
+        echo "[INFO] Cloning dotfiles repository
+        git clone https://github.com/vikdotdev/dotfiles.git "$DOTFILES_DIR"
     else
         echo "[INFO] Dotfiles repository already exists, pulling latest changes"
         cd "$DOTFILES_DIR"
-        git pull origin silverblue
+        git pull origin master
     fi
     
     # Re-exec the local script with --local flag
