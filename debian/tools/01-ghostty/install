@@ -26,7 +26,6 @@ PACKAGES=(
 
 install_packages "${PACKAGES[@]}"
 
-# Check if mise is installed
 if ! command_exists mise; then
     log_error "mise not found. Please install mise first"
     log_info "Run: dot install tools/00-mise"
