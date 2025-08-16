@@ -17,6 +17,12 @@ PACKAGES=(
     "emacs"
     "imagemagick"
     "texlive-full"
+    # Needed to compile vterm and other native packages
+    "cmake"
+    "libtool"
+    "libtool-bin"
+    "libvterm-dev"
+    "libvterm0"
 )
 
 install_packages "${PACKAGES[@]}"

@@ -33,7 +33,6 @@ MINIMAL_PACKAGES=(
     "pandoc"       # Document converter
     
     # System tools
-    "htop"
     "tree"
     "ncdu"         # Disk usage analyzer
 

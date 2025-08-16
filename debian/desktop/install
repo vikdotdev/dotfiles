@@ -16,7 +16,6 @@ log_header "Installing Desktop Applications (Flatpak-only)"
 # No custom repositories - only official Flathub
 DESKTOP_APPS=(
     "com.spotify.Client"                        # Spotify
-    "org.mozilla.Thunderbird"                   # Thunderbird
     "com.slack.Slack"                           # Slack
     "com.discordapp.Discord"                    # Discord
     "org.telegram.desktop"                      # Telegram
@@ -25,6 +24,7 @@ DESKTOP_APPS=(
     "com.rtosta.zapzap"                         # ZapZap (WhatsApp)
     "io.gitlab.adhami3310.Impression"           # Impression (USB writer)
     "com.mattjakeman.ExtensionManager"          # Extension Manager
+    "io.github.zen_browser.zen"                 # Zen Browser
 )
 
 log_step "Installing desktop applications via Flatpak"

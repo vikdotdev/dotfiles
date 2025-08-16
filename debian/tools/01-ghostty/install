@@ -1,0 +1,71 @@
+#!/bin/bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$(dirname "$(dirname "$SCRIPT_DIR")")")"
+
+source "$DOT_HOME/lib/debian/include.sh"
+
+MODULE="ghostty"
+init_module_logging "$MODULE"
+
+log_header "Installing Ghostty Terminal"
+
+# Install dependencies
+log_step "Installing build dependencies"
+PACKAGES=(
+    "libgtk-4-dev"
+    "libadwaita-1-dev"
+    "git"
+    "blueprint-compiler"
+    "gettext"
+    "libxml2-utils"
+    "libgtk4-layer-shell-dev"
+)
+
+install_packages "${PACKAGES[@]}"
+
+# Check if mise is installed
+if ! command_exists mise; then
+    log_error "mise not found. Please install mise first"
+    log_info "Run: dot install tools/00-mise"
+    exit 0
+fi
+
+# Clone or update Ghostty repository
+log_step "Setting up Ghostty repository"
+GHOSTTY_DIR="$HOME/Repositories/ghostty"
+GHOSTTY_VERSION="1.1.3"
+
+if [[ ! -d "$GHOSTTY_DIR" ]]; then
+    log_info "Cloning Ghostty repository"
+    git clone https://github.com/ghostty-org/ghostty "$GHOSTTY_DIR"
+else
+    log_info "Updating existing Ghostty repository"
+    cd "$GHOSTTY_DIR"
+    git fetch
+fi
+
+# Checkout specific version
+log_step "Checking out Ghostty version $GHOSTTY_VERSION"
+cd "$GHOSTTY_DIR"
+git checkout "$GHOSTTY_VERSION"
+
+# Build Ghostty
+log_step "Building Ghostty"
+log_info "Running zig build with mise (this may take a while)"
+pushd "$GHOSTTY_DIR"
+mise exec zig@0.14 -- zig build -p "$HOME/.local" -Doptimize=ReleaseFast
+popd
+
+# Verify installation
+if [[ -f "$HOME/.local/bin/ghostty" ]]; then
+    log_success "Ghostty installed successfully to $HOME/.local/bin/ghostty"
+else
+    log_error "Ghostty installation failed - binary not found"
+    exit 1
+fi
+
+log_success "Ghostty installation completed"
+finalize_module_logging "success"

@@ -80,3 +80,6 @@ function parse_git_dirty {
 
 # Set the colorful prompt
 export PS1='\[\e[33m\]\u\[\e[m\]\[\e[36m\]@\[\e[m\]\[\e[35m\]\h\[\e[m\]: \[\e[32m\]\w\[\e[m\] \[\e[m\]\[\e[35m\]$(parse_git_branch)\[\e[m\]\[\e[36m\]\$\[\e[m\] '
+
+# Tool version manager
+eval "$(~/.local/bin/mise activate bash)"

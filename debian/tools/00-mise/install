@@ -1,0 +1,55 @@
+#!/bin/bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$(dirname "$(dirname "$SCRIPT_DIR")")")"
+
+source "$DOT_HOME/lib/debian/include.sh"
+
+MODULE="mise"
+init_module_logging "$MODULE"
+
+log_header "Installing mise"
+
+# Check if mise is already installed
+if command_exists mise; then
+    log_info "mise is already installed, updating..."
+    mise self-update || log_info "Update failed or not needed"
+else
+    log_step "Installing mise via official installer"
+    
+    # Download and run the mise installer
+    log_info "Downloading and running mise installer"
+    curl https://mise.run | sh
+    
+    # Verify installation
+    if [[ -f "$HOME/.local/bin/mise" ]]; then
+        log_success "mise installed successfully to $HOME/.local/bin/mise"
+    else
+        log_error "mise installation failed - binary not found"
+        exit 1
+    fi
+fi
+
+# Add mise activation to shell config if not already present
+log_step "Configuring shell integration"
+
+BASHRC="$HOME/.bashrc"
+MISE_INIT='eval "$(~/.local/bin/mise activate bash)"'
+
+if [[ -f "$BASHRC" ]]; then
+    if ! grep -q "mise activate bash" "$BASHRC"; then
+        log_info "Adding mise activation to .bashrc"
+        echo "" >> "$BASHRC"
+        echo "# mise version manager" >> "$BASHRC"
+        echo "$MISE_INIT" >> "$BASHRC"
+    else
+        log_info "mise activation already in .bashrc"
+    fi
+fi
+
+log_success "mise installation completed"
+log_info "Run 'source ~/.bashrc' or start a new shell to activate mise"
+
+finalize_module_logging "success"
