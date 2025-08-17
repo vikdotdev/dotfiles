@@ -47,7 +47,7 @@ For both:
   "Reload my Emacs configuration from the Org file."
   (interactive)
   (shell-command "dot build tools/emacs")
-  (org-babel-load-file (expand-file-name "~/.config/emacs/config.org")))
+  (org-babel-load-file (expand-file-name "~/.emacs.d/config.org")))
 #+end_src
 
 Custom version-control install package function. Taken from https://tony-zorman.com/posts/package-vc-install.html

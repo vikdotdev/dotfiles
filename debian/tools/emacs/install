@@ -14,7 +14,7 @@ log_header "Installing Emacs"
 
 log_step "Installing Emacs and dependencies"
 PACKAGES=(
-    "emacs"
+    "emacs-pgtk"
     "imagemagick"
     "texlive-full"
     # Needed to compile vterm and other native packages
