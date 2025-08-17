@@ -319,7 +319,7 @@ main() {
     fi
     
     if [[ $# -eq 0 ]]; then
-        cmd_build
+        usage
         return
     fi
     
