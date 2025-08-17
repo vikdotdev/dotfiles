@@ -7,6 +7,10 @@ cursor-style-blink = false
 # Scrollback
 scrollback-limit = 100000
 
+copy-on-select = clipboard
+
+quit-after-last-window-closed = false
+
 # Custom key bindings
 keybind = ctrl+backslash=write_scrollback_file:open
 keybind = ctrl+zero=close_surface
