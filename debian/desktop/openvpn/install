@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$(dirname "$(dirname "$SCRIPT_DIR")")")"
+
+source "$DOT_HOME/lib/debian/include.sh"
+
+MODULE="openvpn"
+init_module_logging "$MODULE"
+
+log_header "Installing OpenVPN"
+
+# Install OpenVPN and Network Manager integration
+log_step "Installing OpenVPN packages"
+PACKAGES=(
+    "openvpn"
+    "network-manager-openvpn"
+    "network-manager-openvpn-gnome"
+)
+
+install_packages "${PACKAGES[@]}"
+
+log_success "OpenVPN installation completed"
+finalize_module_logging "success"
