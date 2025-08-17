@@ -1,0 +1,43 @@
+#!/bin/bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$(dirname "$(dirname "$SCRIPT_DIR")")")"
+
+source "$DOT_HOME/lib/debian/include.sh"
+
+MODULE="docker"
+init_module_logging "$MODULE"
+
+log_header "Installing Docker (Podman)"
+
+# Install Podman and Docker compatibility layer
+log_step "Installing Podman packages"
+PACKAGES=(
+    "podman"        # Container engine
+    "podman-docker" # Docker compatibility wrapper
+)
+
+install_packages "${PACKAGES[@]}"
+
+# Verify installation
+if command_exists podman; then
+    local podman_version=$(podman --version)
+    log_success "Podman installed: $podman_version"
+else
+    log_error "Podman installation failed"
+    finalize_module_logging "failed"
+    exit 1
+fi
+
+if command_exists docker; then
+    log_success "Docker compatibility wrapper available"
+else
+    log_warning "Docker wrapper not found (may need to restart shell)"
+fi
+
+log_success "Docker (Podman) installation completed"
+log_info "Use 'podman' or 'docker' commands interchangeably"
+
+finalize_module_logging "success"
