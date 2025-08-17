@@ -52,5 +52,15 @@ if [[ -f "$SCRIPT_DIR/config/.inputrc" ]]; then
     log_info "Deployed .inputrc"
 fi
 
+# Bash completions
+log_step "Installing bash completions"
+mkdir -p "$HOME/.bashrc.d"
+
+# Source dot completions from top-level
+if [[ -f "$DOT_HOME/completions/dot.bash" ]]; then
+    cp "$DOT_HOME/completions/dot.bash" "$HOME/.bashrc.d/dot-completion.bash"
+    log_info "Deployed dot command completions"
+fi
+
 log_success "Shell configuration completed"
 finalize_module_logging "success"
