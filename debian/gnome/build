@@ -25,5 +25,13 @@ fi
 # Deploy custom CSS and themes
 log_step "Deploying GTK themes"
 
+# Deploy GTK 3.0 settings
+if [[ -f "$SCRIPT_DIR/config/gtk-3.0/settings.ini" ]]; then
+    log_info "Deploying GTK 3.0 settings"
+    mkdir -p "$HOME/.config/gtk-3.0"
+    cp "$SCRIPT_DIR/config/gtk-3.0/settings.ini" "$HOME/.config/gtk-3.0/settings.ini"
+    log_info "GTK 3.0 settings deployed (dark theme + Emacs keybindings)"
+fi
+
 log_success "GNOME configuration completed"
 finalize_module_logging "success"
