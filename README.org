@@ -1,0 +1,87 @@
+* Installation
+** Debian
+To start, first ensure your user in in ~/etc/sudoers~:
+#+begin_src bash
+su
+# then in sudo shell
+nano /etc/sudoers
+#+end_src
+
+Add your user to sudoers:
+#+begin_example
+%sudo           ALL=(ALL:ALL) ALL # append after this line
+yourusername    ALL=(ALL) ALL     # your line
+#+end_example
+
+Dependencies that are required to run the script:
+#+begin_src bash
+sudo apt install curl git
+#+end_src
+
+Then run the installation:
+#+begin_src bash
+bash <(curl -L https://raw.githubusercontent.com/vikdotdev/dotfiles/master/bin/install-debian)
+#+end_src
+*** Compatibility
+Tested on Debian 13 Trixie.
+*** Post-installation manual steps
+**** Install ~kmonad-toggle~
+In extension manager manually install ~kmonad-toggle~ extension. In "Custom command" field put:
+#+begin_src ruby
+kmonad /home/<username>/.config/kmonad/config.kbd
+#+end_src
+**** Install ~gnome-shell-go-to-last-workspace~
+That's it, it's already configured by build scripts.
+* Dotfiles Management
+After installation, use the ~dot~ command to manage your dotfiles:
+** Commands
+*** ~dot~
+Shows help message with all available commands.
+*** ~dot install [MODULE]~
+Install packages and applications. Without arguments, installs all modules.
+#+begin_src bash
+dot install                  # Install all packages
+dot install emacs            # Install specific package
+dot install tools/git        # Install nested module
+dot install --list           # List available packages
+#+end_src
+*** ~dot build [MODULE]~
+Build and deploy configuration files. Without arguments, builds all modules.
+#+begin_src bash
+dot build                    # Build all configurations
+dot build shell              # Build specific module
+dot build --list             # List available modules
+#+end_src
+*** ~dot upgrade [MODULE]~
+Upgrade source-built packages. Without arguments, upgrades all modules that have upgrade scripts.
+#+begin_src bash
+dot upgrade                  # Upgrade all packages
+dot upgrade emacs            # Upgrade specific package
+dot upgrade --list           # List available upgrades
+#+end_src
+*** ~dot pull~
+Update the dotfiles repository from git. Checks for uncommitted changes before pulling.
+#+begin_src bash
+dot pull                     # Pull latest changes
+#+end_src
+*** ~dot pwd~
+Print the dotfiles directory path.
+#+begin_src bash
+dot pwd                      # Print dotfiles path
+cd $(dot pwd)                # Navigate to dotfiles directory
+#+end_src
+*** ~dot doctor~
+Check system health and requirements. Verifies installation status, directories, and dependencies.
+#+begin_src bash
+dot doctor                   # Run system health check
+#+end_src
+** Module Organization
+Modules are organized by numbered directories for build order:
+- ~00-mise/~ - Runs first (dependency for other tools)
+- ~01-ghostty/~ - Runs second (depends on mise)
+- Regular directories run in alphabetical order
+* Machine specific config
+** ~.profile.local~
+Create a ~~/.profile.local~ file to store machine specific environment variables. 
+
+Emacs package uses ~DESKTOP~ & ~LAPTOP~ variables to define default font sizes.

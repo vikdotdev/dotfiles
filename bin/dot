@@ -35,11 +35,13 @@ COMMANDS:
     upgrade [MODULE]    Upgrade source-built packages
                         Modules: all (default)
 
+    pull               Update dotfiles repository from git
+    pwd                Print dotfiles directory path
     doctor             Check system health and requirements
     help               Show this help message
 
 EXAMPLES:
-    dot                             # Same as 'dot build'
+    dot                             # Show this help message
     dot install                     # Install all packages
     dot install <package>           # Install specific package
     dot install --list              # List available packages for install
@@ -48,6 +50,8 @@ EXAMPLES:
     dot upgrade                     # Upgrade all source-built packages
     dot upgrade package             # Upgrade specific source-built packages
     dot upgrade --list              # List available packages for upgrade
+    dot pull                        # Update dotfiles repository
+    dot pwd                         # Print dotfiles directory path
 
 EOF
 }
@@ -235,6 +239,58 @@ cmd_upgrade() {
     finalize_logging "success"
 }
 
+# Pull command - update dotfiles repository
+cmd_pull() {
+    init_logging "pull"
+    
+    log_header "Updating dotfiles repository"
+    
+    # Save current directory
+    local current_dir="$(pwd)"
+    
+    # Change to dotfiles directory
+    cd "$DOT_HOME"
+    
+    # Get current branch
+    local current_branch=$(git rev-parse --abbrev-ref HEAD)
+    log_info "Current branch: $current_branch"
+    
+    # Check for uncommitted changes
+    if ! git diff-index --quiet HEAD --; then
+        log_warning "You have uncommitted changes:"
+        git status --short
+        log_error "Please commit or stash your changes before pulling"
+        cd "$current_dir"
+        finalize_logging "failed"
+        exit 1
+    fi
+    
+    # Pull latest changes
+    log_step "Pulling latest changes from $current_branch"
+    if git pull origin "$current_branch"; then
+        log_success "Repository updated successfully"
+        
+        # Show what changed
+        local changes=$(git log --oneline HEAD@{1}..HEAD 2>/dev/null)
+        if [[ -n "$changes" ]]; then
+            log_info "Recent changes:"
+            echo "$changes"
+        else
+            log_info "Already up to date"
+        fi
+    else
+        log_error "Failed to pull changes"
+        cd "$current_dir"
+        finalize_logging "failed"
+        exit 1
+    fi
+    
+    # Return to original directory
+    cd "$current_dir"
+    
+    finalize_logging "success"
+}
+
 # Doctor command - check system health
 cmd_doctor() {
     init_logging "doctor"
@@ -335,6 +391,12 @@ main() {
             ;;
         upgrade)
             cmd_upgrade "$@"
+            ;;
+        pull)
+            cmd_pull
+            ;;
+        pwd)
+            echo "$DOT_HOME"
             ;;
         doctor)
             cmd_doctor
