@@ -1,6 +1,6 @@
 (defcfg
   input  (device-file "/dev/input/by-path/platform-i8042-serio-0-event-kbd")
-  output (uinput-sink "KMonad output" "/usr/bin/sleep 1 && $HOME/bin/sys-reset-xorg-settings")
+  output (uinput-sink "KMonad output" "/usr/bin/sleep 1")
   cmp-seq ralt
   cmp-seq-delay 5
   fallthrough true
@@ -10,10 +10,10 @@
 (defalias
   mta (tap-hold-next-release 150 tab lmet)
   rta (tap-hold-next-release 150 \ rmet)
-  qta (tap-hold-next-release 150 ' rctl)
+  qta (tap-hold-next-release 150 ' lalt)
   ces (tap-hold-next-release 150 esc lctl)
   laa (tap-hold-next-release 300 a lalt)
-  lac (tap-hold-next-release 300 ; lalt)
+  lac (tap-hold-next-release 300 ; rctl)
   lsb (tap-hold-next-release 170 lbrc lsft)
   cst (tap-macro (around-next lsft) (around-next lctl))
   rsb (tap-hold-next-release 170 rbrc rsft)
