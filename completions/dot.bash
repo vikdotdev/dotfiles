@@ -35,7 +35,7 @@ _dot_completions() {
             install|build|upgrade)
                 # Get available modules for this command
                 local modules=""
-                local modules_map=""  # Store both original and display names
+                declare -A seen_modules  # Track what we've already added
                 
                 # Find all modules with the command script
                 if [[ -d "$system_dir" ]]; then
@@ -45,15 +45,14 @@ _dot_completions() {
                         
                         # Create display name by removing numeric prefixes like "00-", "01-", etc.
                         local display_name="$module_name"
-                        display_name="${display_name//\/[0-9][0-9]-//\/}"  # Remove /00- pattern in paths
+                        # Remove numeric prefixes at start of path components
                         display_name="${display_name#[0-9][0-9]-}"         # Remove 00- at start
+                        display_name="${display_name//\/[0-9][0-9]-/\/}"   # Replace /00- with just /
                         
-                        # Store both for matching
-                        modules="$modules $module_name"
-                        
-                        # If display name differs, also add it for completion
-                        if [[ "$display_name" != "$module_name" ]]; then
+                        # Only add the cleaned version if we haven't seen it
+                        if [[ -z "${seen_modules[$display_name]}" ]]; then
                             modules="$modules $display_name"
+                            seen_modules[$display_name]=1
                         fi
                     done < <(find "$system_dir" -name "$prev" -type f -executable 2>/dev/null | sort)
                 fi
@@ -70,17 +69,7 @@ _dot_completions() {
                 COMPREPLY=()
                 for option in --list all $modules; do
                     if [[ -z "$cur" ]] || [[ "$option" == "$cur"* ]]; then
-                        # Skip duplicates
-                        local already_added=0
-                        for existing in "${COMPREPLY[@]}"; do
-                            if [[ "$existing" == "$option" ]]; then
-                                already_added=1
-                                break
-                            fi
-                        done
-                        if [[ $already_added -eq 0 ]]; then
-                            COMPREPLY+=("$option")
-                        fi
+                        COMPREPLY+=("$option")
                     fi
                 done
                 ;;
