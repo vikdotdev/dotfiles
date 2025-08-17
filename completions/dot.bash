@@ -34,7 +34,7 @@ _dot_completions() {
         case "${prev}" in
             install|build|upgrade)
                 # Get available modules for this command
-                local modules="--list all"
+                local modules=""
                 
                 # Find all modules with the command script
                 if [[ -d "$system_dir" ]]; then
@@ -45,7 +45,21 @@ _dot_completions() {
                     done < <(find "$system_dir" -name "$prev" -type f -executable 2>/dev/null | sort)
                 fi
                 
-                COMPREPLY=( $(compgen -W "${modules}" -- ${cur}) )
+                # Build completion list with custom order
+                local all_options="--list all $modules"
+                
+                # Use compgen but disable sorting with nosort option (bash 4.4+)
+                if [[ "${BASH_VERSINFO[0]}" -ge 5 ]] || [[ "${BASH_VERSINFO[0]}" -eq 4 && "${BASH_VERSINFO[1]}" -ge 4 ]]; then
+                    compopt -o nosort 2>/dev/null || true
+                fi
+                
+                # Build COMPREPLY preserving our order
+                COMPREPLY=()
+                for option in --list all $modules; do
+                    if [[ -z "$cur" ]] || [[ "$option" == "$cur"* ]]; then
+                        COMPREPLY+=("$option")
+                    fi
+                done
                 ;;
             *)
                 # No completion for other commands
