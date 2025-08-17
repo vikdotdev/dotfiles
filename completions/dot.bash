@@ -21,7 +21,7 @@ _dot_completions() {
     local system_dir="$DOT_HOME/$installed_system"
     
     # Main commands
-    local commands="install build upgrade pull pwd doctor help"
+    local commands="install build upgrade pull sync pwd doctor help"
     
     # If we're on the first argument, complete with commands
     if [[ ${COMP_CWORD} -eq 1 ]]; then

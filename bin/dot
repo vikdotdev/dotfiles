@@ -36,6 +36,7 @@ COMMANDS:
                         Modules: all (default)
 
     pull                Update dotfiles repository from git
+    sync                Pull latest changes and rebuild all
     pwd                 Print dotfiles directory path
     doctor              Check system health and requirements
     help                Show this help message
@@ -51,6 +52,7 @@ EXAMPLES:
     dot upgrade package             # Upgrade specific source-built packages
     dot upgrade --list              # List available packages for upgrade
     dot pull                        # Update dotfiles repository
+    dot sync                        # Pull and rebuild everything
     dot pwd                         # Print dotfiles directory path
 
 EOF
@@ -239,6 +241,15 @@ cmd_upgrade() {
     finalize_logging "success"
 }
 
+# Sync command - pull and build
+cmd_sync() {
+    # First pull
+    cmd_pull
+    
+    # Then build all
+    cmd_build "all"
+}
+
 # Pull command - update dotfiles repository
 cmd_pull() {
     init_logging "pull"
@@ -394,6 +405,9 @@ main() {
             ;;
         pull)
             cmd_pull
+            ;;
+        sync)
+            cmd_sync
             ;;
         pwd)
             echo "$DOT_HOME"

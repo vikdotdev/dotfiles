@@ -64,6 +64,11 @@ Update the dotfiles repository from git. Checks for uncommitted changes before p
 #+begin_src bash
 dot pull                     # Pull latest changes
 #+end_src
+*** ~dot sync~
+Update the repository and rebuild all configurations. Combines ~pull~ and ~build all~ in one command.
+#+begin_src bash
+dot sync                     # Pull and rebuild everything
+#+end_src
 *** ~dot pwd~
 Print the dotfiles directory path.
 #+begin_src bash
