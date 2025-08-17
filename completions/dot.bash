@@ -35,13 +35,26 @@ _dot_completions() {
             install|build|upgrade)
                 # Get available modules for this command
                 local modules=""
+                local modules_map=""  # Store both original and display names
                 
                 # Find all modules with the command script
                 if [[ -d "$system_dir" ]]; then
                     while IFS= read -r script; do
                         local module_path=$(dirname "$script")
                         local module_name="${module_path#$system_dir/}"
+                        
+                        # Create display name by removing numeric prefixes like "00-", "01-", etc.
+                        local display_name="$module_name"
+                        display_name="${display_name//\/[0-9][0-9]-//\/}"  # Remove /00- pattern in paths
+                        display_name="${display_name#[0-9][0-9]-}"         # Remove 00- at start
+                        
+                        # Store both for matching
                         modules="$modules $module_name"
+                        
+                        # If display name differs, also add it for completion
+                        if [[ "$display_name" != "$module_name" ]]; then
+                            modules="$modules $display_name"
+                        fi
                     done < <(find "$system_dir" -name "$prev" -type f -executable 2>/dev/null | sort)
                 fi
                 
@@ -57,7 +70,17 @@ _dot_completions() {
                 COMPREPLY=()
                 for option in --list all $modules; do
                     if [[ -z "$cur" ]] || [[ "$option" == "$cur"* ]]; then
-                        COMPREPLY+=("$option")
+                        # Skip duplicates
+                        local already_added=0
+                        for existing in "${COMPREPLY[@]}"; do
+                            if [[ "$existing" == "$option" ]]; then
+                                already_added=1
+                                break
+                            fi
+                        done
+                        if [[ $already_added -eq 0 ]]; then
+                            COMPREPLY+=("$option")
+                        fi
                     fi
                 done
                 ;;

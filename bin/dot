@@ -72,6 +72,52 @@ get_system_dir() {
     echo "$DOT_HOME/$installed_system"
 }
 
+# Resolve module name (handles numeric prefixes like 00-, 01-)
+resolve_module_path() {
+    local module="$1"
+    local system_dir="$(get_system_dir)"
+    
+    # First, try the module as-is
+    if [[ -d "$system_dir/$module" ]]; then
+        echo "$module"
+        return 0
+    fi
+    
+    # If module contains /, handle each part
+    if [[ "$module" == */* ]]; then
+        local parent="${module%/*}"
+        local child="${module##*/}"
+        
+        # Try with numeric prefix on child
+        for prefix in {00..99}; do
+            if [[ -d "$system_dir/$parent/${prefix}-${child}" ]]; then
+                echo "$parent/${prefix}-${child}"
+                return 0
+            fi
+        done
+        
+        # Try with numeric prefix on parent
+        for prefix in {00..99}; do
+            if [[ -d "$system_dir/${prefix}-${parent}/$child" ]]; then
+                echo "${prefix}-${parent}/$child"
+                return 0
+            fi
+        done
+    else
+        # Try with numeric prefixes for top-level modules
+        for prefix in {00..99}; do
+            if [[ -d "$system_dir/${prefix}-${module}" ]]; then
+                echo "${prefix}-${module}"
+                return 0
+            fi
+        done
+    fi
+    
+    # Return original if no match found
+    echo "$module"
+    return 1
+}
+
 # Check system setup for --list operations
 check_system_for_list() {
     if ! is_system_installed; then
@@ -142,8 +188,9 @@ cmd_install() {
         done
     else
         # Install specific module
-        if [[ -x "$(get_system_dir)/$module/install" ]]; then
-            "$(get_system_dir)/$module/install"
+        local resolved_module=$(resolve_module_path "$module")
+        if [[ -x "$(get_system_dir)/$resolved_module/install" ]]; then
+            "$(get_system_dir)/$resolved_module/install"
         else
             log_error "Module $module does not have an install script"
             exit 1
@@ -183,8 +230,9 @@ cmd_build() {
         done
     else
         # Build specific module
-        if [[ -x "$(get_system_dir)/$module/build" ]]; then
-            "$(get_system_dir)/$module/build"
+        local resolved_module=$(resolve_module_path "$module")
+        if [[ -x "$(get_system_dir)/$resolved_module/build" ]]; then
+            "$(get_system_dir)/$resolved_module/build"
         else
             log_error "Module $module does not have a build script"
             exit 1
@@ -230,8 +278,9 @@ cmd_upgrade() {
         done
     else
         # Upgrade specific module
-        if [[ -x "$(get_system_dir)/$module/upgrade" ]]; then
-            "$(get_system_dir)/$module/upgrade"
+        local resolved_module=$(resolve_module_path "$module")
+        if [[ -x "$(get_system_dir)/$resolved_module/upgrade" ]]; then
+            "$(get_system_dir)/$resolved_module/upgrade"
         else
             log_error "Module $module does not have an upgrade script"
             exit 1
