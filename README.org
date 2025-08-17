@@ -82,6 +82,6 @@ Modules are organized by numbered directories for build order:
 - Regular directories run in alphabetical order
 * Machine specific config
 ** ~.profile.local~
-Create a ~~/.profile.local~ file to store machine specific environment variables. 
+Create a =~/.profile.local= file to store machine specific environment variables. 
 
 Emacs package uses ~DESKTOP~ & ~LAPTOP~ variables to define default font sizes.

@@ -35,10 +35,10 @@ COMMANDS:
     upgrade [MODULE]    Upgrade source-built packages
                         Modules: all (default)
 
-    pull               Update dotfiles repository from git
-    pwd                Print dotfiles directory path
-    doctor             Check system health and requirements
-    help               Show this help message
+    pull                Update dotfiles repository from git
+    pwd                 Print dotfiles directory path
+    doctor              Check system health and requirements
+    help                Show this help message
 
 EXAMPLES:
     dot                             # Show this help message
