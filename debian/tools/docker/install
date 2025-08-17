@@ -23,7 +23,7 @@ install_packages "${PACKAGES[@]}"
 
 # Verify installation
 if command_exists podman; then
-    local podman_version=$(podman --version)
+    podman_version=$(podman --version)
     log_success "Podman installed: $podman_version"
 else
     log_error "Podman installation failed"
