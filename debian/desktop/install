@@ -26,6 +26,7 @@ DESKTOP_APPS=(
     "com.mattjakeman.ExtensionManager"          # Extension Manager
     "io.github.zen_browser.zen"                 # Zen Browser
     "com.github.tchx84.Flatseal"                # Flatseal (Flatpak permissions manager)
+    "page.codeberg.libre_menu_editor.LibreMenuEditor"  # Libre Menu Editor (app menu editor)
 )
 
 log_step "Installing desktop applications via Flatpak"
