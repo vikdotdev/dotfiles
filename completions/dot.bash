@@ -34,7 +34,7 @@ _dot_completions() {
         case "${prev}" in
             install|build|upgrade)
                 # Get available modules for this command
-                local modules="all --list"
+                local modules="--list all"
                 
                 # Find all modules with the command script
                 if [[ -d "$system_dir" ]]; then
@@ -42,7 +42,7 @@ _dot_completions() {
                         local module_path=$(dirname "$script")
                         local module_name="${module_path#$system_dir/}"
                         modules="$modules $module_name"
-                    done < <(find "$system_dir" -name "$prev" -type f -executable 2>/dev/null)
+                    done < <(find "$system_dir" -name "$prev" -type f -executable 2>/dev/null | sort)
                 fi
                 
                 COMPREPLY=( $(compgen -W "${modules}" -- ${cur}) )
