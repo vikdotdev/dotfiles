@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$(dirname "$(dirname "$(dirname "$(dirname "$SCRIPT_DIR")")")")")"
+
+source "$DOT_HOME/lib/debian/include.sh"
+
+MODULE="ruby-deps"
+init_module_logging "$MODULE"
+
+log_header "Installing Ruby dependencies for mise"
+
+# Install libyaml-dev which is needed for Ruby to compile through mise (3.4.5)
+log_step "Installing libyaml-dev"
+PACKAGES=(
+    "libyaml-dev"     # Required for Ruby 3.4.5 compilation through mise
+)
+
+install_packages "${PACKAGES[@]}"
+
+log_success "Ruby dependencies installed"
+log_info "You can now install Ruby versions with: mise install ruby@3.4.5"
+
+finalize_module_logging "success"

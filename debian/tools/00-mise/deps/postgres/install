@@ -1,0 +1,28 @@
+#!/bin/bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$(dirname "$(dirname "$(dirname "$(dirname "$SCRIPT_DIR")")")")")"
+
+source "$DOT_HOME/lib/debian/include.sh"
+
+MODULE="postgres-deps"
+init_module_logging "$MODULE"
+
+log_header "Installing PostgreSQL dependencies for mise"
+
+# Install libreadline-dev which is needed for PostgreSQL to compile through mise
+log_step "Installing libreadline-dev"
+# Required for PostgreSQL compilation through mise
+PACKAGES=(
+    "libreadline-dev"
+    "libssl-dev"
+)
+
+install_packages "${PACKAGES[@]}"
+
+log_success "PostgreSQL dependencies installed"
+log_info "You can now install PostgreSQL versions with: mise install postgres@<version>"
+
+finalize_module_logging "success"
