@@ -1,0 +1,14 @@
+# Ghostty terminal configuration
+
+# Cursor
+cursor-style = block
+cursor-style-blink = false
+
+# Scrollback
+scrollback-limit = 100000
+
+# Custom key bindings
+keybind = ctrl+backslash=write_scrollback_file:open
+keybind = ctrl+zero=close_surface
+keybind = ctrl+two=new_split:right
+keybind = ctrl+three=new_split:down

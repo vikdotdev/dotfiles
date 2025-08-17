@@ -1,0 +1,31 @@
+#!/bin/bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$(dirname "$(dirname "$SCRIPT_DIR")")")"
+
+source "$DOT_HOME/lib/debian/include.sh"
+
+MODULE="ghostty"
+init_module_logging "$MODULE"
+
+log_header "Building Ghostty Configuration"
+
+# Create Ghostty config directory
+log_step "Creating Ghostty config directory"
+mkdir -p "$HOME/.config/ghostty"
+
+# Deploy Ghostty configuration
+log_step "Deploying Ghostty configuration"
+if [[ -f "$SCRIPT_DIR/config/config" ]]; then
+    cp "$SCRIPT_DIR/config/config" "$HOME/.config/ghostty/config"
+    log_info "Deployed Ghostty config to ~/.config/ghostty/config"
+else
+    log_error "Ghostty config file not found"
+    finalize_module_logging "failed"
+    exit 1
+fi
+
+log_success "Ghostty configuration completed"
+finalize_module_logging "success"
