@@ -14,8 +14,7 @@ log_header "Installing mise"
 
 # Check if mise is already installed
 if command_exists mise; then
-    log_info "mise is already installed, updating..."
-    mise self-update || log_info "Update failed or not needed"
+    log_info "mise is already installed, skipping"
 else
     log_step "Installing mise via official installer"
     

@@ -1,0 +1,42 @@
+#!/bin/bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$(dirname "$(dirname "$SCRIPT_DIR")")")"
+
+source "$DOT_HOME/lib/debian/include.sh"
+
+MODULE="mise"
+init_module_logging "$MODULE"
+
+log_header "Upgrading mise"
+
+# Check if mise is installed
+if ! command_exists mise; then
+    log_error "mise is not installed. Run 'dot install tools/00-mise' first"
+    finalize_module_logging "failed"
+    exit 1
+fi
+
+# Get current version
+current_version=$(mise --version 2>/dev/null | cut -d' ' -f2)
+log_info "Current mise version: $current_version"
+
+# Update mise
+log_step "Running mise self-update"
+if mise self-update; then
+    # Get new version
+    new_version=$(mise --version 2>/dev/null | cut -d' ' -f2)
+    
+    if [[ "$current_version" == "$new_version" ]]; then
+        log_info "Already at latest version: $new_version"
+    else
+        log_success "Updated from $current_version to $new_version"
+    fi
+else
+    log_warning "mise self-update failed or not needed"
+fi
+
+log_success "mise upgrade completed"
+finalize_module_logging "success"
