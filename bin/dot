@@ -143,14 +143,8 @@ get_available_modules() {
     # Find all modules with the given command script
     while IFS= read -r -d '' script; do
         local module_path=$(dirname "$script")
-        local module_name=$(basename "$module_path")
-        
-        # Handle submodules (like tools/emacs)
-        local parent_dir=$(dirname "$module_path")
-        if [[ "$(basename "$parent_dir")" != "$installed_system" ]]; then
-            local parent_name=$(basename "$parent_dir")
-            module_name="$parent_name/$module_name"
-        fi
+        # Get the full relative path from system_dir
+        local module_name="${module_path#$system_dir/}"
         
         modules+=("$module_name")
     done < <(find "$system_dir" -name "$command" -type f -executable -print0)
