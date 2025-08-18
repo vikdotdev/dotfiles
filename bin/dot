@@ -24,6 +24,7 @@ dot - Dotfiles management tool for $installed_system
 
 USAGE:
     dot [COMMAND] [ARGS...]
+    INSTALLATION=SYSTEM dot [COMMAND] [ARGS...]
 
 COMMANDS:
     install [MODULE]    Install packages and applications
@@ -54,12 +55,21 @@ EXAMPLES:
     dot pull                        # Update dotfiles repository
     dot sync                        # Pull and rebuild everything
     dot pwd                         # Print dotfiles directory path
+    
+    # Override system without installation marker:
+    INSTALLATION=debian dot install      # Install debian packages
+    INSTALLATION=debian dot build        # Build debian configs
 
 EOF
 }
 
 # Check if system is set up
 check_system_setup() {
+    # Allow override via environment variable
+    if [[ -n "$INSTALLATION" ]]; then
+        return 0
+    fi
+    
     if ! is_system_installed; then
         log_error "System not initialized. Please run one of the install scripts at bin/install-* first"
         exit 1
@@ -68,6 +78,12 @@ check_system_setup() {
 
 # Get system directory path
 get_system_dir() {
+    # Use environment variable override if provided
+    if [[ -n "$INSTALLATION" ]]; then
+        echo "$DOT_HOME/$INSTALLATION"
+        return 0
+    fi
+    
     local installed_system=$(head -n1 "$INSTALLATION_MARKER")
     echo "$DOT_HOME/$installed_system"
 }
@@ -120,6 +136,11 @@ resolve_module_path() {
 
 # Check system setup for --list operations
 check_system_for_list() {
+    # Allow override via environment variable
+    if [[ -n "$INSTALLATION" ]]; then
+        return 0
+    fi
+    
     if ! is_system_installed; then
         log_error "System not initialized. Please run one of the install scripts at bin/install-* first"
         exit 1
@@ -132,7 +153,12 @@ get_available_modules() {
     local modules=()
     
     # Get the installed system type
-    local installed_system=$(head -n1 "$INSTALLATION_MARKER")
+    local installed_system
+    if [[ -n "$INSTALLATION" ]]; then
+        installed_system="$INSTALLATION"
+    else
+        installed_system=$(head -n1 "$INSTALLATION_MARKER")
+    fi
     local system_dir="$DOT_HOME/$installed_system"
     
     # Check if system directory exists
