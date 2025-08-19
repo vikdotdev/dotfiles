@@ -138,7 +138,7 @@ Different machines get different values.
 
 (defvar vik/default-font-size
   (cond
-   ((string= (getenv "DESKTOP") "1") 100)
+   ((string= (getenv "DESKTOP") "1") 120)
    ((string= (getenv "LAPTOP") "2") 150)
    (t 150)))
 

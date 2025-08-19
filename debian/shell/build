@@ -52,6 +52,12 @@ if [[ -f "$SCRIPT_DIR/config/.inputrc" ]]; then
     log_info "Deployed .inputrc"
 fi
 
+# Deploy .profile.local example if it doesn't exist
+if [[ ! -f "$HOME/.profile.local" ]] && [[ -f "$SCRIPT_DIR/config/.profile.local.example" ]]; then
+    cp "$SCRIPT_DIR/config/.profile.local.example" "$HOME/.profile.local"
+    log_info "Deployed .profile.local from example (customize as needed)"
+fi
+
 # Bash completions
 log_step "Installing bash completions"
 mkdir -p "$HOME/.bashrc.d"

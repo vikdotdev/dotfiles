@@ -17,5 +17,5 @@ fi
 
 # Local machine specific configurations
 if [ -f "$HOME/.profile.local" ] ; then
-    source . "$HOME/.profile.local"
+    . "$HOME/.profile.local"
 fi

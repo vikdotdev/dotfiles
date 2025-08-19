@@ -1,0 +1,14 @@
+# ~/.profile.local
+# Local machine-specific environment variables
+# Copy this file to ~/.profile.local and customize as needed
+
+# Example: Set DESKTOP=1 for desktop machines
+# export DESKTOP=1
+
+# Example: Set custom paths
+# export CUSTOM_PATH="/opt/custom/bin"
+# export PATH="$CUSTOM_PATH:$PATH"
+
+# Example: Set environment-specific variables
+# export ENVIRONMENT="development"
+# export DEBUG=1
