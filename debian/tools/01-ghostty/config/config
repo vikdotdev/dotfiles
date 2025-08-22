@@ -3,13 +3,14 @@
 # Cursor
 cursor-style = block
 cursor-style-blink = false
+shell-integration-features = no-cursor
 
 # Scrollback
 scrollback-limit = 100000
 
 copy-on-select = clipboard
-
 quit-after-last-window-closed = false
+theme = IR_Black
 
 # Custom key bindings
 keybind = ctrl+backslash=write_scrollback_file:open
