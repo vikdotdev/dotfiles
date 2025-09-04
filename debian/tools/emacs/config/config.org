@@ -41,6 +41,12 @@ For both:
 "Scheduled" means that is the time to start working on the task if it's a task. If it's an event - time of the event.
 
 =f= and =b= in agenda view I can navigate weeks.
+** Coding
+=M-/= autocomplete
+=M-<TAB>= completion at point
+=M-?= to find references
+=M-.= find definition
+=M-,= go back from prev find definition
 * Package management
 #+begin_src emacs-lisp
 (defun vik/reload-config ()
@@ -573,7 +579,7 @@ Pretty headings.
 #+end_src
 
 Make formatted text appear with markers when hover over.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (use-package org-appear
   :ensure t
   :hook (org-mode . org-appear-mode)
@@ -646,17 +652,8 @@ Move cache data out of the way:
 ** Export
 Exporting as Github flavored markdown to clipboard:
 #+begin_src elisp
-(use-package ox-gfm
-  :ensure t)
+(use-package ox-gfm :ensure t)
 
-(defun vik/org-to-clipboard-as-markdown ()
-  (interactive)
-  (save-window-excursion
-    (let ((org-export-with-toc nil)) 
-      (with-current-buffer (org-gfm-export-to-markdown)
-        (mark-whole-buffer)
-        (clipboard-kill-region (point-min) (point-max))
-        (kill-buffer-and-window)))))
 (defun vik/org-region-to-clipboard-as-markdown ()
   "Export the selected region from Org mode to Markdown and copy it to the clipboard."
   (interactive)
@@ -727,18 +724,6 @@ Camel-cased symbols will be recognized as words.
 #+begin_src emacs-lisp
 (add-hook 'prog-mode-hook 'subword-mode)
 #+end_src
-** TODO Eglot
-Attaches eglot to every programming language buffer:
-#+begin_src emacs-lisp
-(add-hook 'prog-mode-hook 'eglot-ensure)
-(setq eglot-report-progress nil)
-#+end_src
-
-TODO bind =eglot-inlay-hints-mode= to something:
-TODO this was failing when loading the config
-#+begin_src elisp
-;; (eglot-inlay-hints-mode 0)
-#+end_src
 ** Documentation
 Use =C-h .= to look up documentation of thing at point.
 #+begin_src emacs-lisp
@@ -746,29 +731,39 @@ Use =C-h .= to look up documentation of thing at point.
 (setq eldoc-echo-area-use-multiline-p t)
 (setq eldoc-echo-area-prefer-doc-buffer t)
 #+end_src
-** Basic code navigation with =dumb-jump=
-Attaches dumb-jump as xref back-end:
+** Mise
+#+begin_src elisp
+(use-package mise
+  :ensure t
+  :hook (after-init . global-mise-mode))
+#+end_src
+** Eglot
+Attaches eglot to every programming language buffer:
 #+begin_src emacs-lisp
-(unless (package-installed-p 'dumb-jump)
-  (package-install 'dumb-jump))
-(require 'dumb-jump)
-
-(add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
+(add-hook 'prog-mode-hook 'eglot-ensure)
+(setq eglot-report-progress nil)
+#+end_src
+#+begin_src elisp
+(defun my/eglot-register-server (mode bin &rest args)
+  "Associate MODE with a language server BIN and ARGS in `eglot-server-programs`."
+  (add-to-list 'eglot-server-programs
+               `(,mode . (,bin ,@args))))
+#+end_src
+** Basic code navigation with =dumb-jump=
+#+begin_src emacs-lisp
+(use-package dumb-jump
+  :ensure t
+  :config
+  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 #+end_src
 ** Treesitter
-Sources:
 #+begin_src emacs-lisp
-(with-eval-after-load 'treesit
-  (setq treesit-language-source-alist
-        '(
-          (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
-          (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
-          (ruby . ("https://github.com/tree-sitter/tree-sitter-ruby"))
-          (zig . ("https://github.com/tree-sitter-grammars/tree-sitter-zig"))))
-
-  (dolist (source treesit-language-source-alist)
-    (unless (treesit-ready-p (car source))
-      (treesit-install-language-grammar (car source)))))
+(defun my/treesit-setup-lang (lang source)
+  "Register and install a single treesit LANG from SOURCE."
+  (with-eval-after-load 'treesit
+    (add-to-list 'treesit-language-source-alist (cons lang source))
+    (unless (treesit-ready-p lang)
+      (treesit-install-language-grammar lang))))
 #+end_src
 ** Zig
 #+begin_src emacs-lisp
@@ -776,44 +771,46 @@ Sources:
   :ensure t
   :config
   (add-to-list 'auto-mode-alist '("\\.zig\\'" . zig-mode))
-  (add-to-list 'auto-mode-alist '("\\.zig.zon\\'" . zig-mode)))
+  (add-to-list 'auto-mode-alist '("\\.zig.zon\\'" . zig-mode))
+  (with-eval-after-load 'eglot
+    (my/eglot-register-server 'zig-mode "zls"))
+  (my/treesit-setup-lang 'zig '("https://github.com/tree-sitter-grammars/tree-sitter-zig")))
+#+end_src
+** Dart & Flutter
+#+begin_src elisp
+(use-package dart-mode
+  :ensure t
+  :config
+  (with-eval-after-load 'eglot
+    (my/eglot-register-server 'dart-mode "dart" "language-server" "--client-id" "emacs.eglot-dart" "--protocol" "lsp")))
 #+end_src
 
-#+begin_src emacs-lisp
-(let ((zig-bin (string-trim (shell-command-to-string "asdf which zig"))))
-  (when (and zig-bin (file-exists-p zig-bin))
-    (add-to-list 'exec-path (file-name-directory zig-bin))))
+#+begin_src elisp
+(use-package dart-mode
+  :hook (dart-mode . flutter-test-mode))
 
-(with-eval-after-load 'eglot
-  (add-to-list 'eglot-server-programs
-               '(zig-mode . ("zls"))))
+(use-package flutter
+  :ensure t
+  :after dart-mode
+  :bind (:map dart-mode-map
+              ("C-c r" . #'flutter-run-or-hot-reload)))
 #+end_src
 ** Ruby
+=C-c {= ruby toggle block type.
+=C-c '= ruby inside change quote type.
+=C-c ]= flymake-goto-next-error
+=C-c [= flymake-goto-prev-error
 #+begin_src emacs-lisp
 (use-package ruby-ts-mode
   :ensure t
   :config
   (add-to-list 'auto-mode-alist '("\\.rb\\'" . ruby-ts-mode))
   (add-to-list 'auto-mode-alist '("\\Gemfile\\'" . ruby-ts-mode))
-  (add-to-list 'auto-mode-alist '("\\Rakefile\\'" . ruby-ts-mode)))
+  (add-to-list 'auto-mode-alist '("\\Rakefile\\'" . ruby-ts-mode))
+  (with-eval-after-load 'eglot
+    (my/eglot-register-server 'ruby-mode "solargraph" "stdio"))
+  (my/treesit-setup-lang 'ruby '("https://github.com/tree-sitter/tree-sitter-ruby")))
 #+end_src
-
-=M-/= autocomplete (not only ruby)
-
-=M-<TAB>= completion at point
-=M-?= to find references
-=M-.= find definition
-=M-,= go back from prev find definition
-=C-c {= ruby toggle block type.
-=C-c '= ruby inside change quote type.
-#+begin_src emacs-lisp
-(with-eval-after-load 'eglot
-  (add-to-list 'eglot-server-programs
-               '(ruby-mode . ("solargraph" "stdio"))))
-#+end_src
-
-=C-c ]= flymake-goto-next-error
-=C-c [= flymake-goto-prev-error
 #+begin_src elisp
 (add-hook 'ruby-ts-mode-hook
           (lambda ()
@@ -841,16 +838,11 @@ Sources:
   (setq sqlformat-command 'sqlformat))
 #+end_src
 ** Javascript/Typescript
-*** TODO Treesitter
-Does not seem to work
 #+begin_src elisp
-(with-eval-after-load 'treesit
-  (add-hook 'typescript-ts-mode-hook #'tree-sitter-mode)
-  (add-hook 'tsx-ts-mode-hook #'tree-sitter-mode)
-
-  ;; Enable Tree-sitter-based syntax highlighting
-  (add-hook 'typescript-ts-mode-hook #'tree-sitter-hl-mode)
-  (add-hook 'tsx-ts-mode-hook #'tree-sitter-hl-mode))
+(my/treesit-setup-lang 'typescript
+  '("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
+(my/treesit-setup-lang 'tsx
+  '("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
 #+end_src
 * Terminal
 #+begin_src emacs-lisp
@@ -861,7 +853,6 @@ Does not seem to work
    vterm-timer-delay nil)
 #+end_src
 
-Custom functions for opening the terminal:
 #+begin_src emacs-lisp
 (defun vik/vterm-open (new-tab)
   "Open a new vterm. If NEW-TAB is non-nil, open in a new tab. Sets the directory to project root or ~/ if no project is defined."
@@ -887,64 +878,8 @@ Custom functions for opening the terminal:
   (vik/vterm-open t))
 #+end_src
 
-Keybinds:
 #+begin_src emacs-lisp
 (global-set-key (kbd "C-x t T") 'vik/vterm-new-tab)
-#+end_src
-
-#+begin_src elisp
-(use-package popper
-  :ensure t
-  :bind (("C-c p" . my/vterm-popper-toggle))
-  :init
-  ;; Only vterm buffers are popups (keeps it to “just one popup”: your terminal)
-  (setq popper-reference-buffers
-        '("^\\*vterm.*\\*$" vterm-mode))
-
-  ;; Popper shows popups at the bottom and allows only one open at a time by default.
-  ;; (That’s Popper’s default display behavior.)
-  (popper-mode +1)
-  (popper-echo-mode +1))  ;; optional echo hints when toggling
-
-;; Close the pane when the terminal exits (vterm kills the buffer on exit)
-(setq vterm-kill-buffer-on-exit t)
-
-(defun my/vterm--buffer-name ()
-  "Name the vterm buffer (one per project if available)."
-  (if (fboundp 'project-current)
-      (let* ((proj (project-current nil))
-             (root (when proj (car (project-roots proj)))))
-        (if root
-            (format "*vterm:%s*" (file-name-nondirectory (directory-file-name root)))
-          "*vterm*"))
-    "*vterm*"))
-
-(defun my/vterm-popper-toggle ()
-  "Toggle a bottom vterm popup using Popper.
-Creates the vterm buffer if needed, focuses it when shown, and
-restores focus when hidden."
-  (interactive)
-  (let* ((name (my/vterm--buffer-name))
-         (buf  (get-buffer name)))
-    (cond
-     ;; If it's visible, ask Popper to hide the latest popup (this one)
-     ((and buf (get-buffer-window buf t))
-      (popper-toggle))
-     ;; Otherwise create/show it at the bottom and focus it
-     (t
-      (unless buf
-        (setq buf (vterm name)))           ; create the vterm buffer
-      ;; Displaying the buffer makes it Popper’s “latest” popup and selects it.
-      (display-buffer buf)))))
-
-;; Optional: tweak the popup height (~30% of frame)
-;; Popper uses display-buffer under the hood, so you can control height like this:
-(add-to-list 'display-buffer-alist
-             '("\\*vterm.*\\*"
-               (display-buffer-at-bottom)
-               (window-height . 0.3)))
-
-(global-set-key (kbd "C-x t p") 'my/vterm-popper-toggle)
 #+end_src
 * Version control
 ** Magit
