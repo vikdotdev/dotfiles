@@ -382,6 +382,7 @@ Replaces tags with shorter emojis:
                 (pcase keyword
                   ("TODO" "📋")
                   ("DONE" "✅")
+                  ("SKIPPED" "⏭️")
                   (_ keyword))))
           (replace-match (concat prefix emoji) t t))))))
 

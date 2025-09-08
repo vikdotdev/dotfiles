@@ -14,6 +14,7 @@ log_header "Building Mise Configuration"
 
 if command_exists mise; then
     log_step "Creating mise.toml"
+    mkdir -p "$HOME/.config/mise/"
     cp "$SCRIPT_DIR/config/mise.toml" "$HOME/.config/mise/config.toml"
     log_success "Deployed mise config to ~/.config/mise/config.toml"
     log_step "Installing tools"

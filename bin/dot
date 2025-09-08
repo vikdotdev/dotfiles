@@ -66,7 +66,7 @@ EOF
 # Check if system is set up
 check_system_setup() {
     # Allow override via environment variable
-    if [[ -n "$INSTALLATION" ]]; then
+    if [[ -n "${INSTALLATION:-}" ]]; then
         return 0
     fi
     
@@ -79,7 +79,7 @@ check_system_setup() {
 # Get system directory path
 get_system_dir() {
     # Use environment variable override if provided
-    if [[ -n "$INSTALLATION" ]]; then
+    if [[ -n "${INSTALLATION:-}" ]]; then
         echo "$DOT_HOME/$INSTALLATION"
         return 0
     fi
@@ -137,7 +137,7 @@ resolve_module_path() {
 # Check system setup for --list operations
 check_system_for_list() {
     # Allow override via environment variable
-    if [[ -n "$INSTALLATION" ]]; then
+    if [[ -n "${INSTALLATION:-}" ]]; then
         return 0
     fi
     
@@ -154,7 +154,7 @@ get_available_modules() {
     
     # Get the installed system type
     local installed_system
-    if [[ -n "$INSTALLATION" ]]; then
+    if [[ -n "${INSTALLATION:-}" ]]; then
         installed_system="$INSTALLATION"
     else
         installed_system=$(head -n1 "$INSTALLATION_MARKER")
