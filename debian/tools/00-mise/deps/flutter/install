@@ -1,0 +1,32 @@
+#!/bin/bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Navigate from debian/tools/00-mise/deps/flutter to root
+DOT_HOME="${SCRIPT_DIR%/debian/tools/00-mise/deps/flutter}"
+
+source "$DOT_HOME/lib/debian/include.sh"
+
+MODULE="flutter-deps"
+init_module_logging "$MODULE"
+
+log_header "Installing Flutter dependencies for mise"
+
+# Install Flutter dependencies
+log_step "Installing Flutter build dependencies"
+PACKAGES=(
+    "cmake"           # Build system for Flutter
+    "ninja-build"     # Build system for Flutter
+    "libgtk-3-dev"    # GTK3 development files for Flutter desktop apps
+    "clang"           # Compiler for Flutter
+    "pkg-config"      # Helper tool for compiling applications
+    "mesa-utils"      # OpenGL utilities for Flutter GPU support
+)
+
+install_packages "${PACKAGES[@]}"
+
+log_success "Flutter dependencies installed"
+log_info "You can now install Flutter with: mise install flutter"
+
+finalize_module_logging "success"

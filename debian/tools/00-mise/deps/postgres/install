@@ -3,7 +3,8 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DOT_HOME="$(dirname "$(dirname "$(dirname "$(dirname "$(dirname "$SCRIPT_DIR")")")")")"
+# Navigate from debian/tools/00-mise/deps/postgres to root
+DOT_HOME="${SCRIPT_DIR%/debian/tools/00-mise/deps/postgres}"
 
 source "$DOT_HOME/lib/debian/include.sh"
 
