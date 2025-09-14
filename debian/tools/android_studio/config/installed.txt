@@ -1,2 +1,0 @@
-com.github.strindberg.emacsj
-com.jetbrains.kmm
