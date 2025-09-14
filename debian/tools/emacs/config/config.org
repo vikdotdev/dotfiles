@@ -424,7 +424,7 @@ Custom agendas:
       '(("w" "Work"
          ((agenda ""
                   ((org-agenda-overriding-header "Work")
-                   (org-agenda-span 3)
+                   (org-agenda-span 7)
                    (org-agenda-skip-function #'vik/org-agenda-skip-entry-non-work)))
           (tags-todo "+work+PRIORITY=\"A\""
                      ((org-agenda-overriding-header "High priority")))
@@ -436,7 +436,7 @@ Custom agendas:
         ("p" "Personal"
          ((agenda ""
                   ((org-agenda-overriding-header "Personal")
-                   (org-agenda-span 3)
+                   (org-agenda-span 7)
                    (org-agenda-skip-function #'vik/org-agenda-skip-entry-work)))
           (tags-todo "-work+PRIORITY=\"A\""
                      ((org-agenda-overriding-header "High priority")))
@@ -452,8 +452,8 @@ Custom agendas:
 #+end_src
 
 Exclude =closed= items to hide them in agenda view:
-#+begin_src elisp
-(setq org-agenda-log-mode-items '(clock))
+#+begin_src elisp :tangle no
+(setq org-agenda-log-mode-items '(closed clock))
 #+end_src
 
 Format the agenda view:
@@ -466,8 +466,12 @@ Format the agenda view:
 #+end_src
 
 Skip empty days:
-#+begin_src elisp
+#+begin_src elisp :tangle no
 (setq org-agenda-show-all-dates nil)
+#+end_src
+
+#+begin_src elisp
+(setq org-agenda-include-diary t)
 #+end_src
 ** TODO Code-blocks
 TODO These can be run as code blocks - fails for some reason when ran on start-up:
@@ -896,9 +900,6 @@ Attaches eglot to every programming language buffer:
   (define-key vik/magit-prefix-map (kbd "g") #'magit-status)
   (define-key vik/magit-prefix-map (kbd "d") #'magit-dispatch)
   (define-key vik/magit-prefix-map (kbd "f") #'magit-file-dispatch))
-(use-package forge
-  :ensure t
-  :after magit)
 #+end_src
 ** Links
 #+begin_src emacs-lisp
