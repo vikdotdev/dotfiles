@@ -6,7 +6,7 @@ cursor-style-blink = false
 shell-integration-features = no-cursor
 
 # Scrollback
-scrollback-limit = 100000
+scrollback-limit = 1000000
 
 copy-on-select = clipboard
 quit-after-last-window-closed = false

@@ -305,6 +305,13 @@ Point stays at the center of the screen:
   (insert (format-time-string "%Y %b %d, %A")))
 #+end_src
 * Appearance
+** Theme
+#+begin_src emacs-lisp
+(use-package modus-themes
+  :ensure t
+  :config
+  (load-theme 'modus-vivendi :no-confirm))
+#+end_src
 ** Tabs
 #+begin_src emacs-lisp
 (setq tab-bar-close-button-show nil) ; Hide close button for simplicity
@@ -848,6 +855,17 @@ Attaches eglot to every programming language buffer:
   '("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
 (my/treesit-setup-lang 'tsx
   '("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
+#+end_src
+** Kotlin
+#+begin_src elisp
+(my/treesit-setup-lang 'kotlin
+  '("https://github.com/fwcd/tree-sitter-kotlin"))
+
+(use-package kotlin-ts-mode
+  :ensure t
+  :init (vik/vc-install :host "gitlab.com" :repo "bricka/emacs-kotlin-ts-mode")
+  :config
+  (add-to-list 'auto-mode-alist '("\\.kt\\'" . kotlin-ts-mode)))
 #+end_src
 * Terminal
 #+begin_src emacs-lisp

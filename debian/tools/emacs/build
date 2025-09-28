@@ -12,11 +12,62 @@ init_module_logging "$MODULE"
 
 log_header "Building Emacs Configuration"
 
+# Validate configuration syntax first
+log_step "Validating Emacs configuration syntax"
+
+TEMP_DIR=$(mktemp -d)
+TEMP_EL="$TEMP_DIR/config.el"
+
+cleanup_temp() {
+    rm -rf "$TEMP_DIR"
+}
+trap cleanup_temp EXIT
+
+# Tangle the org file to extract elisp code blocks
+if [[ -f "$SCRIPT_DIR/config/config.org" ]]; then
+    log_info "Extracting elisp code from config.org..."
+    emacs --batch \
+          --eval "(require 'org)" \
+          --eval "(org-babel-tangle-file \"$SCRIPT_DIR/config/config.org\" \"$TEMP_EL\")" \
+          2>&1 | grep -v "^Loading" || true
+
+    if [[ ! -f "$TEMP_EL" ]]; then
+        log_error "Failed to tangle config.org"
+        finalize_module_logging "failed"
+        exit 1
+    fi
+
+    # Validate by byte-compiling the tangled elisp file
+    log_info "Checking syntax via byte-compilation..."
+
+    # Run compilation and show only errors
+    emacs --batch \
+          --no-init-file \
+          --no-site-file \
+          --eval "(setq byte-compile-error-on-warn nil)" \
+          --funcall batch-byte-compile "$TEMP_EL" 2>&1 | \
+          grep -E "(Error:|error:)" || true
+
+    # Check if compilation succeeded by looking for the .elc file
+    if [[ ! -f "${TEMP_EL}c" ]]; then
+        log_error "Emacs configuration has syntax errors (byte-compilation failed)"
+        finalize_module_logging "failed"
+        exit 1
+    fi
+
+    log_success "Configuration syntax is valid"
+fi
+
 # Deploy Emacs configuration
 log_step "Deploying Emacs configuration"
 
 EMACS_CONFIG_DIR="$HOME/.emacs.d"
 mkdir -p "$EMACS_CONFIG_DIR"
+
+if [[ -f "$SCRIPT_DIR/config/early-init.el" ]]; then
+    cp "$SCRIPT_DIR/config/early-init.el" "$EMACS_CONFIG_DIR/early-init.el"
+    log_info "Deployed early-init.el"
+fi
 
 if [[ -f "$SCRIPT_DIR/config/init.el" ]]; then
     cp "$SCRIPT_DIR/config/init.el" "$EMACS_CONFIG_DIR/init.el"
