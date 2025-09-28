@@ -22,6 +22,15 @@ else
     log_warning "Git configuration file not found"
 fi
 
+# Copy global gitignore file
+if [[ -f "$SCRIPT_DIR/config/ignore" ]]; then
+    mkdir -p "$HOME/.config/git"
+    cp "$SCRIPT_DIR/config/ignore" "$HOME/.config/git/ignore"
+    log_success "Global gitignore installed"
+else
+    log_warning "Global gitignore file not found"
+fi
+
 log_step "Installing git scripts"
 
 # Create scripts directory
