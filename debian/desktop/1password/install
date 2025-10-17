@@ -12,8 +12,8 @@ init_module_logging "$MODULE"
 
 log_header "Installing 1Password"
 
-# Check if 1Password is already installed
-if package_installed "1password"; then
+# Check if 1Password is already installed (Flatpak)
+if flatpak info com.1password.1Password &>/dev/null; then
     log_info "1Password is already installed"
     log_success "1Password installation completed"
     finalize_module_logging "success"
