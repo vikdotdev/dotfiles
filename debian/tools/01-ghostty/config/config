@@ -10,10 +10,8 @@ scrollback-limit = 1000000
 
 copy-on-select = clipboard
 quit-after-last-window-closed = false
-theme = IR_Black
+theme = IR Black
 
 # Custom key bindings
 keybind = ctrl+backslash=write_scrollback_file:open
-keybind = ctrl+zero=close_surface
-keybind = ctrl+two=new_split:down
-keybind = ctrl+three=new_split:right
+keybind = ctrl+y=paste_from_clipboard

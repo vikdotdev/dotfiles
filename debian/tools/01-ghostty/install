@@ -35,7 +35,8 @@ fi
 # Clone or update Ghostty repository
 log_step "Setting up Ghostty repository"
 GHOSTTY_DIR="$HOME/Repositories/ghostty"
-GHOSTTY_VERSION="main"
+GHOSTTY_VERSION="v1.2.2"
+GHOSTTY_ZIG_VERSION="0.15"
 
 if [[ ! -d "$GHOSTTY_DIR" ]]; then
     log_info "Cloning Ghostty repository"
@@ -55,7 +56,7 @@ git checkout "$GHOSTTY_VERSION"
 log_step "Building Ghostty"
 log_info "Running zig build with mise (this may take a while)"
 pushd "$GHOSTTY_DIR"
-mise exec zig@0.14 -- zig build -p "$HOME/.local" -Doptimize=ReleaseFast
+mise exec zig@$GHOSTTY_ZIG_VERSION -- zig build -p "$HOME/.local" -Doptimize=ReleaseFast
 popd
 
 # Verify installation
