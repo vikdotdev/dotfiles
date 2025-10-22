@@ -146,7 +146,7 @@ Different machines get different values.
   (cond
    ((string= (getenv "DESKTOP") "1") 120)
    ((string= (getenv "LAPTOP") "2") 150)
-   (t 150)))
+   (t 120)))
 
 (setq vik/presentation-mode-flag nil)
 
