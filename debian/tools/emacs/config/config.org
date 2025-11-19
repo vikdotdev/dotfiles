@@ -144,9 +144,9 @@ Different machines get different values.
 
 (defvar vik/default-font-size
   (cond
-   ((string= (getenv "DESKTOP") "1") 120)
+   ((string= (getenv "DESKTOP") "1") 110)
    ((string= (getenv "LAPTOP") "2") 150)
-   (t 120)))
+   (t 110)))
 
 (setq vik/presentation-mode-flag nil)
 
@@ -712,6 +712,15 @@ So that =C-c C-t= stores entries into a =LOGBOOK= drawer:
          (function (lambda () (or (buffer-file-name) (error "No current file!"))))
          "#+TITLE: %^{Title}\n"
          :immediate-finish t)))
+#+end_src
+* Markdown
+#+begin_src elisp
+(use-package markdown-mode
+  :ensure t
+  :mode ("README\\.md\\'" . gfm-mode)
+  :init (setq markdown-command "multimarkdown")
+  :bind (:map markdown-mode-map
+         ("C-c C-e" . markdown-do)))
 #+end_src
 * Project
 #+begin_src elisp

@@ -1,5 +1,3 @@
-ENV['PAGER'] = ENV['EDITOR']
-
 # IRB configuration
 IRB.conf[:EDITOR] = ENV['EDITOR']
 

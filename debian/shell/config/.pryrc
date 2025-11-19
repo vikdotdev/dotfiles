@@ -1,4 +1,4 @@
-ENV['PAGER'] = ENV['EDITOR']
+Pry.config.color = false # Uses built-in pager
 Pry.config.editor = ENV['EDITOR']
 
 if defined?(PryByebug)
