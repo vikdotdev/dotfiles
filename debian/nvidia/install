@@ -1,0 +1,118 @@
+#!/bin/bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$(dirname "$SCRIPT_DIR")")"
+
+source "$DOT_HOME/lib/debian/include.sh"
+
+MODULE="nvidia"
+init_module_logging "$MODULE"
+
+log_header "Installing NVIDIA Driver"
+
+# Check if nvidia hardware is present
+if ! lspci | grep -qi nvidia; then
+    log_warning "No NVIDIA GPU detected, skipping installation"
+    finalize_module_logging "skipped"
+    exit 0
+fi
+
+# Enable non-free repository if not already enabled
+log_step "Ensuring non-free repository is enabled"
+
+SOURCES_FILE="/etc/apt/sources.list"
+# Check for " non-free " (with spaces) to distinguish from "non-free-firmware"
+if ! grep -q " non-free " "$SOURCES_FILE" 2>/dev/null || ! grep -q " contrib " "$SOURCES_FILE" 2>/dev/null; then
+    log_info "Adding contrib and non-free to apt sources"
+    ensure_sudo
+
+    # Backup original sources.list
+    sudo cp "$SOURCES_FILE" "${SOURCES_FILE}.backup.$(date +%Y%m%d_%H%M%S)"
+
+    # Add contrib and non-free after main (before non-free-firmware if present)
+    # Pattern: insert "contrib non-free" after "main" on deb lines
+    sudo sed -i 's/^\(deb[^ ]* [^ ]* [^ ]* main\) /\1 contrib non-free /' "$SOURCES_FILE"
+
+    log_success "APT sources updated with contrib and non-free"
+else
+    log_info "non-free repository already enabled"
+fi
+
+# Update package lists
+log_step "Updating package lists"
+ensure_sudo
+sudo apt update
+
+# Install kernel headers (required for DKMS to build nvidia module)
+log_step "Installing kernel headers for DKMS"
+KERNEL_HEADERS="linux-headers-$(uname -r)"
+if package_installed "$KERNEL_HEADERS"; then
+    log_info "Kernel headers already installed"
+else
+    install_packages "$KERNEL_HEADERS"
+fi
+
+# Install NVIDIA driver
+log_step "Installing NVIDIA driver package"
+install_packages "nvidia-driver"
+
+# Verify installation
+if package_installed nvidia-driver; then
+    log_success "NVIDIA driver installed"
+else
+    log_error "NVIDIA driver installation failed"
+    finalize_module_logging "failed"
+    exit 1
+fi
+
+# Note: nvidia-suspend-common package automatically enables power management services
+
+# Enable NVIDIA memory preservation (required for Wayland suspend/resume)
+log_step "Configuring NVIDIA power management for Wayland"
+NVIDIA_PM_CONF="/etc/modprobe.d/nvidia-power-management.conf"
+if [[ -f "$NVIDIA_PM_CONF" ]] && grep -q "PreserveVideoMemoryAllocations=1" "$NVIDIA_PM_CONF"; then
+    log_info "NVIDIA memory preservation already configured"
+else
+    ensure_sudo
+    echo 'options nvidia NVreg_PreserveVideoMemoryAllocations=1' | sudo tee "$NVIDIA_PM_CONF" > /dev/null
+    log_success "NVIDIA memory preservation enabled"
+fi
+
+# Configure GRUB for NVIDIA DRM modesetting (required for Wayland)
+log_step "Configuring GRUB for NVIDIA Wayland support"
+
+GRUB_FILE="/etc/default/grub"
+
+if grep -q "nvidia-drm.modeset=1" "$GRUB_FILE"; then
+    log_info "nvidia-drm.modeset=1 already configured in GRUB"
+else
+    log_info "Adding nvidia-drm.modeset=1 to GRUB"
+    ensure_sudo
+
+    # Backup GRUB config
+    sudo cp "$GRUB_FILE" "${GRUB_FILE}.backup.$(date +%Y%m%d_%H%M%S)"
+
+    # Add nvidia-drm.modeset=1 to GRUB_CMDLINE_LINUX_DEFAULT
+    sudo sed -i 's/\(GRUB_CMDLINE_LINUX_DEFAULT="[^"]*\)"/\1 nvidia-drm.modeset=1"/' "$GRUB_FILE"
+
+    # Clean up double spaces
+    sudo sed -i 's/  */ /g' "$GRUB_FILE"
+
+    log_success "GRUB configuration updated"
+fi
+
+# Regenerate GRUB config
+log_step "Regenerating GRUB configuration"
+ensure_sudo
+sudo update-grub
+
+# Regenerate initramfs to include nvidia modules
+log_step "Regenerating initramfs"
+sudo update-initramfs -u
+
+log_success "NVIDIA driver installation and configuration completed"
+log_info "Reboot required for changes to take effect"
+
+finalize_module_logging "success"
