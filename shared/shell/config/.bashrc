@@ -10,11 +10,6 @@ if ! [[ "$PATH" =~ "$HOME/.local/bin:" ]]; then
     PATH="$HOME/.local/bin:$PATH"
 fi
 
-# Add dotfiles bin to PATH
-if ! [[ "$PATH" =~ "$HOME/Repositories/dotfiles/bin:" ]]; then
-    PATH="$HOME/Repositories/dotfiles/bin:$PATH"
-fi
-
 export PATH
 
 # User specific aliases and functions
@@ -26,20 +21,10 @@ if [ -d ~/.bashrc.d ]; then
     done
 fi
 
-# Aliases
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
-alias grep='grep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias egrep='egrep --color=auto'
-
-# Git aliases
-alias gs='git status'
-alias ga='git add'
-alias gc='git commit'
-alias gp='git push'
-alias gl='git pull'
+# Source shared aliases
+if [ -f "$HOME/.aliases" ]; then
+    . "$HOME/.aliases"
+fi
 
 # History settings
 HISTSIZE=10000

@@ -3,9 +3,9 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DOT_HOME="$(dirname "$(dirname "$(dirname "$SCRIPT_DIR")")")"
+DOT_HOME="$(dirname "$(dirname "$SCRIPT_DIR")")"
 
-source "$DOT_HOME/lib/debian/include.sh"
+source "$DOT_HOME/lib/macos/include.sh"
 
 MODULE="mise"
 init_module_logging "$MODULE"
@@ -24,4 +24,3 @@ else
     log_error "mise build failed - mise binary not found"
     exit 0
 fi
-

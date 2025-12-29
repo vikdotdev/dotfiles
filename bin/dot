@@ -167,15 +167,19 @@ get_available_modules() {
     fi
     
     # Find all modules with the given command script
+    # Use -perm for BSD find compatibility (macOS)
     while IFS= read -r -d '' script; do
         local module_path=$(dirname "$script")
         # Get the full relative path from system_dir
         local module_name="${module_path#$system_dir/}"
-        
+
         modules+=("$module_name")
-    done < <(find "$system_dir" -name "$command" -type f -executable -print0)
-    
-    printf '%s\n' "${modules[@]}" | sort
+    done < <(find "$system_dir" -name "$command" -type f -perm +111 -print0 2>/dev/null)
+
+    # Handle empty array to avoid unbound variable error
+    if [[ ${#modules[@]} -gt 0 ]]; then
+        printf '%s\n' "${modules[@]}" | sort
+    fi
 }
 
 # Run install command
@@ -199,9 +203,11 @@ cmd_install() {
         log_info "Installing all modules"
         
         # Get all available install scripts
-        local available_modules
-        mapfile -t available_modules < <(get_available_modules "install")
-        
+        local available_modules=()
+        while IFS= read -r line; do
+            [[ -n "$line" ]] && available_modules+=("$line")
+        done < <(get_available_modules "install")
+
         for mod in "${available_modules[@]}"; do
             log_step "Running install for module: $mod"
             "$(get_system_dir)/$mod/install"
@@ -241,9 +247,11 @@ cmd_build() {
         log_info "Building all modules"
         
         # Get all available build scripts
-        local available_modules
-        mapfile -t available_modules < <(get_available_modules "build")
-        
+        local available_modules=()
+        while IFS= read -r line; do
+            [[ -n "$line" ]] && available_modules+=("$line")
+        done < <(get_available_modules "build")
+
         for mod in "${available_modules[@]}"; do
             log_step "Running build for module: $mod"
             "$(get_system_dir)/$mod/build"
@@ -283,8 +291,10 @@ cmd_upgrade() {
         log_info "Upgrading all modules"
         
         # Get all available upgrade scripts
-        local available_modules
-        mapfile -t available_modules < <(get_available_modules "upgrade")
+        local available_modules=()
+        while IFS= read -r line; do
+            [[ -n "$line" ]] && available_modules+=("$line")
+        done < <(get_available_modules "upgrade")
         
         if [[ ${#available_modules[@]} -eq 0 ]]; then
             log_info "No modules have upgrade scripts"

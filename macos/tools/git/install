@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOT_HOME="$(dirname "$(dirname "$(dirname "$SCRIPT_DIR")")")"
+
+source "$DOT_HOME/lib/macos/include.sh"
+
+MODULE="git"
+init_module_logging "$MODULE"
+
+log_header "Installing Git"
+
+log_step "Installing git packages via Homebrew"
+FORMULAS=("git" "git-delta" "gh")
+install_formula "${FORMULAS[@]}"
+
+log_success "Git installation completed"
+log_info "Run 'dot build git' to configure git"
+
+finalize_module_logging "success"
