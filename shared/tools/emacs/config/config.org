@@ -138,12 +138,14 @@ Different machines get different values.
 #+begin_src emacs-lisp
 (defvar vik/big-font-size
   (cond
+   ((eq system-type 'darwin) 180)  ;; macOS needs larger due to scaling
    ((string= (getenv "DESKTOP") "1") 180)
    ((string= (getenv "LAPTOP") "2") 170)
    (t 170)))
 
 (defvar vik/default-font-size
   (cond
+   ((eq system-type 'darwin) 180)  ;; macOS needs larger due to scaling
    ((string= (getenv "DESKTOP") "1") 110)
    ((string= (getenv "LAPTOP") "2") 150)
    (t 110)))

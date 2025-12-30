@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -euo pipefail
+
+source "$DOT_HOME/lib/macos/include.sh"
+
+log_step "Installing fonts via Homebrew"
+
+# Iosevka font variants
+CASKS=(
+    "font-iosevka"
+    "font-iosevka-nerd-font"
+)
+
+for cask in "${CASKS[@]}"; do
+    if brew list --cask "$cask" &>/dev/null; then
+        log_info "$cask already installed"
+    else
+        install_cask "$cask"
+    fi
+done
+
+log_success "Fonts installation completed"
+log_info "Restart applications to use the new fonts"
