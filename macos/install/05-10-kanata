@@ -2,15 +2,7 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DOT_HOME="$(dirname "$(dirname "$SCRIPT_DIR")")"
-
 source "$DOT_HOME/lib/macos/include.sh"
-
-MODULE="kanata"
-init_module_logging "$MODULE"
-
-log_header "Installing Kanata"
 
 # Kanata and Karabiner versions
 KANATA_VERSION="1.10.1"
@@ -23,7 +15,6 @@ KANATA_PLIST="/Library/LaunchDaemons/com.kanata.plist"
 if command_exists kanata && [[ -f "$KARABINER_DAEMON_PLIST" ]] && [[ -f "$KANATA_PLIST" ]]; then
     INSTALLED_VERSION=$(kanata --version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 || echo "unknown")
     log_success "kanata is already fully installed and configured (version: $INSTALLED_VERSION)"
-    finalize_module_logging "success"
     exit 0
 fi
 
@@ -63,7 +54,6 @@ if [[ -d "/Applications/.Karabiner-VirtualHIDDevice-Manager.app" ]]; then
             log_success "Karabiner v${KARABINER_VERSION} installed"
         else
             log_error "Failed to download Karabiner driver"
-            finalize_module_logging "failed"
             exit 1
         fi
     fi
@@ -77,7 +67,6 @@ else
         log_success "Karabiner driver installed"
     else
         log_error "Failed to download Karabiner driver"
-        finalize_module_logging "failed"
         exit 1
     fi
 fi
@@ -163,14 +152,12 @@ if download_file "$KANATA_URL" "$TEMP_KANATA/$KANATA_ZIP"; then
         log_success "kanata installed to $KANATA_PATH"
     else
         log_error "Could not find kanata binary in zip"
-        finalize_module_logging "failed"
         exit 1
     fi
 
     rm -rf "$TEMP_KANATA"
 else
     log_error "Failed to download kanata"
-    finalize_module_logging "failed"
     exit 1
 fi
 
@@ -230,4 +217,3 @@ log_info "3. Grant Input Monitoring permissions to your terminal app (e.g., Ghos
 log_info "4. Run 'dot build kanata' to deploy configuration and start kanata"
 echo ""
 
-finalize_module_logging "success"

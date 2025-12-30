@@ -2,15 +2,7 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DOT_HOME="$(dirname "$(dirname "$SCRIPT_DIR")")"
-
 source "$DOT_HOME/lib/macos/include.sh"
-
-MODULE="mise"
-init_module_logging "$MODULE"
-
-log_header "Installing mise"
 
 # Check if mise is already installed
 if command_exists mise; then
@@ -50,5 +42,3 @@ fi
 
 log_success "mise installation completed"
 log_info "Run 'source ~/.bashrc' or start a new shell to activate mise"
-
-finalize_module_logging "success"

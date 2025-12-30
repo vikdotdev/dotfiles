@@ -88,47 +88,36 @@ get_system_dir() {
     echo "$DOT_HOME/$installed_system"
 }
 
-# Resolve module name (handles numeric prefixes like 00-, 01-)
-resolve_module_path() {
+# Resolve script name (handles numeric prefixes like 01-50-mise)
+resolve_script_name() {
     local module="$1"
+    local command="$2"
     local system_dir="$(get_system_dir)"
-    
-    # First, try the module as-is
-    if [[ -d "$system_dir/$module" ]]; then
+    local command_dir="$system_dir/$command"
+
+    # First, try the module name as-is
+    if [[ -f "$command_dir/$module" && -x "$command_dir/$module" ]]; then
         echo "$module"
         return 0
     fi
-    
-    # If module contains /, handle each part
-    if [[ "$module" == */* ]]; then
-        local parent="${module%/*}"
-        local child="${module##*/}"
-        
-        # Try with numeric prefix on child
-        for prefix in {00..99}; do
-            if [[ -d "$system_dir/$parent/${prefix}-${child}" ]]; then
-                echo "$parent/${prefix}-${child}"
-                return 0
-            fi
-        done
-        
-        # Try with numeric prefix on parent
-        for prefix in {00..99}; do
-            if [[ -d "$system_dir/${prefix}-${parent}/$child" ]]; then
-                echo "${prefix}-${parent}/$child"
-                return 0
-            fi
-        done
-    else
-        # Try with numeric prefixes for top-level modules
-        for prefix in {00..99}; do
-            if [[ -d "$system_dir/${prefix}-${module}" ]]; then
-                echo "${prefix}-${module}"
-                return 0
-            fi
-        done
+
+    # Try to find a script that ends with the module name (e.g., "mise" -> "01-50-mise")
+    local found_script=""
+    for script in "$command_dir"/*; do
+        [[ ! -f "$script" || ! -x "$script" ]] && continue
+        local script_name=$(basename "$script")
+        # Check if script ends with -$module
+        if [[ "$script_name" == *-"$module" ]]; then
+            found_script="$script_name"
+            break
+        fi
+    done
+
+    if [[ -n "$found_script" ]]; then
+        echo "$found_script"
+        return 0
     fi
-    
+
     # Return original if no match found
     echo "$module"
     return 1
@@ -151,7 +140,7 @@ check_system_for_list() {
 get_available_modules() {
     local command="$1"
     local modules=()
-    
+
     # Get the installed system type
     local installed_system
     if [[ -n "${INSTALLATION:-}" ]]; then
@@ -160,21 +149,19 @@ get_available_modules() {
         installed_system=$(head -n1 "$INSTALLATION_MARKER")
     fi
     local system_dir="$DOT_HOME/$installed_system"
-    
-    # Check if system directory exists
-    if [[ ! -d "$system_dir" ]]; then
+    local command_dir="$system_dir/$command"
+
+    # Check if command directory exists
+    if [[ ! -d "$command_dir" ]]; then
         return
     fi
-    
-    # Find all modules with the given command script
+
+    # Find all executable files in the command directory
     # Use -perm for BSD find compatibility (macOS)
     while IFS= read -r -d '' script; do
-        local module_path=$(dirname "$script")
-        # Get the full relative path from system_dir
-        local module_name="${module_path#$system_dir/}"
-
-        modules+=("$module_name")
-    done < <(find "$system_dir" -name "$command" -type f -perm +111 -print0 2>/dev/null)
+        local script_name=$(basename "$script")
+        modules+=("$script_name")
+    done < <(find "$command_dir" -maxdepth 1 -type f -perm +111 -print0 2>/dev/null)
 
     # Handle empty array to avoid unbound variable error
     if [[ ${#modules[@]} -gt 0 ]]; then
@@ -185,7 +172,7 @@ get_available_modules() {
 # Run install command
 cmd_install() {
     local module="${1:-all}"
-    
+
     # Handle --list option
     if [[ "$module" == "--list" ]]; then
         check_system_for_list
@@ -193,43 +180,65 @@ cmd_install() {
         get_available_modules "install"
         return 0
     fi
-    
+
     check_system_setup
     init_logging "install"
-    
+
     log_header "Installing: $module"
-    
+
+    # Export common variables for scripts
+    export DOT_HOME="$DOT_HOME"
+    export SYSTEM_DIR="$(get_system_dir)"
+    export SHARED_DIR="$DOT_HOME/shared"
+
     if [[ "$module" == "all" ]]; then
         log_info "Installing all modules"
-        
+
         # Get all available install scripts
         local available_modules=()
         while IFS= read -r line; do
             [[ -n "$line" ]] && available_modules+=("$line")
         done < <(get_available_modules "install")
 
-        for mod in "${available_modules[@]}"; do
-            log_step "Running install for module: $mod"
-            "$(get_system_dir)/$mod/install"
+        for script_name in "${available_modules[@]}"; do
+            # Extract module name from script filename (e.g., "01-50-mise" -> "mise")
+            export MODULE_NAME="$(basename "$script_name" | sed 's/^[0-9]*-[0-9]*-//')"
+
+            init_module_logging "$MODULE_NAME"
+            if "$SYSTEM_DIR/install/$script_name"; then
+                finalize_module_logging "success"
+            else
+                finalize_module_logging "failed"
+                exit 1
+            fi
         done
     else
         # Install specific module
-        local resolved_module=$(resolve_module_path "$module")
-        if [[ -x "$(get_system_dir)/$resolved_module/install" ]]; then
-            "$(get_system_dir)/$resolved_module/install"
+        local script_name=$(resolve_script_name "$module" "install")
+        if [[ -x "$SYSTEM_DIR/install/$script_name" ]]; then
+            # Extract module name from script filename
+            export MODULE_NAME="$(basename "$script_name" | sed 's/^[0-9]*-[0-9]*-//')"
+
+            init_module_logging "$MODULE_NAME"
+            if "$SYSTEM_DIR/install/$script_name"; then
+                finalize_module_logging "success"
+            else
+                finalize_module_logging "failed"
+                exit 1
+            fi
         else
             log_error "Module $module does not have an install script"
             exit 1
         fi
     fi
-    
+
     finalize_logging "success"
 }
 
 # Run build command
 cmd_build() {
     local module="${1:-all}"
-    
+
     # Handle --list option
     if [[ "$module" == "--list" ]]; then
         check_system_for_list
@@ -237,43 +246,65 @@ cmd_build() {
         get_available_modules "build"
         return 0
     fi
-    
+
     check_system_setup
     init_logging "build"
-    
+
     log_header "Building: $module"
-    
+
+    # Export common variables for scripts
+    export DOT_HOME="$DOT_HOME"
+    export SYSTEM_DIR="$(get_system_dir)"
+    export SHARED_DIR="$DOT_HOME/shared"
+
     if [[ "$module" == "all" ]]; then
         log_info "Building all modules"
-        
+
         # Get all available build scripts
         local available_modules=()
         while IFS= read -r line; do
             [[ -n "$line" ]] && available_modules+=("$line")
         done < <(get_available_modules "build")
 
-        for mod in "${available_modules[@]}"; do
-            log_step "Running build for module: $mod"
-            "$(get_system_dir)/$mod/build"
+        for script_name in "${available_modules[@]}"; do
+            # Extract module name from script filename (e.g., "03-00-git" -> "git")
+            export MODULE_NAME="$(basename "$script_name" | sed 's/^[0-9]*-[0-9]*-//')"
+
+            init_module_logging "$MODULE_NAME"
+            if "$SYSTEM_DIR/build/$script_name"; then
+                finalize_module_logging "success"
+            else
+                finalize_module_logging "failed"
+                exit 1
+            fi
         done
     else
         # Build specific module
-        local resolved_module=$(resolve_module_path "$module")
-        if [[ -x "$(get_system_dir)/$resolved_module/build" ]]; then
-            "$(get_system_dir)/$resolved_module/build"
+        local script_name=$(resolve_script_name "$module" "build")
+        if [[ -x "$SYSTEM_DIR/build/$script_name" ]]; then
+            # Extract module name from script filename
+            export MODULE_NAME="$(basename "$script_name" | sed 's/^[0-9]*-[0-9]*-//')"
+
+            init_module_logging "$MODULE_NAME"
+            if "$SYSTEM_DIR/build/$script_name"; then
+                finalize_module_logging "success"
+            else
+                finalize_module_logging "failed"
+                exit 1
+            fi
         else
             log_error "Module $module does not have a build script"
             exit 1
         fi
     fi
-    
+
     finalize_logging "success"
 }
 
 # Run upgrade command
 cmd_upgrade() {
     local module="${1:-all}"
-    
+
     # Handle --list option
     if [[ "$module" == "--list" ]]; then
         check_system_for_list
@@ -281,42 +312,64 @@ cmd_upgrade() {
         get_available_modules "upgrade"
         return 0
     fi
-    
+
     check_system_setup
     init_logging "upgrade"
-    
+
     log_header "Upgrading: $module"
-    
+
+    # Export common variables for scripts
+    export DOT_HOME="$DOT_HOME"
+    export SYSTEM_DIR="$(get_system_dir)"
+    export SHARED_DIR="$DOT_HOME/shared"
+
     if [[ "$module" == "all" ]]; then
         log_info "Upgrading all modules"
-        
+
         # Get all available upgrade scripts
         local available_modules=()
         while IFS= read -r line; do
             [[ -n "$line" ]] && available_modules+=("$line")
         done < <(get_available_modules "upgrade")
-        
+
         if [[ ${#available_modules[@]} -eq 0 ]]; then
             log_info "No modules have upgrade scripts"
             finalize_logging "success"
             return
         fi
-        
-        for mod in "${available_modules[@]}"; do
-            log_step "Running upgrade for module: $mod"
-            "$(get_system_dir)/$mod/upgrade"
+
+        for script_name in "${available_modules[@]}"; do
+            # Extract module name from script filename
+            export MODULE_NAME="$(basename "$script_name" | sed 's/^[0-9]*-[0-9]*-//')"
+
+            init_module_logging "$MODULE_NAME"
+            if "$SYSTEM_DIR/upgrade/$script_name"; then
+                finalize_module_logging "success"
+            else
+                finalize_module_logging "failed"
+                exit 1
+            fi
         done
     else
         # Upgrade specific module
-        local resolved_module=$(resolve_module_path "$module")
-        if [[ -x "$(get_system_dir)/$resolved_module/upgrade" ]]; then
-            "$(get_system_dir)/$resolved_module/upgrade"
+        local script_name=$(resolve_script_name "$module" "upgrade")
+        if [[ -x "$SYSTEM_DIR/upgrade/$script_name" ]]; then
+            # Extract module name from script filename
+            export MODULE_NAME="$(basename "$script_name" | sed 's/^[0-9]*-[0-9]*-//')"
+
+            init_module_logging "$MODULE_NAME"
+            if "$SYSTEM_DIR/upgrade/$script_name"; then
+                finalize_module_logging "success"
+            else
+                finalize_module_logging "failed"
+                exit 1
+            fi
         else
             log_error "Module $module does not have an upgrade script"
             exit 1
         fi
     fi
-    
+
     finalize_logging "success"
 }
 

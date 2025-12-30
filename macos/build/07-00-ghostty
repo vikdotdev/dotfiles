@@ -2,31 +2,19 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DOT_HOME="$(dirname "$(dirname "$(dirname "$SCRIPT_DIR")")")"
-
 source "$DOT_HOME/lib/macos/include.sh"
 
-MODULE="ghostty"
-init_module_logging "$MODULE"
-
-log_header "Building Ghostty Configuration"
-
-# Create Ghostty config directory
 log_step "Creating Ghostty config directory"
 mkdir -p "$HOME/.config/ghostty"
 
-# Deploy Ghostty configuration from shared
 log_step "Deploying Ghostty configuration"
-SHARED_CONFIG="$DOT_HOME/shared/ghostty/config/config"
+SHARED_CONFIG="$SHARED_DIR/ghostty/config/config"
 if [[ -f "$SHARED_CONFIG" ]]; then
     cp "$SHARED_CONFIG" "$HOME/.config/ghostty/config"
     log_info "Deployed Ghostty config to ~/.config/ghostty/config"
 else
     log_error "Ghostty config file not found at $SHARED_CONFIG"
-    finalize_module_logging "failed"
     exit 1
 fi
 
 log_success "Ghostty configuration completed"
-finalize_module_logging "success"

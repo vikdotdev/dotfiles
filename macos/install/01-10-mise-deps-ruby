@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -euo pipefail
+
+source "$DOT_HOME/lib/macos/include.sh"
+
+log_step "Installing libyaml"
+
+if brew_installed libyaml; then
+    log_info "libyaml already installed"
+else
+    install_formula libyaml
+fi
+
+log_success "Ruby dependencies installed"
+log_info "You can now install Ruby versions with: mise install ruby@3.4.5"
