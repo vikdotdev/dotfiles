@@ -7,3 +7,9 @@ DOT_HOME="$(dirname "$(dirname "$(dirname "$SCRIPT_DIR")")")"
 
 # Call shared build script
 "$DOT_HOME/shared/tools/git/build"
+
+# Copy macOS-specific git configuration
+if [[ -f "$SCRIPT_DIR/config/gitconfig.os" ]]; then
+    cp "$SCRIPT_DIR/config/gitconfig.os" "$HOME/.gitconfig.os"
+    echo "[macOS] OS-specific git configuration installed"
+fi
