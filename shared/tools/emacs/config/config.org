@@ -755,10 +755,21 @@ Use =C-h .= to look up documentation of thing at point.
 (setq eldoc-echo-area-prefer-doc-buffer t)
 #+end_src
 ** Mise
+Shared mise configuration:
 #+begin_src elisp
 (use-package mise
   :ensure t
   :hook (after-init . global-mise-mode))
+#+end_src
+
+macOS-specific PATH and mise executable:
+#+begin_src elisp :tangle (if (eq system-type 'darwin) "yes" "no")
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  (exec-path-from-shell-initialize))
+
+(setq mise-executable (expand-file-name "~/.local/bin/mise"))
 #+end_src
 ** Eglot
 Attaches eglot to every programming language buffer:
