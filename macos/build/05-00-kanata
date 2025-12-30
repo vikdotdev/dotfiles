@@ -10,25 +10,48 @@ if ! command_exists kanata; then
     exit 0
 fi
 
-log_step "Deploying kanata configuration"
+log_step "Validating kanata configuration"
+NEW_CONFIG="$SYSTEM_DIR/config/kanata/iso-us-international.kbd"
 
+# Basic validation: check if file exists and is not empty
+if [[ ! -f "$NEW_CONFIG" ]]; then
+    log_error "Config file not found: $NEW_CONFIG"
+    exit 1
+fi
+
+if [[ ! -s "$NEW_CONFIG" ]]; then
+    log_error "Config file is empty: $NEW_CONFIG"
+    exit 1
+fi
+
+log_info "Config file validation passed"
+
+log_step "Deploying kanata configuration"
 CONFIG_DIR="$HOME/.config/kanata"
 mkdir -p "$CONFIG_DIR"
 
-cp "$SYSTEM_DIR/config/kanata/iso-us-international.kbd" "$CONFIG_DIR/config.kbd"
+cp "$NEW_CONFIG" "$CONFIG_DIR/config.kbd"
 log_success "Configuration deployed to $CONFIG_DIR/config.kbd"
 
 KANATA_PLIST="/Library/LaunchDaemons/com.kanata.plist"
 if [[ -f "$KANATA_PLIST" ]]; then
-    log_step "Starting kanata service"
+    log_step "Restarting kanata service"
 
-    if sudo launchctl list | grep -q "com.kanata"; then
-        log_info "Reloading kanata service"
-        sudo launchctl unload "$KANATA_PLIST" 2>/dev/null || true
+    # Bootout (unload) - will fail silently if not loaded
+    sudo launchctl bootout system "$KANATA_PLIST" 2>/dev/null || true
+    sleep 0.5
+
+    # Bootstrap (load and start)
+    if sudo launchctl bootstrap system "$KANATA_PLIST" 2>/dev/null; then
+        log_success "kanata service restarted (passwordless sudo)"
+    else
+        # Try kickstart if already loaded
+        if sudo launchctl kickstart -k system/com.kanata 2>/dev/null; then
+            log_success "kanata service restarted via kickstart"
+        else
+            log_warning "Could not restart service - may need manual intervention"
+        fi
     fi
-
-    sudo launchctl load "$KANATA_PLIST"
-    log_success "kanata service started"
 else
     log_warning "kanata LaunchDaemon not found"
     log_info "Run 'dot install kanata' to set up the launch service"

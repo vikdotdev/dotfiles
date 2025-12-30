@@ -202,18 +202,36 @@ sudo tee "$KANATA_PLIST" > /dev/null << EOF
 </plist>
 EOF
 
-# Set correct permissions
 sudo chmod 644 "$KANATA_PLIST"
 sudo chown root:wheel "$KANATA_PLIST"
 
 log_success "kanata LaunchDaemon created"
+
+# Set up passwordless sudo for kanata service management
+log_step "Setting up passwordless sudo for kanata management"
+SUDOERS_FILE="/etc/sudoers.d/kanata"
+
+sudo tee "$SUDOERS_FILE" > /dev/null << 'SUDOEOF'
+# Allow passwordless sudo for kanata service management
+%admin ALL=(root) NOPASSWD: /bin/launchctl bootout system /Library/LaunchDaemons/com.kanata.plist
+%admin ALL=(root) NOPASSWD: /bin/launchctl bootstrap system /Library/LaunchDaemons/com.kanata.plist
+%admin ALL=(root) NOPASSWD: /bin/launchctl kickstart -k system/com.kanata
+SUDOEOF
+
+sudo chmod 440 "$SUDOERS_FILE"
+log_success "Sudoers configured for passwordless kanata management"
 log_info "kanata will start automatically after 'dot build kanata' deploys the config"
 
 echo ""
 log_warning "IMPORTANT: Kanata requires system permissions"
 log_info "1. Approve the Karabiner extension in System Settings > Privacy & Security if needed"
 log_info "2. Restart your Mac if prompted"
-log_info "3. Grant Input Monitoring permissions to your terminal app (e.g., Ghostty)"
+log_info "3. Grant Input Monitoring permissions to: $KANATA_PATH"
+log_info "   Go to: System Settings > Privacy & Security > Input Monitoring"
 log_info "4. Run 'dot build kanata' to deploy configuration and start kanata"
+log_info ""
+log_info "Manage kanata service without password:"
+log_info "  sudo launchctl bootout system /Library/LaunchDaemons/com.kanata.plist"
+log_info "  sudo launchctl bootstrap system /Library/LaunchDaemons/com.kanata.plist"
 echo ""
 
