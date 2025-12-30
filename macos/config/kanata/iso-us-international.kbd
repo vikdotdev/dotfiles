@@ -34,7 +34,7 @@
 )
 
 (defsrc
-  esc  mute vold volu                               end  ins  del
+  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
   nubs 1    2    3    4    5    6    7    8    9    0    -    =    bspc
   tab  q    w    e    r    t    y    u    i    o    p    [    ]
   caps a    s    d    f    g    h    j    k    l    ;    '    \    ret
@@ -44,7 +44,7 @@
 )
 
 (deflayer main
-  esc  mute vold volu                               end  ins  del
+  esc  brdn brup mctl sls  dtn  dnd  prev pp   next mute vold volu
   =    @1cm 2    3    4    5    6    7    8    9    0    -    grv  bspc
   @mta q    w    e    r    t    y    u    i    o    p    @hyp \
   @ces @laa s    d    f    g    h    j    k    l    @lac @qta ret  ret
@@ -54,7 +54,7 @@
 )
 
 (deflayer side
-  _    _    _    _                                  _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _
   _    _    _    _    _    _    _    _    _    _    _    _    _    _
   _    @hba @hfo @tba @tfo _    _    _    _    _    up   _    _
   _    _    _    bspc rght ret  _    _    _    _    _    _    _    _
