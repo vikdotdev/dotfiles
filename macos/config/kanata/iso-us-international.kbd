@@ -22,6 +22,7 @@
   lsb (tap-hold 170 170 [ lsft)
   rsb (tap-hold 170 170 ] rsft)
   sid (tap-hold 300 300 spc (layer-toggle side))
+  1cm (tap-hold 300 300 1 lmet)
 
   ;; Browser history navigation
   hfo (multi lalt rght)
@@ -44,11 +45,11 @@
 
 (deflayer main
   esc  mute vold volu                               end  ins  del
-  =    1    2    3    4    5    6    7    8    9    0    -    grv  bspc
+  =    @1cm 2    3    4    5    6    7    8    9    0    -    grv  bspc
   @mta q    w    e    r    t    y    u    i    o    p    @hyp \
   @ces @laa s    d    f    g    h    j    k    l    @lac @qta ret  ret
   lsft lsft z    x    c    v    b    n    m    ,    .    /         @rsb
-  caps _    lalt           @sid           ralt      rctl pgup up   pgdn
+  caps lalt lmet           @sid           ralt      rctl pgup up   pgdn
                                                          left down rght
 )
 
