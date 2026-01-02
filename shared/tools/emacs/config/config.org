@@ -207,6 +207,14 @@ Show rows and columns at the bottom:
 #+begin_src elisp
 (setq column-number-mode t)
 #+end_src
+** MacOS keyboard fixes
+Makes Cmd act as Alt:
+#+begin_src elisp
+(setq mac-option-key-is-meta nil
+      mac-command-key-is-meta t
+      mac-command-modifier 'meta
+      mac-option-modifier 'none)
+#+end_src
 * Authinfo
 #+begin_src elisp
 (require 'auth-source)

@@ -3,8 +3,6 @@
 
 (defcfg
   process-unmapped-keys yes
-  ;; Allow command execution (use with caution)
-  danger-enable-cmd yes
 )
 
 (defalias
@@ -14,15 +12,14 @@
   ;; Tap-hold aliases
   ;; kanata uses: (tap-hold tap-timeout hold-timeout tap-action hold-action)
   mta (tap-hold 150 150 tab @hyp)
-  rta (tap-hold 150 150 \ rmet)
-  qta (tap-hold 150 150 ' lalt)
+  rta (tap-hold 150 150 \ @hyp)
+  qta (tap-hold 150 150 ' rmet)
   ces (tap-hold 150 150 esc lctl)
-  laa (tap-hold 300 300 a lalt)
+  lma (tap-hold 300 300 a lmet)
   lac (tap-hold 300 300 ; rctl)
   lsb (tap-hold 170 170 [ lsft)
   rsb (tap-hold 170 170 ] rsft)
   sid (tap-hold 300 300 spc (layer-toggle side))
-  1cm (tap-hold 300 300 1 lmet)
 
   ;; Browser history navigation
   hfo (multi lalt rght)
@@ -39,17 +36,17 @@
   tab  q    w    e    r    t    y    u    i    o    p    [    ]
   caps a    s    d    f    g    h    j    k    l    ;    '    \    ret
   lsft grv  z    x    c    v    b    n    m    ,    .    /         rsft
-  lctl lmet lalt           spc            ralt      rctl pgup up   pgdn
+  lctl lalt lmet           spc            rmet      ralt      up
                                                          left down rght
 )
 
 (deflayer main
   esc  brdn brup mctl sls  dtn  dnd  prev pp   next mute vold volu
-  =    @1cm 2    3    4    5    6    7    8    9    0    -    grv  bspc
-  @mta q    w    e    r    t    y    u    i    o    p    @hyp \
-  @ces @laa s    d    f    g    h    j    k    l    @lac @qta ret  ret
-  lsft lsft z    x    c    v    b    n    m    ,    .    /         @rsb
-  caps lalt lmet           @sid           ralt      rctl pgup up   pgdn
+  =    1    2    3    4    5    6    7    8    9    0    -    grv  bspc
+  @mta q    w    e    r    t    y    u    i    o    p    @rta \
+  @ces @lma s    d    f    g    h    j    k    l    @lac @qta ret  ret
+  @lsb @lsb z    x    c    v    b    n    m    ,    .    /         @rsb
+  caps lalt lmet           @sid           ralt      rctl      up
                                                          left down rght
 )
 
@@ -59,6 +56,6 @@
   _    @hba @hfo @tba @tfo _    _    _    _    _    up   _    _
   _    _    _    bspc rght ret  _    _    _    _    _    _    _    _
   _    _    _    _    _    _    left down _    _    _    _         _
-  _    _    _              _              _         _    _    _    _
+  _    _    _              _              _         _         _
                                                          _    _    _
 )
