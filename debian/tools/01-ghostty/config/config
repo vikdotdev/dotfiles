@@ -11,6 +11,7 @@ scrollback-limit = 4294967295
 copy-on-select = clipboard
 quit-after-last-window-closed = false
 theme = IR Black
+font-size = 12
 
 # Custom key bindings
 keybind = ctrl+backslash=write_scrollback_file:open
