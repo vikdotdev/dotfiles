@@ -138,12 +138,14 @@ Different machines get different values.
 #+begin_src emacs-lisp
 (defvar vik/big-font-size
   (cond
+   ((eq system-type 'darwin) 180)  ;; macOS needs larger due to scaling
    ((string= (getenv "DESKTOP") "1") 180)
    ((string= (getenv "LAPTOP") "2") 170)
    (t 170)))
 
 (defvar vik/default-font-size
   (cond
+   ((eq system-type 'darwin) 180)  ;; macOS needs larger due to scaling
    ((string= (getenv "DESKTOP") "1") 110)
    ((string= (getenv "LAPTOP") "2") 150)
    (t 110)))
@@ -204,6 +206,14 @@ Toggle between light and dark themes with =F5= key.
 Show rows and columns at the bottom:
 #+begin_src elisp
 (setq column-number-mode t)
+#+end_src
+** MacOS keyboard fixes
+Makes Cmd act as Alt:
+#+begin_src elisp
+(setq mac-option-key-is-meta nil
+      mac-command-key-is-meta t
+      mac-command-modifier 'meta
+      mac-option-modifier 'none)
 #+end_src
 * Authinfo
 #+begin_src elisp
@@ -753,10 +763,21 @@ Use =C-h .= to look up documentation of thing at point.
 (setq eldoc-echo-area-prefer-doc-buffer t)
 #+end_src
 ** Mise
+Shared mise configuration:
 #+begin_src elisp
 (use-package mise
   :ensure t
   :hook (after-init . global-mise-mode))
+#+end_src
+
+macOS-specific PATH and mise executable:
+#+begin_src elisp :tangle (if (eq system-type 'darwin) "yes" "no")
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  (exec-path-from-shell-initialize))
+
+(setq mise-executable (expand-file-name "~/.local/bin/mise"))
 #+end_src
 ** Eglot
 Attaches eglot to every programming language buffer:
@@ -984,6 +1005,10 @@ Attaches eglot to every programming language buffer:
 
 (with-eval-after-load 'dired
   (define-key dired-mode-map (kbd "e") 'eshell))
+
+;; Use GNU ls from coreutils on macOS
+(when (eq system-type 'darwin)
+  (setq insert-directory-program "/opt/homebrew/bin/gls"))
 
 (setq dired-listing-switches "-lah --group-directories-first")
 #+end_src

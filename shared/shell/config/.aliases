@@ -1,0 +1,4 @@
+# ~/.aliases
+# Shared aliases for bash and zsh
+
+alias ll='ls -alF'

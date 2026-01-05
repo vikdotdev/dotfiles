@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -euo pipefail
+
+source "$DOT_HOME/lib/macos/include.sh"
+
+log_step "Installing git packages via Homebrew"
+FORMULAS=("git" "git-delta" "gh")
+install_formula "${FORMULAS[@]}"
+
+log_success "Git installation completed"
+log_info "Run 'dot build git' to configure git"

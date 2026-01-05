@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -euo pipefail
+
+"$SHARED_DIR/tools/git/build"
+
+if [[ -f "$SYSTEM_DIR/config/git/gitconfig.os" ]]; then
+    cp "$SYSTEM_DIR/config/git/gitconfig.os" "$HOME/.gitconfig.os"
+    echo "[macOS] OS-specific git configuration installed"
+fi

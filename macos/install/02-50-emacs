@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -euo pipefail
+
+source "$DOT_HOME/lib/macos/include.sh"
+
+log_step "Installing emacs via Homebrew"
+install_cask "emacs"
+
+log_success "Emacs installation completed"
+log_info "Run 'dot build emacs' to configure emacs"

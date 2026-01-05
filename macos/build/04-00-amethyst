@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -euo pipefail
+
+source "$DOT_HOME/lib/macos/include.sh"
+
+if ! command -v open >/dev/null || [[ ! -d "/Applications/Amethyst.app" ]]; then
+    log_warning "Amethyst not installed, skipping configuration deployment"
+    log_info "Run 'dot install amethyst' to install Amethyst first"
+    exit 0
+fi
+
+log_step "Deploying Amethyst configuration"
+SOURCE_CONFIG="$SYSTEM_DIR/config/amethyst/.amethyst.yml"
+DEST_CONFIG="$HOME/.amethyst.yml"
+
+if [[ ! -f "$SOURCE_CONFIG" ]]; then
+    log_error "Config file not found: $SOURCE_CONFIG"
+    exit 1
+fi
+
+cp "$SOURCE_CONFIG" "$DEST_CONFIG"
+log_success "Amethyst configuration deployed to $DEST_CONFIG"
+log_info "Restart Amethyst for changes to take effect"

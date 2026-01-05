@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -euo pipefail
+
+source "$DOT_HOME/lib/macos/include.sh"
+
+log_step "Creating Ghostty config directory"
+mkdir -p "$HOME/.config/ghostty"
+
+log_step "Deploying Ghostty configuration"
+SHARED_CONFIG="$SHARED_DIR/ghostty/config/config"
+if [[ -f "$SHARED_CONFIG" ]]; then
+    cp "$SHARED_CONFIG" "$HOME/.config/ghostty/config"
+    log_info "Deployed Ghostty config to ~/.config/ghostty/config"
+else
+    log_error "Ghostty config file not found at $SHARED_CONFIG"
+    exit 1
+fi
+
+log_success "Ghostty configuration completed"

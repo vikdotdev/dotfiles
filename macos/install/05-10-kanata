@@ -1,0 +1,237 @@
+#!/bin/bash
+
+set -euo pipefail
+
+source "$DOT_HOME/lib/macos/include.sh"
+
+# Kanata and Karabiner versions
+KANATA_VERSION="1.10.1"
+KARABINER_VERSION="6.7.0"
+
+# Check if everything is already set up
+KARABINER_DAEMON_PLIST="/Library/LaunchDaemons/org.pqrs.karabiner.virtualhiddevice.daemon.plist"
+KANATA_PLIST="/Library/LaunchDaemons/com.kanata.plist"
+
+if command_exists kanata && [[ -f "$KARABINER_DAEMON_PLIST" ]] && [[ -f "$KANATA_PLIST" ]]; then
+    INSTALLED_VERSION=$(kanata --version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 || echo "unknown")
+    log_success "kanata is already fully installed and configured (version: $INSTALLED_VERSION)"
+    exit 0
+fi
+
+# Install Karabiner DriverKit VirtualHIDDevice v6.7.0
+log_step "Installing Karabiner DriverKit VirtualHIDDevice v${KARABINER_VERSION}"
+
+KARABINER_PKG="Karabiner-DriverKit-VirtualHIDDevice-${KARABINER_VERSION}.pkg"
+KARABINER_URL="https://github.com/pqrs-org/Karabiner-DriverKit-VirtualHIDDevice/releases/download/v${KARABINER_VERSION}/${KARABINER_PKG}"
+TEMP_DIR=$(mktemp -d)
+
+# Check if Karabiner is already installed and what version
+if [[ -d "/Applications/.Karabiner-VirtualHIDDevice-Manager.app" ]]; then
+    log_info "Karabiner driver is installed, checking version..."
+
+    # Try to get version from the app bundle
+    CURRENT_VERSION=$(defaults read "/Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/Info.plist" CFBundleShortVersionString 2>/dev/null || echo "unknown")
+
+    if [[ "$CURRENT_VERSION" == "$KARABINER_VERSION" ]]; then
+        log_info "Karabiner v${KARABINER_VERSION} already installed"
+    else
+        log_warning "Karabiner v${CURRENT_VERSION} is installed, upgrading to v${KARABINER_VERSION}"
+
+        # Uninstall old version
+        log_info "Deactivating old Karabiner driver"
+        bash '/Library/Application Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice/scripts/uninstall/deactivate_driver.sh' || true
+
+        log_info "Removing old Karabiner files (requires sudo)"
+        ensure_sudo
+        sudo bash '/Library/Application Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice/scripts/uninstall/remove_files.sh' || true
+
+        # Download and install new version
+        log_info "Downloading Karabiner v${KARABINER_VERSION}"
+        if download_file "$KARABINER_URL" "$TEMP_DIR/$KARABINER_PKG"; then
+            log_info "Installing Karabiner driver (requires sudo)"
+            ensure_sudo
+            sudo installer -pkg "$TEMP_DIR/$KARABINER_PKG" -target /
+            log_success "Karabiner v${KARABINER_VERSION} installed"
+        else
+            log_error "Failed to download Karabiner driver"
+            exit 1
+        fi
+    fi
+else
+    # Fresh install
+    log_info "Downloading Karabiner DriverKit VirtualHIDDevice v${KARABINER_VERSION}"
+    if download_file "$KARABINER_URL" "$TEMP_DIR/$KARABINER_PKG"; then
+        log_info "Installing Karabiner driver (requires sudo)"
+        ensure_sudo
+        sudo installer -pkg "$TEMP_DIR/$KARABINER_PKG" -target /
+        log_success "Karabiner driver installed"
+    else
+        log_error "Failed to download Karabiner driver"
+        exit 1
+    fi
+fi
+
+# Activate Karabiner driver (run in background with timeout workaround)
+log_step "Activating Karabiner driver"
+# macOS doesn't have timeout command, use perl-based alternative
+perl -e 'alarm 60; exec @ARGV' /Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager activate || true
+log_info "Driver activation completed (may require approval in System Settings)"
+
+# Set up LaunchDaemon for Karabiner VirtualHIDDevice daemon
+log_step "Setting up Karabiner daemon to start on boot"
+DAEMON_PLIST="/Library/LaunchDaemons/org.pqrs.karabiner.virtualhiddevice.daemon.plist"
+
+if [[ -f "$DAEMON_PLIST" ]]; then
+    log_info "LaunchDaemon already configured"
+else
+    log_info "Creating LaunchDaemon plist (requires sudo)"
+    ensure_sudo
+
+    sudo tee "$DAEMON_PLIST" > /dev/null << 'EOF'
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>org.pqrs.karabiner.virtualhiddevice.daemon</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Library/Application Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice/Applications/Karabiner-VirtualHIDDevice-Daemon.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Daemon</string>
+    </array>
+    <key>ProcessType</key>
+    <string>Interactive</string>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>/var/log/karabiner-daemon.log</string>
+    <key>StandardErrorPath</key>
+    <string>/var/log/karabiner-daemon.log</string>
+</dict>
+</plist>
+EOF
+
+    # Set correct permissions
+    sudo chmod 644 "$DAEMON_PLIST"
+    sudo chown root:wheel "$DAEMON_PLIST"
+
+    # Load the daemon
+    log_info "Loading Karabiner daemon"
+    sudo launchctl load "$DAEMON_PLIST" || true
+
+    log_success "Karabiner daemon configured to start on boot"
+fi
+
+# Clean up temp directory
+rm -rf "$TEMP_DIR"
+
+# Download and install kanata binary
+log_step "Installing kanata v${KANATA_VERSION}"
+
+KANATA_ZIP="kanata-macos-binaries-arm64-v${KANATA_VERSION}.zip"
+KANATA_URL="https://github.com/jtroo/kanata/releases/download/v${KANATA_VERSION}/${KANATA_ZIP}"
+INSTALL_DIR="$HOME/.local/bin"
+KANATA_PATH="$INSTALL_DIR/kanata"
+TEMP_KANATA=$(mktemp -d)
+
+ensure_dir "$INSTALL_DIR"
+
+log_info "Downloading kanata v${KANATA_VERSION} for ARM64"
+if download_file "$KANATA_URL" "$TEMP_KANATA/$KANATA_ZIP"; then
+    log_info "Extracting kanata binary"
+    cd "$TEMP_KANATA"
+    unzip -q "$KANATA_ZIP"
+
+    # Find the binary (might be kanata_macos_arm64 or similar)
+    BINARY=$(find . -name "kanata*" -type f | head -1)
+
+    if [[ -n "$BINARY" ]]; then
+        mv "$BINARY" "$KANATA_PATH"
+        chmod +x "$KANATA_PATH"
+        log_success "kanata installed to $KANATA_PATH"
+    else
+        log_error "Could not find kanata binary in zip"
+        exit 1
+    fi
+
+    rm -rf "$TEMP_KANATA"
+else
+    log_error "Failed to download kanata"
+    exit 1
+fi
+
+# Verify installation
+if command_exists kanata; then
+    VERSION=$(kanata --version 2>&1 | head -1)
+    log_success "kanata installation completed: $VERSION"
+else
+    log_warning "kanata installed but not in PATH. Add $INSTALL_DIR to your PATH"
+fi
+
+# Set up LaunchDaemon to run kanata on boot
+log_step "Setting up kanata to start on boot"
+KANATA_PLIST="/Library/LaunchDaemons/com.kanata.plist"
+KANATA_CONFIG="$HOME/.config/kanata/config.kbd"
+
+log_info "Creating kanata LaunchDaemon (requires sudo)"
+ensure_sudo
+
+sudo tee "$KANATA_PLIST" > /dev/null << EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.kanata</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>$KANATA_PATH</string>
+        <string>--cfg</string>
+        <string>$KANATA_CONFIG</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>StandardErrorPath</key>
+    <string>/var/log/kanata.err</string>
+    <key>StandardOutPath</key>
+    <string>/var/log/kanata.out</string>
+</dict>
+</plist>
+EOF
+
+sudo chmod 644 "$KANATA_PLIST"
+sudo chown root:wheel "$KANATA_PLIST"
+
+log_success "kanata LaunchDaemon created"
+
+# Set up passwordless sudo for kanata service management
+log_step "Setting up passwordless sudo for kanata management"
+SUDOERS_FILE="/etc/sudoers.d/kanata"
+
+sudo tee "$SUDOERS_FILE" > /dev/null << 'SUDOEOF'
+# Allow passwordless sudo for kanata service management
+%admin ALL=(root) NOPASSWD: /bin/launchctl bootout system /Library/LaunchDaemons/com.kanata.plist
+%admin ALL=(root) NOPASSWD: /bin/launchctl bootstrap system /Library/LaunchDaemons/com.kanata.plist
+%admin ALL=(root) NOPASSWD: /bin/launchctl kickstart -k system/com.kanata
+SUDOEOF
+
+sudo chmod 440 "$SUDOERS_FILE"
+log_success "Sudoers configured for passwordless kanata management"
+log_info "kanata will start automatically after 'dot build kanata' deploys the config"
+
+echo ""
+log_warning "IMPORTANT: Kanata requires system permissions"
+log_info "1. Approve the Karabiner extension in System Settings > Privacy & Security if needed"
+log_info "2. Restart your Mac if prompted"
+log_info "3. Grant Input Monitoring permissions to: $KANATA_PATH"
+log_info "   Go to: System Settings > Privacy & Security > Input Monitoring"
+log_info "4. Run 'dot build kanata' to deploy configuration and start kanata"
+log_info ""
+log_info "Manage kanata service without password:"
+log_info "  sudo launchctl bootout system /Library/LaunchDaemons/com.kanata.plist"
+log_info "  sudo launchctl bootstrap system /Library/LaunchDaemons/com.kanata.plist"
+echo ""
+

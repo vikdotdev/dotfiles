@@ -1,5 +1,9 @@
 # Ghostty terminal configuration
 
+# macOS: Make left Option/Alt act as Meta key for terminal shortcuts (Alt+f, Alt+b, etc.)
+# Right Option/Alt will still produce special characters (ń, ƒ, etc.)
+macos-option-as-alt = left
+
 # Cursor
 cursor-style = block
 cursor-style-blink = false

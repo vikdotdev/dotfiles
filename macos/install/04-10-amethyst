@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -euo pipefail
+
+source "$DOT_HOME/lib/macos/include.sh"
+
+log_step "Installing Amethyst via Homebrew"
+CASKS=("amethyst")
+install_cask "${CASKS[@]}"
+
+log_success "Amethyst installation completed"
+log_info "Run 'dot build amethyst' to configure Amethyst"
+log_info ""
+log_warning "IMPORTANT: Grant Accessibility permissions to Amethyst"
+log_info "Go to: System Settings > Privacy & Security > Accessibility"
+log_info "Enable Amethyst to allow window management"

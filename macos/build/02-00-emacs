@@ -1,0 +1,28 @@
+#!/bin/bash
+
+set -euo pipefail
+
+source "$DOT_HOME/lib/macos/include.sh"
+
+log_step "Deploying Emacs configuration"
+
+EMACS_CONFIG_DIR="$HOME/.emacs.d"
+SHARED_CONFIG_DIR="$SHARED_DIR/tools/emacs/config"
+mkdir -p "$EMACS_CONFIG_DIR"
+
+if [[ -f "$SHARED_CONFIG_DIR/early-init.el" ]]; then
+    cp "$SHARED_CONFIG_DIR/early-init.el" "$EMACS_CONFIG_DIR/early-init.el"
+    log_info "Deployed early-init.el"
+fi
+
+if [[ -f "$SHARED_CONFIG_DIR/init.el" ]]; then
+    cp "$SHARED_CONFIG_DIR/init.el" "$EMACS_CONFIG_DIR/init.el"
+    log_info "Deployed init.el"
+fi
+
+if [[ -f "$SHARED_CONFIG_DIR/config.org" ]]; then
+    cp "$SHARED_CONFIG_DIR/config.org" "$EMACS_CONFIG_DIR/config.org"
+    log_info "Deployed config.org"
+fi
+
+log_success "Emacs configuration completed"

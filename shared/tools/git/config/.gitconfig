@@ -2,10 +2,8 @@
   email = vikdotdev@gmail.com
   name = Viktor Habchak
   signingkey = 7392D21113383CBB
-[credential "https://github.com"]
-  helper = !/usr/bin/gh auth git-credential
-[credential "https://gist.github.com"]
-  helper = !/usr/bin/gh auth git-credential
+[include]
+  path = ~/.gitconfig.os
 [alias]
   ci = commit
   st = status

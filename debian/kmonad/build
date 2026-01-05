@@ -29,10 +29,11 @@ log_step "Deploying KMonad configuration"
 CONFIG_DIR="$HOME/.config/kmonad"
 mkdir -p "$CONFIG_DIR"
 
-# Deploy keyboard configuration
-if [[ -f "$SCRIPT_DIR/config/laptop.kbd" ]]; then
+# Deploy keyboard configuration from shared
+SHARED_CONFIG="$DOT_HOME/shared/kmonad/config/laptop.kbd"
+if [[ -f "$SHARED_CONFIG" ]]; then
     log_info "Deploying keyboard configuration"
-    cp "$SCRIPT_DIR/config/laptop.kbd" "$CONFIG_DIR/config.kbd"
+    cp "$SHARED_CONFIG" "$CONFIG_DIR/config.kbd"
 else
     log_warning "No keyboard configuration found"
 fi

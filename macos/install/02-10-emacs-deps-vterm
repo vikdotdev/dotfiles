@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -euo pipefail
+
+source "$DOT_HOME/lib/macos/include.sh"
+
+log_step "Installing Emacs dependencies (cmake, libtool)"
+
+FORMULAS=("cmake" "libtool")
+
+for formula in "${FORMULAS[@]}"; do
+    if brew_installed "$formula"; then
+        log_info "$formula already installed"
+    else
+        install_formula "$formula"
+    fi
+done
+
+log_success "Emacs dependencies installed"
